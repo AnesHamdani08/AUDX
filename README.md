@@ -35,4 +35,4 @@ Thank you for stepping by.
 -Custome Taskbar thubnails
 # Screenshots
 ![image](https://user-images.githubusercontent.com/38377619/114264431-3b870200-99eb-11eb-9fe3-849c481422e2.png)
--More scrrenshots will be added as well as the source code
+-More screenshots will be added as well as the source code.
