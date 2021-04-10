@@ -4,7 +4,7 @@ A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
 # Features
--Clean UI - Based on the HandyControl <https://github.com/HandyOrg/HandyControl>
+-Clean UI - Based on the HandyControl <https://github.com/HandyOrg/HandyControl> <br>
 -Tags manager - Based on Taglib-Sharp <https://github.com/mono/taglib-sharp>
 -FX's : Equaliser , Reverb , Sound Booster , Balance , Mono , Sample Rate , Swap Stereo , Rotating Channels.
 -Visualiser : Support for Sonique, Winamp, Windows Media Player, and BassBox, witch framerate limiting (15-30-60-Unlocked)
