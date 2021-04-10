@@ -1,4 +1,5 @@
 # MuPlay
+![MuPlayerV2](https://user-images.githubusercontent.com/38377619/114272147-3343bc80-9a15-11eb-93be-b1de7f3b5a0e.png)
 A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
@@ -25,11 +26,13 @@ Thank you for stepping by.
 -Media controls : Play , Pause , Next , Previous , No Loop , Playlist Loop , Track Loop , Shuffle , Volume , Cover Viewer
 -Playlist : Add , Remove , Move up , Move down , Move to , Clear , View
 -Windows 10 SMTC (Current playing track will show in the volume bar)
+-Taskbar : Progress , State , Buttons
 # To be implemented features
 -Plugins support
 -Fullscreen player
 -Lyrics finding
 -Custom theme support
+-Custome Taskbar thubnails
 # Screenshots
 ![image](https://user-images.githubusercontent.com/38377619/114264431-3b870200-99eb-11eb-9fe3-849c481422e2.png)
 -More scrrenshots will be added as well as the source code
