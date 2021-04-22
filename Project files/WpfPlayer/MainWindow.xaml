@@ -1,0 +1,982 @@
+﻿<hc:GlowWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"       
+        xmlns:local="clr-namespace:WpfPlayer"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"                                            
+        x:Name="PrimWindow" x:Class="MainWindow"                
+        mc:Ignorable="d"
+        Title="MuPlay" Height="650" Width="1200" Initialized="Window_Initialized" MinWidth="1020" WindowStartupLocation="CenterScreen" ActiveGlowColor="#FFC500FF" InactiveGlowColor="#FFFF00D1" Icon="Res/icon.ico" AllowDrop="True">
+    <hc:GlowWindow.Resources>
+        <system:String x:Key="fav_Tip">I love it!</system:String>
+        <system:String x:Key="Vol_Tip">100</system:String>
+        <system:String x:Key="Seek_Tip">Play a song first ;)</system:String>
+        <system:String x:Key="Visualiser_Tip">How did you see that ?</system:String>
+        <system:Boolean x:Key="ShowHomeTopCanvas">False</system:Boolean>
+        <BooleanToVisibilityConverter x:Key="b2vc"/>
+    </hc:GlowWindow.Resources>
+    <hc:GlowWindow.NonClientAreaContent>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Height="29">
+                <Menu HorizontalAlignment="Left">
+                    <MenuItem x:Name="TitleBar_File" Header="File">
+                        <MenuItem.Icon>
+                            <Image Source="Res/control-panelg.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem x:Name="TitleBar_Unsync" Header="Unsynced">
+                            <MenuItem.Icon>
+                                <Image Source="Res/no-syncg.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_UnsyncAdd" Header="Add">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/add-songg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Load from">
+                                <MenuItem x:Name="TitleBar_UnsyncYT" Header="Youtube">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/youtubeg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_UnsyncSC" Header="Soundcloud">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/soundcloudg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_UnsyncURL" Header="URL">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/linkg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="Synced">
+                            <MenuItem.Icon>
+                                <Image Source="Res/syncg.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_SyncAdd" Header="Add">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/add-songg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_SyncScan" Header="Scan">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/scang.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem x:Name="TitleBar_Sleep" Header="Sleep">
+                            <MenuItem.Icon>
+                                <Image Source="Res/timerg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="TitleBar_Exit" Header="Exit">
+                            <MenuItem.Icon>
+                                <Image Source="Res/exitg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="TitleBar_Edit" Header="Edit">
+                        <MenuItem.Icon>
+                            <Image Source="Res/editg.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem x:Name="TitleBar_Tags" Header="Tags">
+                            <MenuItem.Icon>
+                                <Image Source="Res/tagsg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Fx">
+                            <MenuItem.Icon>
+                                <Image Source="Res/fx.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_Eq" Header="Equaliser">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/eqg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Reverb" Header="Reverb">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/reverb.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_SoundBooster" Header="Sound Booster">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/soundbooster.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_SoundBooster_OnOff" Header="Toggle FX"/>
+                                <MenuItem x:Name="TitleBar_SoundBooster_PresSoft" Header="Soft" IsEnabled="False"/>
+                                <MenuItem x:Name="TitleBar_SoundBooster_PresMed" Header="Medium" IsEnabled="False"/>
+                                <MenuItem x:Name="TitleBar_SoundBooster_PresHard" Header="Hard" IsEnabled="False"/>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Balance" Header="Balance">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/balance-scale.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_BalanceLeft" Header="Left">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/balance-scale-left.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_BalanceCenter" Header="Center" IsChecked="True">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/balance-scale.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_BalanceRight" Header="Right">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/balance-scale-right.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_Balance_Subitem" Header="Sample Rate" Width="200" Margin="0,10,0,0">
+                                    <MenuItem.Template>
+                                        <ControlTemplate TargetType="{x:Type MenuItem}">
+                                            <Slider Width="200" x:Name="TitleBar_Balance_Slider" Minimum="-100" Maximum="100" ValueChanged="TitleBar_Balance_Slider_ValueChanged" LargeChange="10"/>
+                                        </ControlTemplate>
+                                    </MenuItem.Template>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Mono" Header="Mono">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/frequency.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_SampleRate" Header="Sample Rate">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/sample-rate.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_SampleRate_Subitem" Header="Sample Rate" Width="200" Margin="0,10,0,0">
+                                    <MenuItem.Template>
+                                        <ControlTemplate TargetType="{x:Type MenuItem}">
+                                            <Slider Width="200" x:Name="TitleBar_SampleRate_Slider" Minimum="100" Maximum="100000" ValueChanged="TitleBar_SampleRate_Slider_ValueChanged" LargeChange="10000"/>
+                                        </ControlTemplate>
+                                    </MenuItem.Template>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_SampleRate_Reset" Header="Reset">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/balance-scale.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_SteroMix" Header="Reverse Stereo">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/swap.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_8DRotateChannel" Header="8D Audio">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/rotate.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_RotateChannel" Header="Toggle"/>
+                                <MenuItem x:Name="TitleBar_8DRotateChannel_Rate" Header="Rate">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/frame-rate.png"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem x:Name="TitleBar_8DRotateChannel_Rate_Slow" Header="Slow">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/forward-15.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TitleBar_8DRotateChannel_Rate_Med" Header="Regular">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/forward-30.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TitleBar_8DRotateChannel_Rate_Fast" Header="Fast">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/forward-60.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem x:Name="TitleBar_SFX" Header="SFX">
+                            <MenuItem.Icon>
+                                <Image Source="Res/audio-wave2.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_Default" Header="Windows Built-in">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/windows-10.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_LoadPlugin" Header="Load plugin">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/plugin.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Frame Rate">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/frame-rate.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_15FPS" Header="15 FPS">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/forward-15.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_30FPS" Header="30 FPS">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/forward-30.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_60FPS" Header="60 FPS (May cause lag !)">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/forward-60.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem x:Name="TileBar_Plugins" Header="Plugins">
+                            <MenuItem.Icon>
+                                <Image Source="Res/plugin.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_DSP" Header="Winamp DSP">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/winamp.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_MusicBrainz" Header="MusicBrainz">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/MusicBrainz.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_MB_Search" Header="Search">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/search.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_MB_SearchCurrent" Header="Search current">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/search.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_StreamDownloader" Header="Stream Downloader">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/downloader.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_StreamDownloader_DownloadCurrent" Header="Download current">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/downloader.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_StreamDownloader_State" Header="State">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/downloader.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Lyrics" Header="Lyrics">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/lyrics.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Upnp" Header="Home Network(NAS)">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/nas.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_ABLoop" Header="A/B Loop">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/ABLoop.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_ABLoop_A" Header="A">
+                                    <TextBox x:Name="Title_Bar_ABLoop_A_TB" Width="200"/>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_ABLoop_B" Header="B">
+                                    <TextBox x:Name="Title_Bar_ABLoop_B_TB" Width="200"/>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_ABLoop_Set" Header="Set">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/editg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Playlist">
+                        <MenuItem.Icon>
+                            <Image Source="Res/playlist-settingsg.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Favourites" x:Name="TitleBar_Playlist_Favourites">
+                            <MenuItem.Icon>
+                                <Image Source="Res/ThumbsUp.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="All" x:Name="TitleBar_Playlist_All">
+                            <MenuItem.Icon>
+                                <Image Source="Res/control-panelg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Random 10" x:Name="TitleBar_Playlist_Random10">
+                            <MenuItem.Icon>
+                                <Image Source="Res/control-panelg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Shuffle All" x:Name="TitleBar_Playlist_ShuffleAll">
+                            <MenuItem.Icon>
+                                <Image Source="Res/control-panelg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Custom playlist manager" x:Name="TitleBar_Playlist_CustomPlaylistManager">
+                            <MenuItem.Icon>
+                                <Image Source="Res/control-panelg.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="TitleBar_MiniPlayer" Header="Mini Player"/>
+                </Menu>
+            </StackPanel>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Menu" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}">
+                <Button.Background>
+                    <ImageBrush ImageSource="Res/menu.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Theme" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,30,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="Res/ChangeTheme.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Settings" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,60,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="Res/settings.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Search" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,90,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="Res/search.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <TextBlock HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Clock" Foreground="White" Margin="0,4,120,0" Text="00:00" FontSize="16"/>
+        </Grid>
+    </hc:GlowWindow.NonClientAreaContent>
+    <Grid RenderTransformOrigin="0.484,0.497" Margin="0,0,0,33">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <hc:NotifyIcon x:Name="NotifyIconMain" Text="MuPlay" IsBlink="False" Visibility="Visible" Icon="Res/icon.ico">
+            <hc:NotifyIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="MuPlay" x:Name="NotifyIcon_MuPlay">
+                        <MenuItem.Icon>
+                            <Image Source="Res/icon.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Previous" x:Name="NotifyIcon_Previous">
+                        <MenuItem.Icon>
+                            <Image Source="Res/previous.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="NotifyIcon_Play" Header="Play" >
+                        <MenuItem.Icon>
+                            <Image Source="Res/play.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Next" x:Name="NotifyIcon_Next">
+                        <MenuItem.Icon>
+                            <Image Source="Res/next.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Volume">
+                        <MenuItem.Icon>
+                            <Image Source="Res/fvol.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="100%" x:Name="NotifyIcon_Volume100">
+                            <MenuItem.Icon>
+                                <Image Source="Res/fvol.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="75%" x:Name="NotifyIcon_Volume75">
+                            <MenuItem.Icon>
+                                <Image Source="Res/Mivol.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="50%" x:Name="NotifyIcon_Volume50">
+                            <MenuItem.Icon>
+                                <Image Source="Res/Mivol.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="25%" x:Name="NotifyIcon_Volume25">
+                            <MenuItem.Icon>
+                                <Image Source="Res/Lvol.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="0%" x:Name="NotifyIcon_Volume0">
+                            <MenuItem.Icon>
+                                <Image Source="Res/Nvol.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Exit" x:Name="NotifyIcon_Exit">
+                        <MenuItem.Icon>
+                            <Image Source="Res/exitg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </hc:NotifyIcon.ContextMenu>
+        </hc:NotifyIcon>
+        <hc:Drawer x:Name="DrawerLeft" Dock="Left" ShowMode="Push" Grid.ColumnSpan="2">
+            <Border Background="{DynamicResource RegionBrush}" Width="200" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="DrawerLeftHeader" Margin="10,0,0,0" Text="MuPlay" Style="{StaticResource TextBlockTitle}" HorizontalAlignment="Left"/>
+                    <Button x:Name="drawerclosebtn" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                    <Button x:Name="btn_home" Content="Home" Margin="0,0,0,-100" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_playlist" Content="Playlist" Margin="0,0,0,-160" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_favourites" Content="Favourites" Margin="0,0,0,-220" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_visualiser" Content="Visualiser" Margin="0,0,0,-280" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_library" Content="Library" Margin="0,0,0,-340" HorizontalAlignment="Center" Height="30" Width="200"/>
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <hc:Drawer x:Name="PlaylistDrawerLeft" Dock="Left" ShowMode="Push" Margin="0,0,0,45">
+            <Border Background="{DynamicResource RegionBrush}" Width="200" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="PlaylistDrawerLeftHeader" Margin="10,0,0,0" Text="Playlist" Style="{StaticResource TextBlockTitle}" HorizontalAlignment="Left"/>
+                    <Button x:Name="Playlistdrawerclosebtn" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                    <Button x:Name="Playlistadd" Content="Add" Margin="0,0,0,-100" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="Playlistremove" Content="Remove" Margin="0,0,0,-160" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="Playlistmoveup" Content="Move up" Margin="0,0,0,-220" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="Playlistmovedown" Content="Move down" Margin="0,0,0,-280" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="Playlistmoveto" Content="Move to" Margin="0,0,0,-340" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="Playlistclear" Content="Clear" Margin="0,0,0,-400" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <ToggleButton x:Name="Playlisteditmode" Content="Edit Mode: OFF" Margin="0,0,0,-460" HorizontalAlignment="Center" Height="30" Width="200"/>
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <Canvas x:Name="BottomCanvas" Grid.ColumnSpan="2" Margin="0,0,0,-36" Height="50" VerticalAlignment="Bottom" Background="Gainsboro">
+            <Grid>
+                <Image x:Name="media_cover" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Stretch="Fill" Width="50" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
+					tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+					tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvasVisChanger}">
+                    <Image.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick"
+							Command="{Binding DataContext.MouseDoubleClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    </Image.InputBindings>
+                </Image>
+                <StackPanel x:Name="Media_Info_pnl" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+					tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+					tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvasVisChanger}" Margin="50,0,0,0" HorizontalAlignment="Left" Width="145">
+                    <Label x:Name="MEDIA_TITLE" Content="No Media" Width="143" Height="25" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" Grid.IsSharedSizeScope="True" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Foreground="Black" Margin="2,0,0,0" FontWeight="Bold">
+                        <Label.Effect>
+                            <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                        </Label.Effect>
+                    </Label>
+                    <Label x:Name="MEDIA_ARTIST" Content="No Media" Width="143" Height="26" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}" FontFamily="Open Sans" FontSize="10.667" Padding="0" HorizontalContentAlignment="Left" Foreground="Black" Margin="2,0,0,0">
+                        <Label.Effect>
+                            <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                        </Label.Effect>
+                    </Label>
+                    <hc:RunningBlock x:Name="NotifyBlock" BorderBrush="{x:Null}" Visibility="Collapsed"/>
+                </StackPanel>
+                <hc:Divider Margin="198,10,986,10" Orientation="Vertical" LineStroke="#FF646464" HorizontalAlignment="Left" Width="8">
+                    <hc:Divider.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </hc:Divider.Effect>
+                </hc:Divider>
+                <Button x:Name="visualiser_off" hc:Poptip.Content="{DynamicResource Visualiser_Tip}" Width="30" BorderBrush="{x:Null}" Margin="0,9,165,11" HorizontalAlignment="Right" Visibility="Hidden">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/audiowave.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="visualiser_resize" hc:Poptip.Content="Resize visualiser" Width="30" BorderBrush="{x:Null}" Margin="0,9,200,11" HorizontalAlignment="Right" Visibility="Hidden">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/resize.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Label x:Name="visualiser_fps" Content="00" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Black" Margin="0,9,235,11" HorizontalAlignment="Right" Visibility="Hidden">
+                    <Label.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Label.Effect>
+                </Label>
+                <Button x:Name="media_sidebar" Width="30" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="0,9,0,11">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/sidebar.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <hc:PreviewSlider x:Name="media_vol_track" Maximum="100" ToolTip="{DynamicResource Vol_Tip}" Margin="0,16,40,16" Value="100" HorizontalAlignment="Right" Width="83">
+                    <hc:PreviewSlider.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </hc:PreviewSlider.Effect>
+                </hc:PreviewSlider>
+                <Button x:Name="media_vol_btn" hc:Poptip.Content="{DynamicResource Vol_Tip}" Width="30" BorderBrush="{x:Null}" Margin="0,9,130,11" HorizontalAlignment="Right">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/Fvol.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="media_like_btn" hc:IconElement.Geometry="{StaticResource StarGeometry}" hc:FloatingBlock.Content="{DynamicResource fav_Tip}" BorderBrush="{x:Null}" Content="" BorderThickness="0" Height="34" Background="{x:Null}" HorizontalAlignment="Left"  tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+					tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+					tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Favourite}" Margin="848,7,0,9">
+                    <Button.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Button.Effect>
+                </Button>
+                <Button x:Name="media_shuffle" Width="30" BorderBrush="{x:Null}" Margin="813,10,0,11" HorizontalAlignment="Left">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/no-shuffle.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="media_loop" Width="30" BorderBrush="{x:Null}" Margin="778,10,0,11" HorizontalAlignment="Left">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="White" ShadowDepth="0" Direction="0"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/no-loop.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Label x:Name="media_posndur" Content="00:00 | 00:00" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Black" Margin="685,10,0,11" HorizontalAlignment="Left">
+                    <Label.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Label.Effect>
+                </Label>
+                <hc:Divider Margin="670,10,0,11" Orientation="Vertical" LineStroke="#FF646464" Width="10" Height="30" HorizontalAlignment="Left">
+                    <hc:Divider.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="#FF9C9C9C"/>
+                    </hc:Divider.Effect>
+                </hc:Divider>
+                <hc:PreviewSlider x:Name="media_track" Margin="315,16,0,17" VerticalAlignment="Center" ToolTip="{DynamicResource Seek_Tip}" HorizontalAlignment="Left" Width="350">
+                    <hc:PreviewSlider.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </hc:PreviewSlider.Effect>
+                </hc:PreviewSlider>
+                <Button x:Name="media_next_btn" Width="30" BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="280,10,0,10">
+                    <Button.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush Stretch="Uniform" ImageSource="Res/next.png"/>
+                    </Button.Background>
+                </Button>
+                <hc:LoadingCircle x:Name="media_loading" Height="40" Margin="235,5,0,5" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center" d:IsHidden="True"/>
+                <Button x:Name="media_play_btn" Width="40" BorderBrush="{x:Null}" Height="40" HorizontalAlignment="Left" BorderThickness="1" Margin="235,5,0,5">
+                    <Button.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/play.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="media_prev_btn" Width="30" BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="200,10,0,10">
+                    <Button.Effect>
+                        <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <ImageBrush ImageSource="Res/previous.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+            </Grid>
+        </Canvas>
+        <TabControl x:Name="MainTabCtrl" Grid.ColumnSpan="2" Margin="0,0,0,14">
+            <TabItem Header="Home">
+                <Grid Background="#FFE5E5E5">
+                    <Grid x:Name="Home_FancyBackground" Margin="0" Visibility="Hidden">
+                        <Grid.Effect>
+                            <BlurEffect Radius="200"/>
+                        </Grid.Effect>
+                        <Ellipse x:Name="Home_FancyBackground_el1" Fill="Red" HorizontalAlignment="Left" Height="600" Margin="10,10,0,0" VerticalAlignment="Top" Width="600"/>
+                        <Ellipse x:Name="Home_FancyBackground_el2" Fill="Green" HorizontalAlignment="Left" Height="600" Margin="582,-68,0,0" VerticalAlignment="Top" Width="600"/>
+                    </Grid>
+                    <Image x:Name="Home_Background" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <BlurEffect Radius="50"/>
+                        </Image.Effect>
+                    </Image>
+                    <Viewbox x:Name="vbx" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" Width="430" Height="200" Margin="10,10,0,0">
+                        <Canvas x:Name="Home_TopBarCanvas" HorizontalAlignment="Left" Height="200" Margin="0" VerticalAlignment="Top" Width="430" Background="#7FC8C8C8" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+							tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+							tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvasVisChanger}" Opacity="0">
+                            <Label x:Name="Home_Media_Artist" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Open Sans" FontSize="14.667" Background="{x:Null}" BorderBrush="{x:Null}" Canvas.Left="205" Canvas.Top="166" MaxWidth="223">
+                                <Label.Effect>
+                                    <DropShadowEffect Opacity="0.4"/>
+                                </Label.Effect>
+                            </Label>
+                            <Label x:Name="Home_Media_Title" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Open Sans" FontSize="18.667" Background="{x:Null}" BorderBrush="{x:Null}" Canvas.Left="205" Canvas.Top="122" MaxWidth="217">
+                                <Label.Effect>
+                                    <DropShadowEffect Opacity="0.4"/>
+                                </Label.Effect>
+                            </Label>
+                            <Image x:Name="Home_Visualizer" HorizontalAlignment="Left" Height="115" VerticalAlignment="Top" Width="225" Canvas.Left="205"/>
+                            <Image x:Name="Home_NowPlaying" HorizontalAlignment="Left" Height="200" VerticalAlignment="Top" Width="200" Stretch="Fill"/>
+                        </Canvas>
+                    </Viewbox>
+                    <Rectangle x:Name="Home_TopBarCanvas_Reflection" Margin="10,210,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" 
+						Height="{Binding Height, ElementName=Home_TopBarCanvas}" Width="{Binding Width, ElementName=Home_TopBarCanvas}" Visibility="Hidden">
+                        <Rectangle.Effect>
+                            <DropShadowEffect/>
+                        </Rectangle.Effect>
+                        <Rectangle.Fill>
+                            <!-- Creates the reflection. -->
+                            <VisualBrush Opacity="0.75" Stretch="None" Visual="{Binding ElementName=Home_TopBarCanvas}">
+                                <VisualBrush.RelativeTransform>
+                                    <!-- Flip the reflection. -->
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                        <TranslateTransform  Y="1" />
+                                    </TransformGroup>
+                                </VisualBrush.RelativeTransform>
+                            </VisualBrush>
+                        </Rectangle.Fill>
+                        <Rectangle.OpacityMask>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Color="#FF000000" Offset="0.0" />
+                                <GradientStop Color="#33000000" Offset="0.5" />
+                                <GradientStop Color="#00000000" Offset="0.75" />
+                            </LinearGradientBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Image x:Name="Home_Rec1" HorizontalAlignment="Left" Height="150" Margin="35,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec1_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="35,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec1_RunningBlock" HorizontalAlignment="Left" Margin="35,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec1}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec2" HorizontalAlignment="Left" Height="150" Margin="200,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec2_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="200,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec2_RunningBlock" HorizontalAlignment="Left" Margin="200,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec2}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec3" HorizontalAlignment="Left" Height="150" Margin="365,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec3_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="365,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec3_RunningBlock" HorizontalAlignment="Left" Margin="365,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec3}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec4" HorizontalAlignment="Left" Height="150" Margin="530,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec4_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="530,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec4_RunningBlock" HorizontalAlignment="Left" Margin="530,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec4}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec5" HorizontalAlignment="Left" Height="150" Margin="695,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec5_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="695,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec5_RunningBlock" HorizontalAlignment="Left" Margin="695,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec5}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec6" HorizontalAlignment="Left" Height="150" Margin="860,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec6_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="860,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec6_RunningBlock" HorizontalAlignment="Left" Margin="860,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec6}" AutoReverse="True" Visibility="Hidden"/>
+                    <Image x:Name="Home_Rec7" HorizontalAlignment="Left" Height="150" Margin="1025,220,0,0" VerticalAlignment="Top" Width="150" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_RecChanger}" Visibility="Collapsed" Stretch="UniformToFill">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Rectangle x:Name="Home_Rec7_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="1025,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+                    <hc:RunningBlock x:Name="Home_Rec7_RunningBlock" HorizontalAlignment="Left" Margin="1025,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec7}" AutoReverse="True" Visibility="Hidden"/>
+                    <Rectangle x:Name="QuickAccess_Overlay" Fill="Black" Stroke="Black" Opacity="0.5" Visibility="Hidden"/>
+                    <Border ClipToBounds="True" CornerRadius="6" Background="#7FFFFFFF" x:Name="QuickAccess_MainCanvasBorder" Height="300" Width="600" Margin="296,121" tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_OverlayChanger}">
+                        <Canvas x:Name="QuickAccess_MainCanvas" Height="300" Margin="0,0,0,0" Width="600">
+                            <Button x:Name="Quick_Access_AddSong" Canvas.Left="10" Canvas.Top="10" Width="75" Height="75" BorderBrush="{x:Null}">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="Res/AddSong.png" Stretch="Uniform"/>
+                                </Button.Background>
+                            </Button>
+                            <Button x:Name="Quick_Access_AddAlbum" Canvas.Left="90" Canvas.Top="10" Width="75" Height="75" BorderBrush="{x:Null}">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="Res/AddAlbum.png" Stretch="Uniform">
+                                        <ImageBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="1.1" ScaleY="1.2"/>
+                                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                                <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </ImageBrush.RelativeTransform>
+                                    </ImageBrush>
+                                </Button.Background>
+                            </Button>
+                        </Canvas>
+                    </Border>
+                    <Label x:Name="Media_next" Content="  " HorizontalAlignment="Left" Margin="455,10,0,0" VerticalAlignment="Top" Background="{x:Null}" FontStyle="Italic" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvas}" Opacity="0">
+                        <Label.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="0"/>
+                        </Label.Effect>
+                    </Label>
+                    <hc:LoadingLine x:Name="overlay_loadingline" Margin="0,270,0,267" DotDelayTime="75" DotSpeed="2" DotCount="15" DotInterval="5" Visibility="Hidden"/>
+                    <hc:LoadingLine x:Name="Overlay_Loading" Margin="0,268,0,0" VerticalAlignment="Top" Height="6" DotCount="15" Visibility="Hidden"/>
+                    <ScrollViewer x:Name="home_lyrics_sv" HorizontalAlignment="Left" Height="157" Margin="35,385,0,0" VerticalAlignment="Top" Width="530">
+                        <TextBlock x:Name="home_lyrics_block" TextWrapping="Wrap" Margin="10">
+                            <TextBlock.Effect>
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="White"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                    </ScrollViewer>
+                    <TextBlock x:Name="Home_Overlay_State" HorizontalAlignment="Center" Margin="0,30,0,0" TextWrapping="Wrap" Text="State" VerticalAlignment="Center" Foreground="White" Visibility="Hidden">
+                        <TextBlock.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <Border x:Name="Media_Next_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
+                        <Grid>
+                            <Border x:Name="Media_Next_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
+                            <TextBlock x:Name="Media_Next_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                            <TextBlock x:Name="Media_Next_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="Media_Previous_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
+                        <Grid>
+                            <Border x:Name="Media_Previous_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
+                            <TextBlock x:Name="Media_Previous_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                            <TextBlock x:Name="Media_Previous_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Playlists">
+                <Grid Background="#FFE5E5E5">
+                    <ListView x:Name="Playlist_Main" Margin="0">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                                <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                                <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                                <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button x:Name="PlaylistLeftDrawerOpen" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="36" Margin="0,512,0,0" Style="{StaticResource ButtonIcon}" Foreground="{DynamicResource PrimaryTextBrush}" hc:IconElement.Geometry="{StaticResource RightGeometry}"/>
+                    <Rectangle x:Name="Playlist_Overlay" Fill="#7F000000" Opacity="0.5" tz:Transitionz.Opacity="{tz:OpacityParams Duration=500, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=10, From=0\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Playlist_Overlay_Changer}"/>
+                    <hc:LoadingLine Margin="0,268" Height="6"  DotDelayTime="160" DotSpeed="2" DotCount="10" DotInterval="5" RenderTransformOrigin="0.5,0.5" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Playlist_Overlay_Changer}" VerticalAlignment="Center">
+                        <hc:LoadingLine.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="-1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </hc:LoadingLine.RenderTransform>
+                    </hc:LoadingLine>
+                    <Label x:Name="Playlist_Overlay_State" Content="Adding songs ..." HorizontalAlignment="Center" Margin="543,233,543,279" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Playlist_Overlay_Changer}">
+                        <Label.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White"/>
+                        </Label.Effect>
+                    </Label>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Favourites">
+                <Grid x:Name="Favourites_Grid" Margin="0" Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Visualiser">
+                <Grid Background="#FFE5E5E5">
+                    <WindowsFormsHost x:Name="Visualiser_Host" Background="{x:Null}"/>
+                </Grid>
+            </TabItem>
+            <TabItem  Header="Library">
+                <Grid Margin="0" Background="#FFE5E5E5">
+                    <TabControl x:Name="tabControl" Margin="0" TabStripPlacement="Left">
+                        <TabItem Header="     Tracks     ">
+                            <Grid Background="#FFE5E5E5">
+                                <ScrollViewer x:Name="Library_Tracks_View" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                                    <ListView x:Name="Library_Tracks_Lview" Margin="0">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                                <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                                                <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                                                <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                                                <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </ScrollViewer>
+                                <Rectangle x:Name="Library_Tracks_Overlay" Fill="#BF000000" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
+									tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Tracks}"/>
+                                <hc:LoadingLine x:Name="Library_Tracks_Overlay_LoadingLine" VerticalAlignment="Top" Margin="0,268,0,0" Height="6" DotCount="15" DotSpeed="2" Visibility="Hidden"/>
+                                <StackPanel x:Name="Library_Track_SPanel" Height="150" Margin="0,196,0,0" VerticalAlignment="Top" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+									tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Tracks_Mitem}"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Artists">
+                            <Grid Background="#FFE5E5E5">
+                                <ScrollViewer x:Name="Library_Artists_View">
+                                    <ListView x:Name="Library_Artists_Lview" Margin="0">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                                <GridViewColumn Header="Songs" DisplayMemberBinding="{Binding SongsC}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </ScrollViewer>
+                                <Rectangle x:Name="Library_Artists_Overlay" Fill="#BF000000" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
+									tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Artists}"/>
+                                <hc:LoadingLine x:Name="Library_Artists_Overlay_LoadingLine" VerticalAlignment="Top" Margin="0,268,0,0" Height="6" DotCount="15" DotSpeed="2" Visibility="Hidden"/>
+                                <ScrollViewer x:Name="Library_Artists_SpanelView" Margin="0,78,0,0" Visibility="Hidden">
+                                    <StackPanel x:Name="Library_Artists_SPanel" VerticalAlignment="Top" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+										tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+										tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Artists_Mitem}">
+                                        <ListView x:Name="Library_ArtistsLV" Margin="0">
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                                    <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                                                    <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                                                    <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                                                    <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                                                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Years">
+                            <Grid Background="#FFE5E5E5">
+                                <ScrollViewer x:Name="Library_Years_View">
+                                    <ListView x:Name="Library_Years_Lview" Margin="0">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Name}"/>
+                                                <GridViewColumn Header="Songs" DisplayMemberBinding="{Binding SongsC}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </ScrollViewer>
+                                <Rectangle x:Name="Library_Years_Overlay" Fill="#BF000000" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
+									tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Years}"/>
+                                <hc:LoadingLine x:Name="Library_Years_Overlay_LoadingLine" VerticalAlignment="Top" Margin="0,268,0,0" Height="6" DotCount="15" DotSpeed="2" Visibility="Hidden"/>
+                                <ScrollViewer x:Name="Library_Years_SpanelView" Margin="0,78,0,0" Visibility="Hidden">
+                                    <StackPanel x:Name="Library_Years_SPanel" Margin="0,78,0,0" VerticalAlignment="Top" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+										tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+										tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Years_Mitem}">
+                                        <ListView x:Name="Library_YearsLV" Margin="0">
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                                    <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                                                    <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                                                    <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                                                    <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                                                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="     Favourites     ">
+                            <Grid Background="#FFE5E5E5">
+                                <ScrollViewer x:Name="Library_Favourites_View" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                                    <ListView x:Name="Library_Favourites_Lview" Margin="0">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                                <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                                <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                                                <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                                                <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                                                <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </ScrollViewer>
+                                <Rectangle x:Name="Library_Favourites_Overlay" Fill="#BF000000" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
+									tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Favourites}"/>
+                                <hc:LoadingLine x:Name="Library_Favourites_Overlay_LoadingLine" VerticalAlignment="Top" Margin="0,268,0,0" Height="6" DotCount="15" DotSpeed="2" Visibility="Hidden"/>
+                                <StackPanel x:Name="Library_Favourites_SPanel" Height="150" Margin="0,196,0,0" VerticalAlignment="Top" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"                          
+									tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+									tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_Library_Favourites_Mitem}"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Switches" Height="30" VerticalAlignment="Bottom">
+                <Grid>
+                    <CheckBox x:Name="Switches_TopBarCanvasVisChanger" Content="TopBarVis" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,10,0,0"/>
+                    <CheckBox x:Name="Switches_OverlayChanger" Content="Overlay" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,33,0,0"/>
+                    <CheckBox x:Name="Switches_RecChanger" Content="Rec" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,79,0,0"/>
+                    <CheckBox x:Name="Switches_Playlist_Overlay_Changer" Content="Playlist" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,56,0,0"/>
+                    <CheckBox x:Name="Switches_Favourite" Content="Favourite" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,102,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Tracks" Content="Library Tracks" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,125,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Tracks_Mitem" Content="Library Tracks Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,148,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Artists" Content="Library Artist" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,171,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Artists_Mitem" Content="Library Artists Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,194,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Years" Content="Library Years" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,217,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Years_Mitem" Content="Library Years Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,240,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Favourites" Content="Library Favourites" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,263,0,0"/>
+                    <CheckBox x:Name="Switches_Library_Favourites_Mitem" Content="Library Favourites Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,286,0,0"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</hc:GlowWindow>
