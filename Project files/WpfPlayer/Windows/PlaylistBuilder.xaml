@@ -1,0 +1,61 @@
+﻿<hc:Window x:Class="PlaylistBuilder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Playlist Builder" Height="600" Width="450" Icon="/WpfPlayer;component/Res/icon.ico" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=Window}">
+    <hc:Window.NonClientAreaContent>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Add" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Res/plus.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Remove" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,30,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Res/cross.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Save" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,60,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Res/save.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <StackPanel Height="29">
+                <Menu HorizontalAlignment="Left">
+                    <MenuItem Header="Load Current" x:Name="TitleBar_LoadCurrentPlaylist">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/plus.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
+        </Grid>
+    </hc:Window.NonClientAreaContent>
+    <Grid>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Margin="38,17,0,0"/>
+        <TextBox x:Name="PB_Name" HorizontalAlignment="Left" Height="23" Margin="75,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="350"/>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" Margin="10,52,0,0"/>
+        <TextBox x:Name="PB_Desc" HorizontalAlignment="Left" Height="23" Margin="75,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="350"/>
+        <ListView x:Name="PB_View" Margin="0,80,0,0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                    <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                    <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                    <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</hc:Window>

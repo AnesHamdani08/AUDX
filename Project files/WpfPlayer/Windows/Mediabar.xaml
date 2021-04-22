@@ -1,0 +1,43 @@
+﻿<Window x:Class="mediabar"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="mediabar" Height="80" Width="300" ShowInTaskbar="False" Topmost="True" Icon="/WpfPlayer;component/Res/icon.ico" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="{x:Null}">
+    <Grid>
+        <Border x:Name="main_border" BorderThickness="1" Grid.Row="0"
+        CornerRadius="50,50,50,50" Background="#BF000000"/>
+        <TextBlock x:Name="media_title" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="80,17,0,0" Foreground="White" FontSize="13.333">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock x:Name="media_artist" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="80,35,0,0" Foreground="White">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock x:Name="media_posdur" HorizontalAlignment="Left" TextWrapping="Wrap" Text="00:00/00:00" VerticalAlignment="Top" Margin="211,64,0,0" Foreground="White" FontStyle="Italic" FontSize="10.667">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <Ellipse x:Name="media_cover" Stroke="#7F000000" Margin="1,2,0,2" Height="76" Width="75" HorizontalAlignment="Left" VerticalAlignment="Center" RenderTransformOrigin="0.5, 0.5">
+            <Ellipse.RenderTransform>
+                <!-- giving the transform a name tells the framework not to freeze it -->
+                <RotateTransform x:Name="noFreeze" />
+            </Ellipse.RenderTransform>
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)" To="360" Duration="0:0:10" RepeatBehavior="Forever" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+        </Ellipse>
+    </Grid>
+</Window>

@@ -1,0 +1,80 @@
+﻿<hc:GlowWindow x:Class="MiniPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"  
+        mc:Ignorable="d"
+        Title="MuPlay" Height="400" Width="300" Icon="/WpfPlayer;component/Res/icon.ico" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ActiveGlowColor="#FFFF00AE" InactiveGlowColor="#FF7400FF">
+    <hc:GlowWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="b2vc"></BooleanToVisibilityConverter>
+        <local:DoubleToInteger x:Key="DoubleToInteger"/>
+    </hc:GlowWindow.Resources>
+    <Grid x:Name="MGrid">
+        <CheckBox x:Name="Anim_Switch" Content="Anim Switch" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"/>
+        <Image x:Name="Media_Cover" VerticalAlignment="Top" Height="294" Width="294" Stretch="UniformToFill"/>
+        <Button x:Name="Media_PlayPause" HorizontalAlignment="Left" Margin="131,299,0,0" VerticalAlignment="Top" Width="32" Height="32" BorderBrush="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="0" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/play.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Media_Next" HorizontalAlignment="Left" Margin="169,302,0,0" VerticalAlignment="Top" Width="25" Height="26" BorderBrush="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="0" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/next.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Media_Previous" HorizontalAlignment="Left" Margin="100,302,0,0" VerticalAlignment="Top" Width="25" Height="26" BorderBrush="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="0" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/previous.png"/>
+            </Button.Background>
+        </Button>
+        <hc:PreviewSlider x:Name="Media_Seek" HorizontalAlignment="Left" Margin="40,344,0,0" VerticalAlignment="Top" Width="214" Value="5"/>
+        <Button x:Name="Media_Volume" HorizontalAlignment="Left" Margin="0,303,0,0" VerticalAlignment="Top" Width="25" Height="24" BorderBrush="{x:Null}" ToolTip="{Binding Value, Converter={StaticResource DoubleToInteger}, ElementName=Media_Volume_Slider}" Visibility="Hidden">
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/Fvol.png"/>
+            </Button.Background>
+        </Button>
+        <TextBlock x:Name="Media_Pos" HorizontalAlignment="Left" Margin="10,346,0,0" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Top" FontSize="10.667" FontFamily="Segoe UI Semibold"/>
+        <TextBlock x:Name="Media_Length" HorizontalAlignment="Left" Margin="259,346,0,0" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Top" FontSize="10.667" FontFamily="Segoe UI Semibold"/>
+        <hc:PreviewSlider x:Name="Media_Volume_Slider" HorizontalAlignment="Left" Margin="30,306,0,0" VerticalAlignment="Top" Width="66" Maximum="100" Visibility="Hidden"/>
+        <Border BorderBrush="Black" Height="18" Margin="0,295,0,0" VerticalAlignment="Top" d:IsHidden="True">
+            <TextBlock x:Name="Media_Title" TextWrapping="Wrap" Text="Title" FontWeight="Bold" Margin="0" HorizontalAlignment="Center"/>
+        </Border>
+        <Border BorderBrush="Black" Margin="0,313,0,42">
+            <TextBlock x:Name="Media_Artist" Margin="0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Grid x:Name="Playlist_Grid" Height="294" VerticalAlignment="Top" Width="294" Background="#BF000000" tz:Transitionz.Opacity="{tz:OpacityParams From=0, To=1, Duration=500, TransitionOn=Visibility}"
+            tz:Transitionz.Translate="{tz:TranslateParams From='0,0', To='0,0', Duration=10, TransitionOn=Visibility}"
+            tz:Transitionz.Visibility="{Binding ElementName=Anim_Switch, Path=IsChecked, Converter={StaticResource b2vc}}">
+            <ListView x:Name="Playlist_Main" Margin="0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF212121">
+                <ListView.Effect>
+                    <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="15"/>
+                </ListView.Effect>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                        <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                        <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                        <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                        <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                        <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button x:Name="Playlist_Hide" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="36" Margin="0" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource RightGeometry}" Foreground="#FFCFCFCF"/>
+        </Grid>
+    </Grid>
+</hc:GlowWindow>

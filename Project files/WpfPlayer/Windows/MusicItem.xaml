@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="MusicItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfPlayer"
+             mc:Ignorable="d" Width="293">
+    <Grid x:Name="M_Grid">
+        <Image x:Name="Song_Cover" Width="150" Height="150" HorizontalAlignment="Left"/>
+        <TextBlock x:Name="Song_Artist" HorizontalAlignment="Left" Margin="155,112,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Foreground="White" FontSize="21.333" MaxWidth="{Binding ElementName=M_Grid,Path=Width}">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock x:Name="Song_Title" HorizontalAlignment="Left" Margin="155,68,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Foreground="White" FontSize="29.333" FontWeight="Bold" MaxWidth="{Binding ElementName=M_Grid,Path=Width}">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="30"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <Button x:Name="btn_preview" hc:IconElement.Geometry="{StaticResource EyeOpenGeometry}"  HorizontalAlignment="Left" Margin="155,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Button x:Name="btn_add" hc:IconElement.Geometry="{StaticResource AddGeometry}"  HorizontalAlignment="Left" Margin="204,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}">
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="btn_add_playall" Header="Play all" IsEnabled="False" >
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="btn_add_playnow" Header="Play now">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="btn_add_queuefirst" Header="Queue first">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="btn_add_queuenext" Header="Queue next">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>                             
+                    <MenuItem x:Name="btn_add_queuelast" Header="Queue last">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+        <Button x:Name="btn_close" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"  HorizontalAlignment="Left" Margin="247,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}"/>
+    </Grid>
+</UserControl>

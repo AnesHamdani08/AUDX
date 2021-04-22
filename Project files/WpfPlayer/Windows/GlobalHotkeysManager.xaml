@@ -1,0 +1,37 @@
+﻿<hc:GlowWindow x:Class="GlobalHotkeysManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"        
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Global Hotkeys Manager" Height="200" Width="300" ActiveGlowColor="#FFE800FF" InactiveGlowColor="#FF9700FF" Icon="/WpfPlayer;component/Res/icon.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+    <Grid>
+        <ComboBox x:Name="set_globalhotkey" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="272">
+            <ComboBoxItem Content="Play/Pause"/>
+            <ComboBoxItem Content="Next"/>
+            <ComboBoxItem Content="Previous"/>
+            <ComboBoxItem Content="Skip 10 seconds"/>
+            <ComboBoxItem Content="Revert 10 seconds"/>
+            <ComboBoxItem Content="Volume Up"/>
+            <ComboBoxItem Content="Volume Down"/>
+            <ComboBoxItem Content="Volume Mute"/>
+        </ComboBox>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,45,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top"/>
+        <TextBlock x:Name="set_ghstate" HorizontalAlignment="Left" Margin="60,45,0,0" TextWrapping="Wrap" Text="On/Off" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="10,73,0,0" TextWrapping="Wrap" Text="Modifier" VerticalAlignment="Top"/>
+        <TextBlock x:Name="set_ghmod" HorizontalAlignment="Left" Margin="60,73,0,0" TextWrapping="Wrap" Text="Modifier" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" Margin="10,108,0,0" TextWrapping="Wrap" Text="Key" VerticalAlignment="Top"/>
+        <TextBlock x:Name="set_ghkey" HorizontalAlignment="Left" Margin="60,108,0,0" TextWrapping="Wrap" Text="Key" VerticalAlignment="Top"/>
+        <ComboBox x:Name="set_ghmodcb" HorizontalAlignment="Left" Margin="110,66,0,0" VerticalAlignment="Top" Width="116">
+            <ComboBoxItem Content="No Modifier"/>
+            <ComboBoxItem Content="Shift"/>
+            <ComboBoxItem Content="CTRL"/>
+            <ComboBoxItem Content="ALT"/>
+            <ComboBoxItem Content="Windows"/>
+        </ComboBox>
+        <ComboBox x:Name="set_ghkeycb" HorizontalAlignment="Left" Margin="110,101,0,0" VerticalAlignment="Top" Width="116"/>
+        <Button x:Name="set_apply" Content="Set" HorizontalAlignment="Left" Margin="243,136,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</hc:GlowWindow>

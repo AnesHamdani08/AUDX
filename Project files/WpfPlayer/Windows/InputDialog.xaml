@@ -1,0 +1,18 @@
+﻿<hc:GlowWindow x:Class="InputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfPlayer"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        mc:Ignorable="d"
+        Title="Input Dialog" Height="126.333" Width="300" Icon="/WpfPlayer;component/Res/icon.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid>
+        <TextBox x:Name="ib_input" HorizontalAlignment="Left" Height="23" Margin="10,56,0,0" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="236"/>
+        <ScrollViewer Margin="0,0,0,40">
+            <TextBox x:Name="ib_msg" Margin="0,0,0,0" TextWrapping="Wrap" IsEnabled="False"/>
+        </ScrollViewer>
+        <Button x:Name="ib_done" IsDefault="True" Content="ü" HorizontalAlignment="Right" Margin="251,56,10,0" VerticalAlignment="Bottom" Width="31" FontFamily="Wingdings" FontSize="16"/>
+
+    </Grid>
+</hc:GlowWindow>

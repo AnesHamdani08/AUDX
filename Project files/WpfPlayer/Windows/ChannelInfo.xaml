@@ -1,0 +1,60 @@
+﻿<hc:GlowWindow x:Name="glowWindow" x:Class="ChannelInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="ChannelInfo" Height="269" Width="600" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+    <Grid>
+        <ProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Peak_Master" HorizontalAlignment="Left" Height="200" Margin="10,10,0,0" VerticalAlignment="Top" Width="20" Orientation="Vertical" Maximum="32"/>
+        <ProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Peak_Left" HorizontalAlignment="Left" Height="200" Margin="35,10,0,0" VerticalAlignment="Top" Width="20" Orientation="Vertical" Foreground="Red" Maximum="32"/>
+        <ProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Peak_Right" HorizontalAlignment="Left" Height="200" Margin="60,10,0,0" VerticalAlignment="Top" Width="20" Orientation="Vertical" Foreground="Lime" Maximum="32"/>
+        <TextBlock x:Name="textBlock_lr" HorizontalAlignment="Left" Margin="14,215,0,0" TextWrapping="Wrap" Text="LR" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_l" HorizontalAlignment="Left" Margin="42,215,0,0" TextWrapping="Wrap" Text="L" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_r" HorizontalAlignment="Left" Margin="66,215,0,0" TextWrapping="Wrap" Text="R" VerticalAlignment="Top"/>
+        <hc:WaveProgressBar x:Name="Cpu_Usage_All" HorizontalAlignment="Left" Margin="85,84,0,0" VerticalAlignment="Top" Value="50">
+            <hc:WaveProgressBar.WaveFill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Red" Offset="0"/>
+                    <GradientStop Color="Lime" Offset="1"/>
+                    <GradientStop Color="#FFFFF300" Offset="0.5"/>
+                </LinearGradientBrush>
+            </hc:WaveProgressBar.WaveFill>
+        </hc:WaveProgressBar>
+        <TextBlock x:Name="textBlock_r_Copy" HorizontalAlignment="Left" Margin="92,215,0,0" TextWrapping="Wrap" Text="Total Cpu Usage" VerticalAlignment="Top"/>
+        <hc:WaveProgressBar x:Name="Cpu_Usage_MP" HorizontalAlignment="Left" Margin="190,84,0,0" VerticalAlignment="Top" Value="50">
+            <hc:WaveProgressBar.WaveFill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Red" Offset="0"/>
+                    <GradientStop Color="Lime" Offset="1"/>
+                    <GradientStop Color="#FFFFF300" Offset="0.5"/>
+                </LinearGradientBrush>
+            </hc:WaveProgressBar.WaveFill>
+        </hc:WaveProgressBar>
+        <TextBlock x:Name="textBlock_r_Copy1" HorizontalAlignment="Left" Margin="190,215,0,0" TextWrapping="Wrap" Text="MuPlay Cpu Usage" VerticalAlignment="Top"/>
+        <hc:WaveProgressBar x:Name="Mem_Usage_All" HorizontalAlignment="Left" Margin="295,84,0,0" VerticalAlignment="Top" Value="50">
+            <hc:WaveProgressBar.WaveFill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Red" Offset="0"/>
+                    <GradientStop Color="Lime" Offset="1"/>
+                    <GradientStop Color="#FFFFF300" Offset="0.5"/>
+                </LinearGradientBrush>
+            </hc:WaveProgressBar.WaveFill>
+        </hc:WaveProgressBar>
+        <TextBlock x:Name="textBlock_r_Copy2" HorizontalAlignment="Left" Margin="298,215,0,0" TextWrapping="Wrap" Text="Total Mem Usage" VerticalAlignment="Top"/>
+        <hc:WaveProgressBar x:Name="Mem_Usage_MP" HorizontalAlignment="Left" Margin="400,84,0,0" VerticalAlignment="Top" Value="50">
+            <hc:WaveProgressBar.WaveFill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Red" Offset="0"/>
+                    <GradientStop Color="Lime" Offset="1"/>
+                    <GradientStop Color="#FFFFF300" Offset="0.5"/>
+                </LinearGradientBrush>
+            </hc:WaveProgressBar.WaveFill>
+        </hc:WaveProgressBar>
+        <TextBlock x:Name="textBlock_r_Copy3" HorizontalAlignment="Left" Margin="397,215,0,0" TextWrapping="Wrap" Text="MuPlay Mem Usage" VerticalAlignment="Top"/>
+        <TextBlock x:Name="TB_Cpu_Usage" HorizontalAlignment="Left" Margin="115,10,0,0" TextWrapping="Wrap" Text="Cpu Usage:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="TB_Mem_Usage" HorizontalAlignment="Left" Margin="92,31,0,0" TextWrapping="Wrap" Text="Memory Usage:" VerticalAlignment="Top"/>
+    </Grid>
+</hc:GlowWindow>

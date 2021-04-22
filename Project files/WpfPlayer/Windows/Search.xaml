@@ -1,0 +1,28 @@
+﻿<hc:GlowWindow x:Class="Search"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Search" Height="500" Width="421.895" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="/WpfPlayer;component/Res/icon.ico" ResizeMode="NoResize" WindowStyle="None" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+    <Grid>
+        <TextBox x:Name="search_box" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="273" Margin="10,10,0,0" HorizontalAlignment="Left"/>
+        <ListView x:Name="LV_Main" Margin="0,45,0,10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Artist}"/>
+                    <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Album}"/>
+                    <GridViewColumn Header="Year" DisplayMemberBinding="{Binding Year}"/>
+                    <GridViewColumn Header="Track Num" DisplayMemberBinding="{Binding Track}"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="search_btn" hc:IconElement.Geometry="{StaticResource SearchGeometry}" HorizontalAlignment="Right" Margin="0,10,3,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="Set_PlaylistOnly" Content="Playlist only" HorizontalAlignment="Right" Margin="0,18,48,0" VerticalAlignment="Top"/>
+    </Grid>
+</hc:GlowWindow>

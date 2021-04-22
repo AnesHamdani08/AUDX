@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="PluginControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfPlayer"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Width="500" Height="150" Background="#0CFFFFFF">
+    <Grid>
+        <Image x:Name="_icon" HorizontalAlignment="Left" Width="150" Height="150" VerticalAlignment="Top"/>
+        <Label x:Name="_name" Content="Name" HorizontalAlignment="Left" Margin="155,10,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="18.667">
+            <Label.Effect>
+                <DropShadowEffect Color="White" BlurRadius="10" ShadowDepth="0"/>
+            </Label.Effect>
+        </Label>
+        <ScrollViewer HorizontalAlignment="Left" Height="81" Margin="155,50,0,0" VerticalAlignment="Top" Width="335">
+            <TextBlock x:Name="_description" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" FontSize="13.333">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="10" Color="White" ShadowDepth="0"/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </ScrollViewer>
+        <TextBlock x:Name="_version" HorizontalAlignment="Left" Margin="155,134,0,0" TextWrapping="Wrap" Text="V 0000" VerticalAlignment="Top">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="10" Color="White" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+    </Grid>
+</UserControl>

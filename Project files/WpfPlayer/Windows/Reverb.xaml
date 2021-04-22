@@ -1,0 +1,29 @@
+﻿<Window x:Class="Reverb"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Reverb" Height="174" Width="419.667" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="#BFFFFFFF">
+    <Window.Resources>
+        <local:DoubleToInteger x:Key="DoubleToIntegerConverter"></local:DoubleToInteger>
+    </Window.Resources>
+    <Grid>
+        <Button x:Name="ExitBtn" HorizontalAlignment="Left" Margin="380,141,0,0" VerticalAlignment="Top" Width="30" BorderBrush="{x:Null}" Height="30">
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/checkmark-yes.png"/>
+            </Button.Background>
+        </Button>
+        <Slider x:Name="highfreqrtratio_val" HorizontalAlignment="Left" Margin="136,112,0,0" VerticalAlignment="Top" Width="241" Minimum="1" Maximum="999" Value="1" ToolTip="{Binding Value, Converter={StaticResource DoubleToIntegerConverter}, ElementName=highfreqrtratio_val}" SmallChange="10" LargeChange="100"/>
+        <Label x:Name="label" Content="High Freq RT Ratio" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Slider x:Name="reverbtime_val" HorizontalAlignment="Left" Margin="136,82,0,0" VerticalAlignment="Top" Width="241" Minimum="1" Maximum="3000000" Value="1000000" ToolTip="{Binding Value, ConverterParameter=1000, Converter={StaticResource DoubleToIntegerConverter}, ElementName=reverbtime_val}" SmallChange="1000" LargeChange="100000"/>
+        <Label x:Name="label_Copy" Content="Reverb Time" HorizontalAlignment="Left" Margin="43,76,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Slider x:Name="reverbmix_val" HorizontalAlignment="Left" Margin="136,52,0,0" VerticalAlignment="Top" Width="241" Maximum="0" Minimum="-96" ToolTip="{Binding Value, Converter={StaticResource DoubleToIntegerConverter}, ElementName=reverbmix_val}" SmallChange="1" LargeChange="10"/>
+        <Label x:Name="label_Copy1" Content="Reverb Mix" HorizontalAlignment="Left" Margin="50,46,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Slider x:Name="ingain_val" HorizontalAlignment="Left" Margin="136,22,0,0" VerticalAlignment="Top" Width="241" Maximum="0" Minimum="-96" ToolTip="{Binding Value, Converter={StaticResource DoubleToIntegerConverter}, ElementName=ingain_val}" SmallChange="1" LargeChange="10"/>
+        <Label x:Name="label_Copy2" Content="In Gain" HorizontalAlignment="Left" Margin="72,16,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <CheckBox x:Name="fx_state" Content="" HorizontalAlignment="Left" Margin="136,141,0,0" VerticalAlignment="Top" Width="18"/>
+        <Label x:Name="label1" Content="Reverb" HorizontalAlignment="Left" Margin="72,134,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}"/>
+    </Grid>
+</Window>

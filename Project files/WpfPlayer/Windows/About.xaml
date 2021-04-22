@@ -1,0 +1,16 @@
+﻿<hc:Window x:Class="About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="About" Height="300" Width="600" Icon="/WpfPlayer;component/Res/icon.ico" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Image x:Name="Logo" HorizontalAlignment="Center" Height="200" Margin="0,-35,0,0" VerticalAlignment="Center" Source="/WpfPlayer;component/Res/MuPlayerV2.png" Width="200"/>
+        <TextBlock x:Name="Slogan" Margin="0,206,0,0" TextWrapping="Wrap" Text="Thanks for using MuPlay , if you have any thoughts don't hesitate to contact us !" VerticalAlignment="Top" FontSize="16" TextAlignment="Center"/>
+        <Image x:Name="visualizer" HorizontalAlignment="Center" Height="65" Margin="-3,-163,0,0" VerticalAlignment="Center" Stretch="Fill" Width="184"/>
+
+    </Grid>
+</hc:Window>
