@@ -36,4 +36,4 @@ Thank you for stepping by.
 -Single instance application : files will be loaded to the main instance and start a new instance if no files are found<br>
 # Screenshots
 ![image](https://user-images.githubusercontent.com/38377619/114264431-3b870200-99eb-11eb-9fe3-849c481422e2.png)
--More screenshots will be added as well as the source code.
+-More screenshots will be added.
