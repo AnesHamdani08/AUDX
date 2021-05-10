@@ -3,6 +3,8 @@
 // Minor : 1<br>
 // Minor Revision : 0<br>
 // Build : 0<br>
+// Compatibility : WIN10 10240+
+// Available Compatibility : WIN10 10240+ ; WIN7 ; WIN8
 // Changelog<br>
 -All new visualisation engine, stutters are now gone.<br>
 -Fixed fade audio feature<br>
