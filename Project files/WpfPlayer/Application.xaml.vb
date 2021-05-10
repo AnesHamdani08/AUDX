@@ -39,6 +39,7 @@ Class Application
         Else
             e.Handled = True
         End If
+        My.Windows.Console.Log(e.Exception.ToString)
     End Sub
 
     Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup

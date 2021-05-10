@@ -96,10 +96,6 @@
       <HintPath>..\packages\HandyControl.3.0.0\lib\net45\HandyControl.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Interop.UPNPLib">
-      <HintPath>..\..\UpnpController\UpnpController\bin\Debug\Interop.UPNPLib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="MetaBrainz.MusicBrainz.CoverArt">
       <HintPath>..\..\..\Devlopper Stuff\Libraries &amp; Packages\MetaBrainz.MusicBrainz.CoverArt.dll</HintPath>
     </Reference>
@@ -204,6 +200,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base Functions\Analyzer.vb" />
     <Compile Include="Base Functions\AsyncWebBrowser.vb" />
     <Compile Include="Base Functions\BackgroundWorkerWithTag.vb">
       <SubType>Component</SubType>
@@ -218,11 +215,13 @@
     <Compile Include="Base Functions\Library.vb" />
     <Compile Include="Base Functions\Lyrics.vb" />
     <Compile Include="Base Functions\MusicBrainz.vb" />
+    <Compile Include="Base Functions\ParticleManager.vb" />
     <Compile Include="Base Functions\Player.vb" />
     <Compile Include="Base Functions\Playlist.vb" />
     <Compile Include="Base Functions\PlaylistItem.vb" />
     <Compile Include="Base Functions\PluginItem.vb" />
     <Compile Include="Base Functions\ReflectionExample.vb" />
+    <Compile Include="Base Functions\SmoothProgressBar.vb" />
     <Compile Include="Base Functions\SoundCloud.vb" />
     <Compile Include="Base Functions\StreamDownloader.vb" />
     <Compile Include="Base Functions\Updator.vb" />
@@ -234,6 +233,9 @@
     </Compile>
     <Compile Include="Windows\ChannelInfo.xaml.vb">
       <DependentUpon>ChannelInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Console.xaml.vb">
+      <DependentUpon>Console.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\CoverViewer.xaml.vb">
       <DependentUpon>CoverViewer.xaml</DependentUpon>
@@ -315,6 +317,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ChannelInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Console.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -441,7 +447,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="My Project\Resources.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <Generator>PublicVbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
@@ -623,6 +629,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="UPNPLib">
+      <Guid>{DB3442A7-A2E9-4A59-9CB5-F5C1A5D901E5}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets" Condition="Exists('..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets')" />

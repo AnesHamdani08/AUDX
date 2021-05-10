@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"       
         xmlns:local="clr-namespace:WpfPlayer"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"                                            
+        xmlns:system="clr-namespace:System;assembly=mscorlib"          
         x:Name="PrimWindow" x:Class="MainWindow"                
         mc:Ignorable="d"
         Title="MuPlay" Height="650" Width="1200" Initialized="Window_Initialized" MinWidth="1020" WindowStartupLocation="CenterScreen" ActiveGlowColor="#FFC500FF" InactiveGlowColor="#FFFF00D1" Icon="Res/icon.ico" AllowDrop="True">
@@ -210,6 +210,11 @@
                                     <Image Source="Res/plugin.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem x:Name="TitleBar_DefaultMuPlay" Header="MuPlay Built-in">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/plugin.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="Frame Rate">
                                 <MenuItem.Icon>
                                     <Image Source="Res/frame-rate.png"/>
@@ -296,7 +301,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </MenuItem>
-                            </MenuItem>
+                        </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Playlist">
                         <MenuItem.Icon>
@@ -599,11 +604,12 @@
             <TabItem Header="Home">
                 <Grid Background="#FFE5E5E5">
                     <Grid x:Name="Home_FancyBackground" Margin="0" Visibility="Hidden">
-                        <Grid.Effect>
+                       <!-- <Grid.Effect>
                             <BlurEffect Radius="200"/>
-                        </Grid.Effect>
-                        <Ellipse x:Name="Home_FancyBackground_el1" Fill="Red" HorizontalAlignment="Left" Height="600" Margin="10,10,0,0" VerticalAlignment="Top" Width="600"/>
-                        <Ellipse x:Name="Home_FancyBackground_el2" Fill="Green" HorizontalAlignment="Left" Height="600" Margin="582,-68,0,0" VerticalAlignment="Top" Width="600"/>
+                        </Grid.Effect> -->
+                        <Ellipse x:Name="Home_FancyBackground_el1" Fill="Red" HorizontalAlignment="Left" Height="250" Margin="10,10,0,0" VerticalAlignment="Top" Width="{Binding Height,ElementName=Home_FancyBackground_el1}" Visibility="Hidden"/>
+                        <Ellipse x:Name="Home_FancyBackground_el2" Fill="Green" HorizontalAlignment="Left" Height="250" Margin="582,-68,0,0" VerticalAlignment="Top" Width="{Binding Height,ElementName=Home_FancyBackground_el2}" Visibility="Hidden"/>
+                        <Canvas x:Name="FancyCanvas"/>
                     </Grid>
                     <Image x:Name="Home_Background" Stretch="UniformToFill">
                         <Image.Effect>
@@ -823,7 +829,78 @@
             </TabItem>
             <TabItem Header="Visualiser">
                 <Grid Background="#FFE5E5E5">
-                    <WindowsFormsHost x:Name="Visualiser_Host" Background="{x:Null}"/>
+                    <WindowsFormsHost x:Name="Visualiser_Host" Background="{x:Null}" d:IsHidden="True" Visibility="Hidden"/>
+                    <Grid x:Name="Visualiser_Monstercat" Background="Black" Visibility="Hidden">
+                        <WrapPanel VerticalAlignment="Center" Margin="150,-32,68,126" HorizontalAlignment="Left">
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p1" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p2" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p3" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p4" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p5" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p6" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p7" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p8" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p9" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p10" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p11" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p12" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p13" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p14" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p15" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p16" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p17" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p18" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p19" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p20" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p21" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p22" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p23" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p24" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p25" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p26" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p27" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p28" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p29" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p30" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p31" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p32" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p33" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p34" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p35" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p36" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p37" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p38" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p39" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p40" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p41" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p42" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p43" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p44" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p45" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p46" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p47" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p48" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p49" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p50" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p51" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p52" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p53" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p54" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p55" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p56" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p57" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p58" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p59" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p60" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p61" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p62" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p63" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                            <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p64" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
+                        </WrapPanel>
+                        <Image x:Name="Visualiser_Monstercat_Logo" HorizontalAlignment="Left" Height="140" Margin="150,280,0,0" VerticalAlignment="Center" Width="140"/>
+                        <TextBlock x:Name="Visualiser_Monstercat_Title" HorizontalAlignment="Left" Margin="320,336,0,142" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" Foreground="White" FontSize="48" FontFamily="Arial" FontWeight="Bold"/>
+                        <TextBlock x:Name="Visualiser_Monstercat_Artist" HorizontalAlignment="Left" Margin="320,397,0,100" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Center" Foreground="White" FontSize="32" FontFamily="Arial"/>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem  Header="Library">
@@ -833,6 +910,13 @@
                             <Grid Background="#FFE5E5E5">
                                 <ScrollViewer x:Name="Library_Tracks_View" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                                     <ListView x:Name="Library_Tracks_Lview" Margin="0">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel>
+                                                    <!--Memory footprint is only 200 mb-->
+                                                </VirtualizingStackPanel>
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
@@ -859,6 +943,13 @@
                             <Grid Background="#FFE5E5E5">
                                 <ScrollViewer x:Name="Library_Artists_View">
                                     <ListView x:Name="Library_Artists_Lview" Margin="0">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel>
+                                                    <!--Memory footprint is only 200 mb-->
+                                                </VirtualizingStackPanel>
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
@@ -897,6 +988,13 @@
                             <Grid Background="#FFE5E5E5">
                                 <ScrollViewer x:Name="Library_Years_View">
                                     <ListView x:Name="Library_Years_Lview" Margin="0">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel>
+                                                    <!--Memory footprint is only 200 mb-->
+                                                </VirtualizingStackPanel>
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
@@ -935,6 +1033,13 @@
                             <Grid Background="#FFE5E5E5">
                                 <ScrollViewer x:Name="Library_Favourites_View" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                                     <ListView x:Name="Library_Favourites_Lview" Margin="0">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel>
+                                                    <!--Memory footprint is only 200 mb-->
+                                                </VirtualizingStackPanel>
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
@@ -978,5 +1083,8 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Grid x:Name="Home_Loading" Background="White" Margin="0,0,0,-36" d:IsHidden="True">
+            <Image x:Name="Home_Loading_IMG" Source="Res/MuPlayerV2.png"/>
+        </Grid>
     </Grid>
 </hc:GlowWindow>
