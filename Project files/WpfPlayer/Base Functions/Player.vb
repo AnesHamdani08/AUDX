@@ -19,13 +19,16 @@ Public Class Player
     Public Event OnShuffleChanged(NewType As RepeateBehaviour)
     Public Event OnDspAdded(DSP As DSPPlugin)
     Public Event OnDspRemoved(DSP As DSPPlugin)
+    Public Event OnEqChanged(EQgains As Integer())
 #End Region
 #Region "Properties"
     Private IsFirstStream As Boolean = True
     Private Owner As Window = Nothing
         Public Property PlayerState As State
-        Public Property SourceURL As String
-        Private Property Visualizer As Visuals
+    Public Property SourceURL As String
+    Public Property AutoPlay As Boolean = True
+    Public Property FadeAudio As Boolean = False
+    Private Property Visualizer As Visuals
         Public Property Volume As Single = 1
         Public Property IsFXLoaded As Boolean = False
     Public Property IsSFXLoaded As Boolean = False
@@ -106,7 +109,7 @@ Public Class Player
         End Set
     End Property
     Private Property _SkipSilencesInterval As Double = 500
-    Private WithEvents _SkipSilencesTimer As New Timer With {.Interval = SkipSilencesInterval}
+    Private WithEvents _SkipSilencesTimer As New Timer With {.Interval = SkipSilencesInterval, .Enabled = False}
     Public Property SkipSilencesInterval As Double
         Get
             Return _SkipSilencesInterval
@@ -224,6 +227,12 @@ Public Class Player
                 Catch ex As Exception
                     IsDSPLoaded = False
                 End Try
+                If My.Settings.fxEQgains.Count = 10 Then
+                    For i As Integer = 0 To My.Settings.fxEQgains.Count - 1
+                        _fxEQgains(i) = My.Settings.fxEQgains.Item(i)
+                    Next
+                    RaiseEvent OnEqChanged(_fxEQgains)
+                End If
                 If My.Settings.FX_REVERB IsNot Nothing Then
                     Reverb = My.Settings.FX_REVERB
                     IsReverb = True
@@ -257,6 +266,14 @@ Public Class Player
         BassSfx.FreeMe()
         BassWaDsp.FreeMe()
         Bass.BASS_Free()
+        If _fxEQgains(0) <> 0 Or _fxEQgains(1) <> 0 Or _fxEQgains(2) <> 0 Or _fxEQgains(3) <> 0 Or _fxEQgains(4) <> 0 Or _fxEQgains(5) <> 0 Or _fxEQgains(6) <> 0 Or _fxEQgains(7) <> 0 Or _fxEQgains(8) <> 0 Or _fxEQgains(9) <> 0 Then
+            My.Settings.fxEQgains.Clear()
+            For Each gain In _fxEQgains
+                My.Settings.fxEQgains.Add(gain)
+            Next
+        Else
+            My.Settings.fxEQgains.Clear()
+        End If
         If IsReverb Then
             My.Settings.FX_REVERB = Reverb
         Else
@@ -310,31 +327,39 @@ Public Class Player
         End Sub
 #End Region
 #Region "Navigation"
-        Public Sub LoadSong(Loc As String, ByRef Playlist As Playlist, Optional UpdatePlaylist As Boolean = True, Optional RaiseEvents As Boolean = True, Optional UseURL As Boolean = False, Optional URL As String = Nothing, Optional OverrideCurrentMedia As Boolean = False, Optional OCMTitle As String = Nothing, Optional OCMArtist As String = Nothing, Optional OCMCover As System.Drawing.Bitmap = Nothing, Optional OCMYear As Integer = 0, Optional YTURL As String = Nothing, <Runtime.CompilerServices.CallerMemberName> ByVal Optional propertyName As String = Nothing, <Runtime.CompilerServices.CallerLineNumber> ByVal Optional propertyline As String = Nothing)
+    Private oldvol As Single = Volume
+    Public Async Sub LoadSong(Loc As String, Playlist As Playlist, Optional UpdatePlaylist As Boolean = True, Optional RaiseEvents As Boolean = True, Optional UseURL As Boolean = False, Optional URL As String = Nothing, Optional OverrideCurrentMedia As Boolean = False, Optional OCMTitle As String = Nothing, Optional OCMArtist As String = Nothing, Optional OCMCover As System.Drawing.Bitmap = Nothing, Optional OCMYear As Integer = 0, Optional YTURL As String = Nothing, <Runtime.CompilerServices.CallerMemberName> ByVal Optional propertyName As String = Nothing, <Runtime.CompilerServices.CallerLineNumber> ByVal Optional propertyline As String = Nothing)
+        If FadeAudio AndAlso GetPosition() <> GetLength() Then
+            Await FadeVol(0)
+        End If
         StreamStop()
         Bass.BASS_StreamFree(Stream)
+        PlayerState = State.Stopped
         If RaiseEvents = True Then
-                RaiseEvent PlayerStateChanged(State.Stopped)
-            End If
-            PlayerState = State.Stopped
-            If Not UseURL Then
-                If _RepeateType <> RepeateBehaviour.RepeatOne Then
-                    If Mono Then
-                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
-                    Else
+            RaiseEvent PlayerStateChanged(State.Stopped)
+        End If
+        If Not UseURL Then
+            If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                If Mono Then
+                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                Else
                     Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
                 End If
+            Else
+                If Mono Then
+                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
                 Else
-                    If Mono Then
-                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
-                    Else
                     Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
                 End If
-                End If
+            End If
             If Stream <> 0 Then
                 TryCast(Application.Current.MainWindow, MainWindow).AddToJlist(Loc)
-                Bass.BASS_ChannelSetSync(Stream, BASSSync.BASS_SYNC_END, 0, CurrentMediaEndedCALLBACK, IntPtr.Zero)
-                SetVolume(Volume)
+                Bass.BASS_ChannelSetSync(Stream, BASSSync.BASS_SYNC_END Or BASSSync.BASS_SYNC_MIXTIME, 0, CurrentMediaEndedCALLBACK, IntPtr.Zero)
+                If FadeAudio Then
+                    SetVolume(Volume, False, True)
+                Else
+                    SetVolume(Volume, True, True)
+                End If
                 SourceURL = Loc
                 SetFx()
                 For Each dsp In LoadedDSP
@@ -366,72 +391,75 @@ Public Class Player
                     _SkipSilencesTimer.Start()
                 End If
             Else
-                    RaiseEvent OnMediaError(Bass.BASS_ErrorGetCode)
-                End If
-            Else
-                If URL IsNot Nothing Then
-                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
-                        Stream = Bass.BASS_StreamCreateURL(URL, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_STREAM_STATUS, Nothing, Nothing)
-                    Else
+                RaiseEvent OnMediaError(Bass.BASS_ErrorGetCode)
+            End If
+        Else
+            If URL IsNot Nothing Then
+                If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                    Stream = Bass.BASS_StreamCreateURL(URL, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_STREAM_STATUS, Nothing, Nothing)
+                Else
                     Stream = Bass.BASS_StreamCreateURL(URL, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_STREAM_STATUS Or BASSFlag.BASS_SAMPLE_LOOP, Nothing, Nothing)
                 End If
-                    If Stream <> 0 Then
-                        Bass.BASS_ChannelSetSync(Stream, BASSSync.BASS_SYNC_END, 0, CurrentMediaEndedCALLBACK, IntPtr.Zero)
-                        SetVolume(Volume)
-                        SetFx()
-                        If OverrideCurrentMedia = False Then
+                If Stream <> 0 Then
+                    Bass.BASS_ChannelSetSync(Stream, BASSSync.BASS_SYNC_END, 0, CurrentMediaEndedCALLBACK, IntPtr.Zero)
+                    SetVolume(Volume, True, True)
+                    SetFx()
+                    If OverrideCurrentMedia = False Then
+                        SourceURL = URL
+                        CurrentMediaType = StreamTypes.URL
+                        CurrentMediaTitle = "Not available"
+                        CurrentMediaArtist = "Not available"
+                        CurrentMediaCover = Nothing
+                    Else
+                        If YTURL <> Nothing Then
+                            CurrentMediaType = StreamTypes.Youtube
+                            CurrentMediaTitle = OCMTitle
+                            CurrentMediaArtist = OCMArtist
+                            CurrentMediaCover = Utils.ImageSourceFromBitmap(OCMCover)
+                        Else
                             SourceURL = URL
                             CurrentMediaType = StreamTypes.URL
-                            CurrentMediaTitle = "Not available"
-                            CurrentMediaArtist = "Not available"
-                            CurrentMediaCover = Nothing
-                        Else
-                            If YTURL <> Nothing Then
-                                CurrentMediaType = StreamTypes.Youtube
-                                CurrentMediaTitle = OCMTitle
-                                CurrentMediaArtist = OCMArtist
-                                CurrentMediaCover = Utils.ImageSourceFromBitmap(OCMCover)
-                            Else
-                                SourceURL = URL
-                                CurrentMediaType = StreamTypes.URL
-                                CurrentMediaTitle = OCMTitle
-                                CurrentMediaArtist = OCMArtist
-                                CurrentMediaCover = Utils.ImageSourceFromBitmap(OCMCover)
-                            End If
+                            CurrentMediaTitle = OCMTitle
+                            CurrentMediaArtist = OCMArtist
+                            CurrentMediaCover = Utils.ImageSourceFromBitmap(OCMCover)
                         End If
-                        PlayerState = State.MediaLoaded
-                        If RaiseEvents = True Then
-                            If Not OverrideCurrentMedia = False Then
+                    End If
+                    PlayerState = State.MediaLoaded
+                    If RaiseEvents = True Then
+                        If Not OverrideCurrentMedia = False Then
                             RaiseEvent MediaLoaded(CurrentMediaTitle, CurrentMediaArtist, CurrentMediaCover, Utils.ImageSourceFromBitmap(OCMCover, True, 50, 50), False, Nothing)
                         Else
                             RaiseEvent MediaLoaded(CurrentMediaTitle, CurrentMediaArtist, CurrentMediaCover, Nothing, False, Nothing)
                         End If
-                            RaiseEvent PlayerStateChanged(State.MediaLoaded)
-                        End If
-                        If UpdatePlaylist = True Then
-                            If OverrideCurrentMedia Then
-                                If YTURL <> Nothing Then
-                                    Playlist.Add(Nothing, StreamTypes.Youtube, True, True, YTURL, True, OCMTitle, OCMArtist, OCMYear)
-                                Else
-                                    Playlist.Add(Nothing, StreamTypes.URL, True, True, URL, True, OCMTitle, OCMArtist, OCMYear, OCMCover)
-                                End If
+                        RaiseEvent PlayerStateChanged(State.MediaLoaded)
+                    End If
+                    If UpdatePlaylist = True Then
+                        If OverrideCurrentMedia Then
+                            If YTURL <> Nothing Then
+                                Playlist.Add(Nothing, StreamTypes.Youtube, True, True, YTURL, True, OCMTitle, OCMArtist, OCMYear)
                             Else
-                                Playlist.Add(Nothing, StreamTypes.URL, True, True, URL, True, "Not Available", "Not Available", 0)
+                                Playlist.Add(Nothing, StreamTypes.URL, True, True, URL, True, OCMTitle, OCMArtist, OCMYear, OCMCover)
                             End If
+                        Else
+                            Playlist.Add(Nothing, StreamTypes.URL, True, True, URL, True, "Not Available", "Not Available", 0)
                         End If
-                    Else
-                        RaiseEvent OnMediaError(Bass.BASS_ErrorGetCode)
                     End If
                 Else
-                    Exit Sub
+                    RaiseEvent OnMediaError(Bass.BASS_ErrorGetCode)
                 End If
+            Else
+                Exit Sub
             End If
-        End Sub
-        Public Async Function LoadStreamAsync(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True) As Task(Of Boolean)
-            Select Case Type
-                Case StreamTypes.URL
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
-                Case StreamTypes.Youtube
+        End If
+        If AutoPlay Then
+            StreamPlay()
+        End If
+    End Sub
+    Public Async Function LoadStreamAsync(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True) As Task(Of Boolean)
+        Select Case Type
+            Case StreamTypes.URL
+                LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
+            Case StreamTypes.Youtube
                 If URL IsNot Nothing Then
                     Dim Yt As New YoutubeExplode.YoutubeClient
                     Dim Video = Await Yt.Videos.GetAsync(URL)
@@ -481,79 +509,87 @@ Public Class Player
                     YTTrackManifest = Nothing
                     YTTrackStream = Nothing
                     Return Await Task.FromResult(True)
-                    End If
-                Case StreamTypes.Soundcloud
-            End Select
-        End Function
-        Public Async Sub LoadStream(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True)
-            Select Case Type
-                Case StreamTypes.URL
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
-                Case StreamTypes.Youtube
-                    If URL IsNot Nothing Then
-                        Dim Yt As New YoutubeExplode.YoutubeClient
-                        Dim Video = Await Yt.Videos.GetAsync(URL)
-                        Dim CoverData As Byte() = Nothing
-                        Using WC As New System.Net.WebClient
-                            CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
-                        End Using
-                        Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                        Dim YTTrackStream = YTTrackManifest.GetMuxed()
-                        SourceURL = Video.Url
-                        LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
-                        Yt = Nothing
-                        Video = Nothing
-                        CoverData = Nothing
-                        YTTrackManifest = Nothing
-                        YTTrackStream = Nothing
-                    Else
-                        Dim Yt As New YoutubeExplode.YoutubeClient
-                        Dim VideoId = Yt.Search.GetVideosAsync(YTquery, 1, 1).GetAsyncEnumerator
-                        Await VideoId.MoveNextAsync()
-                        Dim Video = VideoId.Current
-                        Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
-                            Dim z As Boolean = Await VideoId.MoveNextAsync()
-                            If Video.Title = VideoId.Current.Title AndAlso Video.Author = VideoId.Current.Author Then
-                                Exit Sub
-                            Else
-                                Video = VideoId.Current
-                            End If
-                        Loop
-                        Dim CoverData As Byte() = Nothing
-                        Using WC As New System.Net.WebClient
-                            CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
-                        End Using
-                        Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                        Dim YTTrackStream = YTTrackManifest.GetMuxed()
-                        SourceURL = Video.Url
+                End If
+            Case StreamTypes.Soundcloud
+        End Select
+    End Function
+    Public Async Sub LoadStream(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True)
+        Select Case Type
+            Case StreamTypes.URL
+                LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
+            Case StreamTypes.Youtube
+                If URL IsNot Nothing Then
+                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim Video = Await Yt.Videos.GetAsync(URL)
+                    Dim CoverData As Byte() = Nothing
+                    Using WC As New System.Net.WebClient
+                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                    End Using
+                    Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
+                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    SourceURL = Video.Url
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
+                    Yt = Nothing
+                    Video = Nothing
+                    CoverData = Nothing
+                    YTTrackManifest = Nothing
+                    YTTrackStream = Nothing
+                Else
+                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim VideoId = Yt.Search.GetVideosAsync(YTquery, 1, 1).GetAsyncEnumerator
+                    Await VideoId.MoveNextAsync()
+                    Dim Video = VideoId.Current
+                    Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
+                        Dim z As Boolean = Await VideoId.MoveNextAsync()
+                        If Video.Title = VideoId.Current.Title AndAlso Video.Author = VideoId.Current.Author Then
+                            Exit Sub
+                        Else
+                            Video = VideoId.Current
+                        End If
+                    Loop
+                    Dim CoverData As Byte() = Nothing
+                    Using WC As New System.Net.WebClient
+                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                    End Using
+                    Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
+                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    SourceURL = Video.Url
                     LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)), 0, Video.Url)
                     Yt = Nothing
-                        VideoId = Nothing
-                        Video = Nothing
-                        CoverData = Nothing
-                        YTTrackManifest = Nothing
-                        YTTrackStream = Nothing
-                    End If
-                Case StreamTypes.Soundcloud
-            End Select
-        End Sub
-        Public Sub StreamPlay(Optional RaiseEvents As Boolean = True)
-            If Bass.BASS_ChannelPlay(Stream, False) Then
-                If RaiseEvents Then
-                    RaiseEvent PlayerStateChanged(State.Playing)
-                    PlayerState = State.Playing
+                    VideoId = Nothing
+                    Video = Nothing
+                    CoverData = Nothing
+                    YTTrackManifest = Nothing
+                    YTTrackStream = Nothing
                 End If
+            Case StreamTypes.Soundcloud
+        End Select
+    End Sub
+    Public Async Sub StreamPlay(Optional RaiseEvents As Boolean = True)
+        If Bass.BASS_ChannelPlay(Stream, False) Then
+            If RaiseEvents Then
+                RaiseEvent PlayerStateChanged(State.Playing)
+                PlayerState = State.Playing
             End If
-        End Sub
-        Public Sub StreamPause(Optional RaiseEvents As Boolean = True)
-            If Bass.BASS_ChannelPause(Stream) Then
-                If RaiseEvents Then
-                    RaiseEvent PlayerStateChanged(State.Paused)
-                    PlayerState = State.Paused
-                End If
+            If FadeAudio Then
+                Await FadeVol(oldvol)
             End If
-        End Sub
-        Public Sub StreamStop()
+        End If
+    End Sub
+    Public Async Sub StreamPause(Optional RaiseEvents As Boolean = True)
+        If FadeAudio Then
+            Await FadeVol(0)
+        End If
+        If Bass.BASS_ChannelPause(Stream) Then
+            If RaiseEvents Then
+                RaiseEvent PlayerStateChanged(State.Paused)
+                PlayerState = State.Paused
+            End If
+        Else
+            SetVolume(oldvol, True, True)
+        End If
+    End Sub
+    Public Sub StreamStop()
             If Bass.BASS_ChannelStop(Stream) Then
                 RaiseEvent PlayerStateChanged(State.Stopped)
                 PlayerState = State.Stopped
@@ -562,7 +598,7 @@ Public Class Player
         End Sub
 #End Region
 #Region "Settings"
-    Public Sub SetVolume(Vol As Single, Optional RaiseEvents As Boolean = True)
+    Public Sub SetVolume(Vol As Single, Optional RaiseEvents As Boolean = True, Optional IsFadeAudioCalled As Boolean = False)
         Select Case Vol
             Case < 0
                 If Bass.BASS_ChannelSetAttribute(Stream, BASSAttribute.BASS_ATTRIB_VOL, 0) Then
@@ -586,15 +622,18 @@ Public Class Player
                     End If
                 End If
         End Select
+        If IsFadeAudioCalled = False Then
+            oldvol = Volume
+        End If
     End Sub
     Public Function GetVolume() As Single
-            Dim Vol As Single = 0
-            If Bass.BASS_ChannelGetAttribute(Stream, BASSAttribute.BASS_ATTRIB_VOL, Vol) Then
-                Volume = Vol
-                Return Vol
-            End If
-            Vol = Nothing
-        End Function
+        Dim Vol As Single = -1
+        If Bass.BASS_ChannelGetAttribute(Stream, BASSAttribute.BASS_ATTRIB_VOL, Vol) Then
+            Volume = Vol
+            Return Vol
+        End If
+        Return Vol
+    End Function
         Public Sub SetPosition(Seconds As Double)
             Bass.BASS_ChannelSetPosition(Stream, Seconds)
         End Sub
@@ -602,8 +641,8 @@ Public Class Player
             Try
                 Return Bass.BASS_ChannelBytes2Seconds(Stream, Bass.BASS_ChannelGetPosition(Stream, BASSMode.BASS_POS_BYTES))
             Catch ex As Exception
-                Return 0
-            End Try
+            Return -1
+        End Try
         End Function
         Public Function GetLength() As Long
             Try
@@ -629,49 +668,52 @@ Public Class Player
         Private Sub SetEq(Optional Reset As Boolean = False)
             If Reset = False Then
             ' 10-band EQ
+            If _fxEQgains(0) <> 0 Or _fxEQgains(1) <> 0 Or _fxEQgains(2) <> 0 Or _fxEQgains(3) <> 0 Or _fxEQgains(4) <> 0 Or _fxEQgains(5) <> 0 Or _fxEQgains(6) <> 0 Or _fxEQgains(7) <> 0 Or _fxEQgains(8) <> 0 Or _fxEQgains(9) <> 0 Then
+                RaiseEvent OnFxChanged(LinkHandles.EQ, True)
+            End If
             Dim eq As New BASS_DX8_PARAMEQ()
-            _fxEQ(0) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(1) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(2) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(3) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(4) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(5) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(6) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(7) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(8) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            _fxEQ(9) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
-            eq.fBandwidth = 18.0F
-            eq.fCenter = 80.0F
-            eq.fGain = _fxEQgains(0)
-            Bass.BASS_FXSetParameters(_fxEQ(0), eq)
-            eq.fCenter = 100.0F
-            eq.fGain = _fxEQgains(1)
-            Bass.BASS_FXSetParameters(_fxEQ(1), eq)
-            eq.fCenter = 125.0F
-            eq.fGain = _fxEQgains(2)
-            Bass.BASS_FXSetParameters(_fxEQ(2), eq)
-            eq.fCenter = 250.0F
-            eq.fGain = _fxEQgains(3)
-            Bass.BASS_FXSetParameters(_fxEQ(3), eq)
-            eq.fCenter = 500.0F
-            eq.fGain = _fxEQgains(4)
-            Bass.BASS_FXSetParameters(_fxEQ(4), eq)
-            eq.fCenter = 1000.0F
-            eq.fGain = _fxEQgains(5)
-            Bass.BASS_FXSetParameters(_fxEQ(5), eq)
-            eq.fCenter = 2000.0F
-            eq.fGain = _fxEQgains(6)
-            Bass.BASS_FXSetParameters(_fxEQ(6), eq)
-            eq.fCenter = 4000.0F
-            eq.fGain = _fxEQgains(7)
-            Bass.BASS_FXSetParameters(_fxEQ(7), eq)
-            eq.fCenter = 8000.0F
-            eq.fGain = _fxEQgains(8)
-            Bass.BASS_FXSetParameters(_fxEQ(8), eq)
-            eq.fCenter = 16000.0F
-            eq.fGain = _fxEQgains(9)
-            Bass.BASS_FXSetParameters(_fxEQ(9), eq)
-        Else
+                _fxEQ(0) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(1) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(2) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(3) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(4) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(5) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(6) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(7) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(8) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                _fxEQ(9) = Bass.BASS_ChannelSetFX(Stream, BASSFXType.BASS_FX_DX8_PARAMEQ, 0)
+                eq.fBandwidth = 18.0F
+                eq.fCenter = 80.0F
+                eq.fGain = _fxEQgains(0)
+                Bass.BASS_FXSetParameters(_fxEQ(0), eq)
+                eq.fCenter = 100.0F
+                eq.fGain = _fxEQgains(1)
+                Bass.BASS_FXSetParameters(_fxEQ(1), eq)
+                eq.fCenter = 125.0F
+                eq.fGain = _fxEQgains(2)
+                Bass.BASS_FXSetParameters(_fxEQ(2), eq)
+                eq.fCenter = 250.0F
+                eq.fGain = _fxEQgains(3)
+                Bass.BASS_FXSetParameters(_fxEQ(3), eq)
+                eq.fCenter = 500.0F
+                eq.fGain = _fxEQgains(4)
+                Bass.BASS_FXSetParameters(_fxEQ(4), eq)
+                eq.fCenter = 1000.0F
+                eq.fGain = _fxEQgains(5)
+                Bass.BASS_FXSetParameters(_fxEQ(5), eq)
+                eq.fCenter = 2000.0F
+                eq.fGain = _fxEQgains(6)
+                Bass.BASS_FXSetParameters(_fxEQ(6), eq)
+                eq.fCenter = 4000.0F
+                eq.fGain = _fxEQgains(7)
+                Bass.BASS_FXSetParameters(_fxEQ(7), eq)
+                eq.fCenter = 8000.0F
+                eq.fGain = _fxEQgains(8)
+                Bass.BASS_FXSetParameters(_fxEQ(8), eq)
+                eq.fCenter = 16000.0F
+                eq.fGain = _fxEQgains(9)
+                Bass.BASS_FXSetParameters(_fxEQ(9), eq)
+            Else
                 _fxEQgains = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
                 ' 10-band EQ
                 Dim eq As New BASS_DX8_PARAMEQ()
@@ -986,15 +1028,22 @@ Public Class Player
     Public Function DetectSilence(Filename As String) As Double()
         Dim cueInPos As Double
         Dim cueOutPos As Double
-        Un4seen.Bass.Utils.DetectCuePoints(Filename, 10, cueInPos, cueOutPos, -25, -42, 0)
-        Dim ComInfo As Double() = {cueInPos, cueOutPos}
+        Dim ComInfo As Double() = {0, 0}
+        If Un4seen.Bass.Utils.DetectCuePoints(Filename, 10, cueInPos, cueOutPos, -25, -42, 0) Then
+            ComInfo = {cueInPos, cueOutPos}
+        Else
+            ComInfo = {0, 9999}
+        End If
         Return ComInfo
     End Function
     Private Sub _SkipSilencesTimer_Elapsed(sender As Object, e As ElapsedEventArgs) Handles _SkipSilencesTimer.Elapsed
         If SkipSilences Then
-            If GetPosition() >= _SkipSilencesCuePoints(1) Then
-                _SkipSilencesTimer.Stop()
-                CurrentMediaEndedCALLBACK(Stream, 0, Nothing, IntPtr.Zero)
+            Dim pos = GetPosition()
+            If pos <> -1 Then
+                If pos >= _SkipSilencesCuePoints(1) Then
+                    _SkipSilencesTimer.Stop()
+                    CurrentMediaEndedCALLBACK(Stream, 0, Nothing, IntPtr.Zero)
+                End If
             End If
         Else
             _SkipSilencesTimer.Stop()
@@ -1081,36 +1130,51 @@ Public Class Player
             End If
         End If
     End Sub
-    Private OldVol As Single
-    Public Async Function FadeVol(Up As Boolean, Down As Boolean, ToVol As Single) As Task
-        If Not Single.IsNaN(ToVol) Then
-            OldVol = Volume
-        End If
+    Private FadeVolDB As Boolean = False
+    Public Async Function FadeVol(ToVol As Single, Optional Delay As Integer = 1, Optional DoubleBuffer As Boolean = True) As Task
         Await Task.Run(Sub()
-                           If Not Single.IsNaN(ToVol) Then
-                               If Up = True Then
-                                   Do While Volume <= ToVol
-                                       If Volume = ToVol Then Exit Do
-                                       SetVolume(Volume + 0.001, False)
-                                   Loop
-                               Else
-                                   Do While Volume >= ToVol
-                                       If Volume = ToVol Then Exit Do
-                                       SetVolume(Volume - 0.001, False)
-                                   Loop
-                               End If
+                           If DoubleBuffer = False Then
+                               Select Case ToVol
+                                   Case < Volume 'Down
+                                       Do While ToVol <> Volume AndAlso Volume >= ToVol
+                                           If ToVol = Volume Then Exit Do
+                                           If Delay <> -1 Then Threading.Thread.Sleep(Delay)
+                                           SetVolume(Volume - 0.001, False, True)
+                                       Loop
+                                   Case > Volume 'Up
+                                       Do While ToVol <> Volume AndAlso Volume <= ToVol
+                                           If ToVol = Volume Then Exit Do
+                                           If Delay <> -1 Then Threading.Thread.Sleep(Delay)
+                                           SetVolume(Volume + 0.001, False, True)
+                                       Loop
+                                   Case = Volume 'Nothing
+                               End Select
                            Else
-                               If Up = True Then
-                                   Do While Volume <= OldVol
-                                       If Volume = OldVol Then Exit Do
-                                       SetVolume(Volume + 0.001, False)
-                                   Loop
-                               Else
-                                   Do While Volume >= OldVol
-                                       If Volume = OldVol Then Exit Do
-                                       SetVolume(Volume - 0.001, False)
-                                   Loop
-                               End If
+                               Select Case ToVol
+                                   Case < Volume 'Down
+                                       Do While ToVol <> Volume AndAlso Volume >= ToVol
+                                           If ToVol = Volume Then Exit Do
+                                           If FadeVolDB = True Then
+                                               If Delay <> -1 Then Threading.Thread.Sleep(Delay)
+                                               FadeVolDB = Not FadeVolDB
+                                           Else
+                                               FadeVolDB = Not FadeVolDB
+                                           End If
+                                           SetVolume(Volume - 0.001, False, True)
+                                       Loop
+                                   Case > Volume 'Up
+                                       Do While ToVol <> Volume AndAlso Volume <= ToVol
+                                           If ToVol = Volume Then Exit Do
+                                           If FadeVolDB = True Then
+                                               If Delay <> -1 Then Threading.Thread.Sleep(Delay)
+                                               FadeVolDB = Not FadeVolDB
+                                           Else
+                                               FadeVolDB = Not FadeVolDB
+                                           End If
+                                           SetVolume(Volume + 0.001, False, True)
+                                       Loop
+                                   Case = Volume 'Nothing
+                               End Select
                            End If
                        End Sub)
     End Function

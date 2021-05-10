@@ -17,7 +17,7 @@
             Right = _Right
         End Sub
     End Class
-    Public Shared ReadOnly Property FileFilters As String = "*.mp3|*.m4a|*.wav|*.aiff|*.mp2|*.mp1|*.ogg|*.wma|*.flac|*.alac|*.webm"
+    Public Shared ReadOnly Property FileFilters As String = "*.mp3|*.m4a|*.mp4|*.wav|*.aiff|*.mp2|*.mp1|*.ogg|*.wma|*.flac|*.alac|*.webm"
     Public Shared ReadOnly Property OFDFileFilters As String = "Supported Files|*.mp3;*.m4a;*.wav;*.aiff;*.mp2;*.mp1;*.ogg;*.wma;*.flac;*.alac;*.webm"
     Public Shared ReadOnly Property ImageFilters As String = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG;*.JPEG)|*.BMP;*.JPG;*.GIF;*.PNG;*.JPEG|All Files(*.*)|*.*"
     Public Shared ReadOnly Property brush_heart As New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/heart.png")))

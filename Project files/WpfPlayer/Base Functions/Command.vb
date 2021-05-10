@@ -1,6 +1,7 @@
 ﻿Imports Un4seen.Bass
 
 Public Class Command
+    Public Shared Property Commands As String() = {"home hide overlay", "playlist show overlay", "playlist hide overlay", "home show reflection", "home hide reflection", "playlist index", "playlist count", "playlist items", "playlist items -s", "playlist items -n", "playlist items -u", "playlist add random", "exit", "exit n", "clear", "next", "previous", "stop", "pause", "play", "init", "free", "fade down", "fade down db", "fade up", "fade up db", "fade to", "fade to db", "eq enable", "eq disable", "reverb enable", "update reverb ingain", "update reverb mix", "update reverb time", "update reverb hfrtr", "reverb disable", "handle", "plugin fx", "plugin sfx", "set sfx fps", "source url", "discord disconnect", "discord connect", "discord set presence", "save", "channelinfo", "tags", "plugins", "notification", "debug", "error", "hooks", "set custom state", "library stats", "search", "refresh library stats", "library make", "library make artists", "library make years", "fullscreen", "library update artists", "library update years", "about", "hotkeys", "home show overlay", "home refresh recommended", "home show recommended", "home topmost off", "home topmost on", "home set visualizer refresh speed", "home hide recommended"}
     Public Shared Async Sub Excute(command As String, Window As Window)
         Select Case command.ToLower
             Case "home topmost off"
@@ -164,10 +165,24 @@ Public Class Command
                 CType(Window, MainWindow).MainPlayer.Dispose()
                 Exit Sub
             Case "fade down"
-                CType(Window, MainWindow).MainPlayer.FadeVol(False, True, 0)
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(0, 1, False)
+                Exit Sub
+            Case "fade down db"
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(0, 1, True)
                 Exit Sub
             Case "fade up"
-                CType(Window, MainWindow).MainPlayer.FadeVol(True, False, 1)
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(1, 1, False)
+                Exit Sub
+            Case "fade up db"
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(1, 1, True)
+                Exit Sub
+            Case "fade to"
+                Dim _to = InputBox("To")
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(_to, 1, False)
+                Exit Sub
+            Case "fade to db"
+                Dim _to = InputBox("To")
+                Await CType(Window, MainWindow).MainPlayer.FadeVol(_to, 1, True)
                 Exit Sub
             Case "eq enable"
                 Exit Sub
@@ -344,38 +359,39 @@ Public Class Command
                 Temp_List = Nothing
                 Exit Sub
             Case "library make artists"
-                         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
+                Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
                 Exit Sub
-                         Case "library make years"
-                         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
+            Case "library make years"
+                Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
                 Exit Sub
-                         Case "fullscreen"
-                         My.Windows.FullScreenPlayer.Owner = Application.Current.MainWindow
-                         My.Windows.FullScreenPlayer.ShowDialog()
-                         Exit Sub
-                         Case "library update artists"
-                         With TryCast(Application.Current.MainWindow, MainWindow)
-                             .GArtists = Await.MainLibrary.ReadArtistsCache(Utils.AppDataPath)
-                             For i As Integer = 0 To .GArtists.Count - 1
-                                 Try
-                                     .libraryArtistsItems.Add(New ArtistItem(i + 1, .GArtists(i)))
-                                 Catch ex As Exception
-                                 End Try
-                             Next
-                         End With
-                         Case "library update years"
-                         With TryCast(Application.Current.MainWindow, MainWindow)
-                             .GYears = Await.MainLibrary.ReadYearsCache(Utils.AppDataPath)
-                             For i As Integer = 0 To .GYears.Count - 1
-                                 Try
-                                     .libraryYearsItems.Add(New ArtistItem(i + 1, .GYears(i)))
-                                 Catch ex As Exception
-                                 End Try
-                             Next
-                         End With
+            Case "fullscreen"
+                My.Windows.FullScreenPlayer.Owner = Application.Current.MainWindow
+                My.Windows.FullScreenPlayer.ShowDialog()
+                Exit Sub
+            Case "library update artists"
+                With TryCast(Application.Current.MainWindow, MainWindow)
+                    .GArtists = Await .MainLibrary.ReadArtistsCache(Utils.AppDataPath)
+                    For i As Integer = 0 To .GArtists.Count - 1
+                        Try
+                            .libraryArtistsItems.Add(New ArtistItem(i + 1, .GArtists(i)))
+                        Catch ex As Exception
+                        End Try
+                    Next
+                End With
+            Case "library update years"
+                With TryCast(Application.Current.MainWindow, MainWindow)
+                    .GYears = Await .MainLibrary.ReadYearsCache(Utils.AppDataPath)
+                    For i As Integer = 0 To .GYears.Count - 1
+                        Try
+                            .libraryYearsItems.Add(New ArtistItem(i + 1, .GYears(i)))
+                        Catch ex As Exception
+                        End Try
+                    Next
+                End With
             Case "about"
                 My.Windows.About.Show()
                 Exit Sub
+            Case "version"
                 With My.Application.Info
                     Dim sb As New Text.StringBuilder
                     sb.AppendLine("Assembly Name: " & .AssemblyName)
@@ -389,10 +405,23 @@ Public Class Command
                     sb.AppendLine(" Minor Revision: " & .Version.MinorRevision)
                     sb.AppendLine(" Revision: " & .Version.Revision)
                     sb.AppendLine("Working Set: " & .WorkingSet)
-                    'sb.AppendLine("Compatiblity: WIN10 10240+")
-                    sb.AppendLine("Compatiblity: WIN7+")
+                    sb.AppendLine("Compatiblity: WIN10 10240+")
+                    'sb.AppendLine("Compatiblity: WIN7+")
                     MessageBox.Show(Application.Current.MainWindow, sb.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Information)
                 End With
+                Exit Sub
+            Case "hotkeys"
+                Dim names = System.Enum.GetNames(GetType(Forms.Keys))
+                Dim sb As New Text.StringBuilder
+                sb.AppendLine("PlayPause: " & My.Settings.GlobalHotkey_PlayPause_MOD & "//" & My.Settings.GlobalHotkey_PlayPause & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_PlayPause).ToString & "]")
+                sb.AppendLine("Next: " & My.Settings.GlobalHotkey_Next_MOD & "//" & My.Settings.GlobalHotkey_Next & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Next).ToString & "]")
+                sb.AppendLine("Previous: " & My.Settings.GlobalHotkey_Previous_MOD & "//" & My.Settings.GlobalHotkey_Previous & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Previous).ToString & "]")
+                sb.AppendLine("+10s: " & My.Settings.GlobalHotkey_Skip10_MOD & "//" & My.Settings.GlobalHotkey_Skip10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Skip10).ToString & "]")
+                sb.AppendLine("-10s: " & My.Settings.GlobalHotkey_Back10_MOD & "//" & My.Settings.GlobalHotkey_Back10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Back10).ToString & "]")
+                sb.AppendLine("Vol Up: " & My.Settings.GlobalHotkey_VolumeUp_MOD & "//" & My.Settings.GlobalHotkey_VolumeUp & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeUp).ToString & "]")
+                sb.AppendLine("Vol Down: " & My.Settings.GlobalHotkey_VolumeDown_MOD & "//" & My.Settings.GlobalHotkey_VolumeDown & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeDown).ToString & "]")
+                sb.AppendLine("Vol Mute: " & My.Settings.GlobalHotkey_VolumeMute_MOD & "//" & My.Settings.GlobalHotkey_VolumeMute & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeMute).ToString & "]")
+                MsgBox(sb.ToString, MsgBoxStyle.MsgBoxHelp)
                 Exit Sub
         End Select
         Throw New Exception("No such command!")
