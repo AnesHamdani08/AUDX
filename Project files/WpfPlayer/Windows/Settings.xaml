@@ -67,6 +67,15 @@
                         <CheckBox x:Name="set_cachelibrarydata" HorizontalAlignment="Left" Margin="12,411,0,0" VerticalAlignment="Top" Content="Cache library data"/>
                         <CheckBox x:Name="set_skipsilences" HorizontalAlignment="Left" Margin="12,434,0,0" VerticalAlignment="Top" Content="Skip silences"/>
                         <CheckBox x:Name="set_fbd_subfolder" HorizontalAlignment="Left" Margin="12,457,0,0" VerticalAlignment="Top" Content="Folder browser dialog (Top Directory only/Sub folders)"/>
+                        <CheckBox x:Name="set_player_autoplay" HorizontalAlignment="Left" Margin="12,477,0,0" VerticalAlignment="Top" Content="AutoPlay on song load"/>
+                        <ComboBox x:Name="set_dragdropbehaviour" HorizontalAlignment="Left" Margin="12,497,0,0" VerticalAlignment="Top" Width="108">
+                            <ComboBoxItem Content="Replace" x:Name="DragDrop_Replace"/>
+                            <ComboBoxItem Content="Add to first" x:Name="DragDrop_AddToFirst"/>
+                            <ComboBoxItem Content="Add to last" x:Name="DragDrop_AddToLast"/>
+                            <ComboBoxItem Content="Add to next" x:Name="DragDrop_AddToNext"/>
+                            <ComboBoxItem Content="Add to last and play" x:Name="DragDrop_AddToLastPlay"/>
+                        </ComboBox>
+                        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="125,504,0,0" TextWrapping="Wrap" Text="DragDrop behaviour" VerticalAlignment="Top"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

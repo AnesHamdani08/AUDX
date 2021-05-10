@@ -340,7 +340,7 @@ Public Class LanBrowser
                             Cover = System.Drawing.Image.FromStream(New MemoryStream(WC.DownloadData((Info(6)))))
                         End Using
                     Catch ex As Exception
-                        Console.WriteLine(TimeOfDay.ToShortTimeString & ": " & "Error on getting Album Cover from UPNP" & ex.Message)
+                        Throw New Exception(TimeOfDay.ToShortTimeString & ": " & "Error on getting Album Cover from UPNP" & ex.Message)
                     End Try
                 Next
                 '0 title1 class,2 ALbum,3 genre,4 artist,5 uri,6 cover uri

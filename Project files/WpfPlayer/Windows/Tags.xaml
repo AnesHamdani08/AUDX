@@ -97,6 +97,7 @@
                             <ContextMenu>
                                 <MenuItem Header="Add" Click="Cover_Add"/>
                                 <MenuItem Header="Remove" Click="Cover_Remove"/>
+                                <MenuItem Header="Move from;to" Click="Cover_MoveTo"/>
                                 <MenuItem Header="Paste" Click="Cover_Paste"/>
                                 <MenuItem Header="Copy" Click="Cover_Copy"/>
                                 <MenuItem Header="Set type" Click="Cover_SetType"/>
@@ -104,7 +105,7 @@
                         </ScrollViewer.ContextMenu>
                         <StackPanel x:Name="cover_stack" VerticalAlignment="Top" Orientation="Horizontal"/>
                     </ScrollViewer>
-                    <TextBox x:Name="tag_lyrics" HorizontalAlignment="Left" Height="256" Margin="0,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290"/>
+                    <TextBox x:Name="tag_lyrics" Height="256" Margin="0,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto"/>
                 </Grid>
             </TabItem>
             <TabItem Header="File">

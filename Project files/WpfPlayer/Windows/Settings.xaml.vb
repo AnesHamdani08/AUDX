@@ -35,8 +35,13 @@ Public Class Settings
             set_output.Items.Add(n & "-" & device)
         Next
         Library = TryCast(Application.Current.MainWindow, MainWindow).MainLibrary
-        get_libcount.Text = Library.Count
-        get_libdate.Text = Library.DateCreated
+        If Library IsNot Nothing Then
+            get_libcount.Text = Library.Count
+            get_libdate.Text = Library.DateCreated
+        Else
+            get_libcount.Text = "N/A"
+            get_libdate.Text = "N/A"
+        End If
         set_cachelibrarydata.IsChecked = My.Settings.CacheLibraryData
         Set_UpdatesServer.Text = My.Settings.UpdatesServer
         set_skipsilences.IsChecked = My.Settings.SkipSilences
@@ -46,6 +51,8 @@ Public Class Settings
             Case IO.SearchOption.TopDirectoryOnly
                 set_fbd_subfolder.IsChecked = True
         End Select
+        set_player_autoplay.IsChecked = My.Settings.Player_AutoPlay
+        set_dragdropbehaviour.SelectedIndex = My.Settings.PlaylistDragDropAction
     End Sub
     Private Sub Lib_Loc_Remove_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Loc_Remove.Click
         If Lib_Loc_Cbox.SelectedIndex <> -1 Then
@@ -96,6 +103,7 @@ Public Class Settings
             .StopToken = True
             .Home_FancyBackground.Visibility = Visibility.Hidden
             .Home_Background.Visibility = Visibility.Visible
+            .FancyBackgroundManager = Nothing
         End With
     End Sub
 
@@ -106,6 +114,8 @@ Public Class Settings
         With TryCast(Application.Current.MainWindow, MainWindow)
             .Home_FancyBackground.Visibility = Visibility.Visible
             .Home_Background.Visibility = Visibility.Hidden
+            .FancyBackgroundManager = New ParticleManager(.FancyCanvas, Me, 500, 5)
+            Exit Sub
             .AniCounter = 1
             .StopToken = False
             .DoAnim(.AniCounter)
@@ -316,8 +326,13 @@ Public Class Settings
             set_output.Items.Add(n & "-" & device)
         Next
         Library = TryCast(Application.Current.MainWindow, MainWindow).MainLibrary
-        get_libcount.Text = Library.Count
-        get_libdate.Text = Library.DateCreated
+        If Library IsNot Nothing Then
+            get_libcount.Text = Library.Count
+            get_libdate.Text = Library.DateCreated
+        Else
+            get_libcount.Text = "N/A"
+            get_libdate.Text = "N/A"
+        End If
         set_cachelibrarydata.IsChecked = My.Settings.CacheLibraryData
         Set_UpdatesServer.Text = My.Settings.UpdatesServer
     End Sub
@@ -349,6 +364,23 @@ Public Class Settings
 
     Private Sub set_fbd_subfolder_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_fbd_subfolder.Unchecked
         My.Settings.FBD_QuickAcess_SubFolders = IO.SearchOption.AllDirectories
+        My.Settings.Save()
+    End Sub
+
+    Private Sub set_player_autoplay_Checked(sender As Object, e As RoutedEventArgs) Handles set_player_autoplay.Checked
+        My.Settings.Player_AutoPlay = True
+        My.Settings.Save()
+        TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.AutoPlay = True
+    End Sub
+
+    Private Sub set_player_autoplay_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_player_autoplay.Unchecked
+        My.Settings.Player_AutoPlay = False
+        My.Settings.Save()
+        TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.AutoPlay = False
+    End Sub
+
+    Private Sub set_dragdropbehaviour_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_dragdropbehaviour.SelectionChanged
+        My.Settings.PlaylistDragDropAction = set_dragdropbehaviour.SelectedIndex
         My.Settings.Save()
     End Sub
 End Class

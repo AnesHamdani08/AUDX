@@ -62,7 +62,7 @@ Public Class Tags
             Next
             IDX = Nothing
         End If
-        Dim Tag
+        Dim Tag As TagLib.File
         Try
             Tag = TagLib.File.Create(Path)
         Catch ex As Exception
@@ -112,6 +112,7 @@ Public Class Tags
             Top_Title.Content = .Title
             tag_type.Text = Tag.Writeable
             tag_year.Text = .Year
+            tag_lyrics.Text = .Lyrics
         End With
         Dim FI As New IO.FileInfo(Path)
         If FI.IsReadOnly Then
@@ -142,6 +143,7 @@ Public Class Tags
             .MusicBrainzReleaseId = tag_releaseid.Text
             .MusicBrainzReleaseStatus = tag_status.Text
             .Title = tag_title.Text
+            .Lyrics = tag_lyrics.Text
             Try
                 .Year = tag_year.Text
             Catch ex As Exception
@@ -184,6 +186,21 @@ Public Class Tags
         Catch ex As Exception
             Throw New Exception("Check your input!")
         End Try
+    End Sub
+    Private Sub Cover_MoveTo()
+        If CoverList.Count > 2 Then
+            Dim ib As New InputDialog("Move from;to , separate using "";""")
+            If ib.ShowDialog Then
+                Dim ibsplit = ib.Input.Split(";")
+                If ibsplit(0) < CoverList.Count AndAlso ibsplit(0) >= 0 Then
+                    If ibsplit(1) < CoverList.Count AndAlso ibsplit(1) >= 0 Then
+                        Dim item = CoverList.Item(ibsplit(0))
+                        CoverList.RemoveAt(ibsplit(0))
+                        CoverList.Insert(ibsplit(1), item)
+                    End If
+                End If
+            End If
+        End If
     End Sub
     Private Sub Cover_Paste()
         If System.Windows.Forms.Clipboard.ContainsImage Then
@@ -228,7 +245,8 @@ Public Class Tags
                 Exit Sub
             End If
         End If
-        Await Player.FadeVol(False, True, 0)
+        Dim oldvol = Player.Volume
+        Await Player.FadeVol(0)
         Dim Pos = Player.GetPosition
         Player.StreamStop()
         Player.Dispose()
@@ -237,8 +255,7 @@ Public Class Tags
         Player.LoadSong(Path, Nothing, False, False)
         Player.SetPosition(Pos)
         Player.StreamPlay()
-        Player.SetVolume(0, False)
-        Await Player.FadeVol(True, False, Single.NaN)
+        Await Player.FadeVol(oldvol)
         If WasItReadOnly = True Then
             Fi.IsReadOnly = True
         End If

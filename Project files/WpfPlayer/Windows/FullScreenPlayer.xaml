@@ -6,7 +6,7 @@
         xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="MuPlay" WindowStartupLocation="CenterScreen" WindowState="Maximized" Topmost="False" Icon="/WpfPlayer;component/Res/icon.ico" AllowsTransparency="True" WindowStyle="None" Width="1280" Height="720" Background="{Binding NonClientAreaBackground, ElementName=Window}">
+        Title="MuPlay" WindowStartupLocation="CenterScreen" WindowState="Maximized" Topmost="False" Icon="/WpfPlayer;component/Res/icon.ico" AllowsTransparency="False" Width="1280" Height="720" Background="{Binding NonClientAreaBackground, ElementName=Window}" WindowStyle="None">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="b2vc"></BooleanToVisibilityConverter>
     </Window.Resources>

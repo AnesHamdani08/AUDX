@@ -58,10 +58,6 @@ Public Class Equalizer
         Eq9.Value = Band8Gain
         Eq10.Value = Band9Gain
     End Sub
-
-    Private Sub fx_state_Checked(sender As Object, e As RoutedEventArgs) Handles fx_state.Checked
-    End Sub
-
     Private Sub fx_state_Unchecked(sender As Object, e As RoutedEventArgs) Handles fx_state.Unchecked
         Eq1.Value = 0
         Eq2.Value = 0
