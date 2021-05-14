@@ -12,7 +12,7 @@
 -Folder browsing mode can now be changed<br>
 -Autoplaying can now be turned off<br>
 -DragDrop with changeable actions<br>
--Added a dedicated console window with command injecting
+-Added a dedicated console window with command injecting<br>
 //------------------------------------------------------<br>
 //Future<br>
 -Documentation<br>
