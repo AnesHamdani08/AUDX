@@ -16,5 +16,6 @@
 //------------------------------------------------------<br>
 //Future<br>
 -Documentation<br>
+-Custom taskbar thumbnail<br>
 //Suggest features in github.<br>
 
