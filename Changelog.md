@@ -1,3 +1,10 @@
+// Upcoming V 0.1.0.1<br>
+// New Logo<br>
+// Bug fixes<br>
+// Windows explorer Open With is now functional<br>
+// Sleep timer is now available<br>
+// New changelog popup will appear after updating<br>
+// Launch of MuPlayAPI which will let developers integrate their apps with MuPlay<br>
 // V 0.1.0.0<br>
 // Major : 0<br>
 // Minor : 1<br>
