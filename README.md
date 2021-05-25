@@ -34,6 +34,28 @@ Thank you for stepping by.
 -Custom theme support<br>
 -Custom Taskbar thubnails<br>
 -Single instance application : files will be loaded to the main instance and start a new instance if no files are found<br>
+-Sleep timer
+-API
 # Screenshots
 ![image](https://user-images.githubusercontent.com/38377619/114264431-3b870200-99eb-11eb-9fe3-849c481422e2.png)
 -More screenshots will be added.
+# Resources
+-All icons used in MuPlay are from [Icons8](https://icons8.com) Style:Windows 10<br>
+# Used libraries
+Made possible by:<br>
+-[AngleSharp](https://github.com/AngleSharp/AngleSharp)<br>
+-[Bass.Net](http://bass.radio42.com/)<br>
+-[Bass](https://www.un4seen.com/)<br>
+-[DiscordRPC](https://github.com/Lachee/discord-rpc-csharp)<br>
+-[HandyControl](https://github.com/HandyOrg/HandyControl)<br>
+-[Zastai MetaBrainz](https://github.com/Zastai/MetaBrainz.MusicBrainz)<br>
+-[BigGranu MusicBrainz](https://github.com/BigGranu/MusicBrainz)<br>
+-[Newtonsoft Json](https://github.com/JamesNK/Newtonsoft.Json)<br>
+-[Ookii Dialogs](https://github.com/ookii-dialogs/ookii-dialogs-wpf)<br>
+-[SciChart Transitionz](https://github.com/ABTSoftware/SciChart.Wpf.UI/wiki/Transitionz-Library)<br>
+-[Taglib-Sharp](https://github.com/mono/taglib-sharp)<br>
+-[YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode)<br>
+# Disclaimer
+If you find any copyright infringement  in MuPlay feel free to leave a post in "Issues" , or contact me via email: aneshamdani9@gmail.com<br>
+# Thank you
+Thanks for checking MuPlay feel free to express your feedback in "Issues" , all your thoughts are welcome.
