@@ -12,7 +12,7 @@
                 <BlurEffect Radius="20"/>
             </Image.Effect>
         </Image>
-        <Image x:Name="Main_Cover" HorizontalAlignment="Center" Height="200" Margin="0" VerticalAlignment="Top" Width="200" Source="MyTile-mytile.png" Stretch="Fill"/>
+        <Image x:Name="Main_Cover" HorizontalAlignment="Center" Height="200" Margin="0" VerticalAlignment="Top" Width="200" Stretch="Fill"/>
         <Slider x:Name="Main_Track" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="300" LargeChange="0" IsMoveToPointEnabled="True"/>
         <Button x:Name="Main_PlayPause" Content="Play" HorizontalAlignment="Center" Margin="0,0,0,28" VerticalAlignment="Bottom" Width="50"/>
         <Button x:Name="Main_Next" Content="Next" HorizontalAlignment="Center" Margin="120,0,0,28" VerticalAlignment="Bottom" Width="50"/>
