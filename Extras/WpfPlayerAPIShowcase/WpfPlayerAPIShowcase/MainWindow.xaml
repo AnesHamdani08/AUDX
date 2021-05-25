@@ -1,0 +1,29 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfPlayerAPIShowcase"
+        mc:Ignorable="d"
+        Title="MuPlay API Test" Height="350" Width="525" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Image x:Name="Main_Background" Stretch="UniformToFill">
+            <Image.Effect>
+                <BlurEffect Radius="20"/>
+            </Image.Effect>
+        </Image>
+        <Image x:Name="Main_Cover" HorizontalAlignment="Center" Height="200" Margin="0" VerticalAlignment="Top" Width="200" Source="MyTile-mytile.png" Stretch="Fill"/>
+        <Slider x:Name="Main_Track" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="300" LargeChange="0" IsMoveToPointEnabled="True"/>
+        <Button x:Name="Main_PlayPause" Content="Play" HorizontalAlignment="Center" Margin="0,0,0,28" VerticalAlignment="Bottom" Width="50"/>
+        <Button x:Name="Main_Next" Content="Next" HorizontalAlignment="Center" Margin="120,0,0,28" VerticalAlignment="Bottom" Width="50"/>
+        <Button x:Name="Main_Previous" Content="Previous" HorizontalAlignment="Center" Margin="-120,0,0,28" VerticalAlignment="Bottom" Width="50"/>
+        <Slider x:Name="Main_Volume" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Vertical" Height="100" TickPlacement="TopLeft" Margin="0,0,0,10" Maximum="100" TickFrequency="10" SmallChange="1" LargeChange="10"/>
+        <TextBlock x:Name="Main_Len" HorizontalAlignment="Left" Margin="420,138,0,10" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Bottom" FontSize="16"/>
+        <TextBlock x:Name="Main_Pos" HorizontalAlignment="Left" Margin="60,138,0,10" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Bottom" FontSize="16"/>
+        <ProgressBar x:Name="Main_Peak_L" Maximum="32" HorizontalAlignment="Center" Height="200" Margin="-210,0,0,0" VerticalAlignment="Top" Width="10" Orientation="Vertical"/>
+        <ProgressBar x:Name="Main_Peak_R" Maximum="32" HorizontalAlignment="Center" Height="200" Margin="210,0,0,0" VerticalAlignment="Top" Width="10" Orientation="Vertical"/>
+        <TextBlock x:Name="Main_Title" HorizontalAlignment="Center" Margin="0,200,0,0" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
+        <TextBlock x:Name="Main_Artist" HorizontalAlignment="Center" Margin="0,225,0,0" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Top" FontSize="16"/>
+
+    </Grid>
+</Window>
