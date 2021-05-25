@@ -9,7 +9,9 @@
 -Sleep timer is now available<br>
 -New changelog popup will appear after updating<br>
 -Launch of MuPlayAPI which will let developers integrate their apps with MuPlay<br>
--More EQ presets
+-More EQ presets<br>
+-File > Synced > Scan is now working<br>
+-Settings > Scan is now removing song that are no longer exists<br>
 # V 0.1.0.0<br>
 -Major : 0
 -Minor : 1
