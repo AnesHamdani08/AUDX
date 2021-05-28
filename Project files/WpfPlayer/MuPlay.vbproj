@@ -65,7 +65,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Res\icon.ico</ApplicationIcon>
+    <ApplicationIcon>Res\icon_n.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -88,13 +88,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Temp\FTP Upload\Bass.Net.dll</HintPath>
     </Reference>
-    <Reference Include="DiscordRPC, Version=1.0.166.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DiscordRichPresence.1.0.166\lib\net35\DiscordRPC.dll</HintPath>
+    <Reference Include="DiscordRPC, Version=1.0.175.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscordRichPresence.1.0.175\lib\net35\DiscordRPC.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="HandyControl, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HandyControl.3.0.0\lib\net45\HandyControl.dll</HintPath>
+    <Reference Include="HandyControl, Version=3.2.0.0, Culture=neutral, PublicKeyToken=45be8712787a1e5b, processorArchitecture=MSIL">
+      <HintPath>..\packages\HandyControls.3.3.5\lib\net461\HandyControl.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="MetaBrainz.MusicBrainz.CoverArt">
       <HintPath>..\..\..\Devlopper Stuff\Libraries &amp; Packages\MetaBrainz.MusicBrainz.CoverArt.dll</HintPath>
@@ -190,8 +191,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="YoutubeExplode, Version=5.1.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YoutubeExplode.5.1.9\lib\net461\YoutubeExplode.dll</HintPath>
+    <Reference Include="YoutubeExplode, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YoutubeExplode.6.0.0\lib\net461\YoutubeExplode.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -201,6 +202,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Base Functions\Analyzer.vb" />
+    <Compile Include="Base Functions\API.vb" />
     <Compile Include="Base Functions\AsyncWebBrowser.vb" />
     <Compile Include="Base Functions\BackgroundWorkerWithTag.vb">
       <SubType>Component</SubType>
@@ -209,18 +211,21 @@
     <Compile Include="Base Functions\ClickImage.vb" />
     <Compile Include="Base Functions\Command.vb" />
     <Compile Include="Base Functions\Constants.vb" />
+    <Compile Include="Base Functions\CustomTaskBarThumb.vb" />
     <Compile Include="Base Functions\DoubleToInteger.vb" />
     <Compile Include="Base Functions\GlobalHotkey.vb" />
     <Compile Include="Base Functions\ArtistItem.vb" />
     <Compile Include="Base Functions\Library.vb" />
     <Compile Include="Base Functions\Lyrics.vb" />
     <Compile Include="Base Functions\MusicBrainz.vb" />
+    <Compile Include="Base Functions\NamedPipeManager.vb" />
     <Compile Include="Base Functions\ParticleManager.vb" />
     <Compile Include="Base Functions\Player.vb" />
     <Compile Include="Base Functions\Playlist.vb" />
     <Compile Include="Base Functions\PlaylistItem.vb" />
     <Compile Include="Base Functions\PluginItem.vb" />
     <Compile Include="Base Functions\ReflectionExample.vb" />
+    <Compile Include="Base Functions\SleepTimer.vb" />
     <Compile Include="Base Functions\SmoothProgressBar.vb" />
     <Compile Include="Base Functions\SoundCloud.vb" />
     <Compile Include="Base Functions\StreamDownloader.vb" />
@@ -230,6 +235,9 @@
     <Compile Include="Base Functions\Utils.vb" />
     <Compile Include="Windows\About.xaml.vb">
       <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Changelog.xaml.vb">
+      <DependentUpon>Changelog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ChannelInfo.xaml.vb">
       <DependentUpon>ChannelInfo.xaml</DependentUpon>
@@ -313,6 +321,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Changelog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -578,9 +590,6 @@
     <Resource Include="Res\bass.png" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Res\next.ico" />
     <Resource Include="Res\previous.ico" />
     <Resource Include="Res\play.ico" />
@@ -619,6 +628,10 @@
     <Resource Include="Res\cross.png" />
     <Content Include="Res\left.wav" />
     <Resource Include="Res\plus.png" />
+    <Resource Include="Res\icon_n.ico" />
+    <Resource Include="Res\MuPlayLogo.png" />
+    <Resource Include="Res\MuPlayLogoF.png" />
+    <Resource Include="Res\milk-and-mocha-cute.gif" />
     <Content Include="Res\right.wav" />
     <Resource Include="Res\rotate.png" />
     <Resource Include="Res\swap.png" />

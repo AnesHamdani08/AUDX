@@ -8,11 +8,13 @@ Imports WpfPlayer
 Imports System.Windows.Interop
 Imports Microsoft.WindowsAPICodePack.Shell
 Imports Windows.Media.Playback
+Imports HandyControl.Themes
 Imports Windows.Media
+Imports HandyControl.Data
 
 Class MainWindow
     Private WithEvents MainUIManager As New System.Windows.Threading.DispatcherTimer With {.IsEnabled = False, .Interval = New TimeSpan(0, 0, 0, 0, 100)}
-    '    Public WithEvents MainUIVisualizerUpdator As New System.Windows.Threading.DispatcherTimer With {.IsEnabled = False, .Interval = New TimeSpan(0, 0, 0, 0, 33)}
+    'Public WithEvents MainUIVisualizerUpdator As New System.Windows.Threading.DispatcherTimer With {.IsEnabled = False, .Interval = New TimeSpan(0, 0, 0, 0, 33)}
     Public WithEvents MainUIVisualizerUpdator As New Forms.Timer With {.Enabled = False, .Interval = 33}
     Public WithEvents MainPlayer As New Player(Me, AddressOf MainPlayer_MediaEnded) With {.SkipSilences = My.Settings.SkipSilences, .FadeAudio = My.Settings.OnMediaChange_FadeAudio, .AutoPlay = My.Settings.Player_AutoPlay}
     Private PreviewPlayer As New Player(Me, Nothing) With {.FadeAudio = False, .AutoPlay = True}
@@ -40,10 +42,10 @@ Class MainWindow
     Public Playicon As System.Drawing.Icon
     Public Pauseicon As System.Drawing.Icon
     Public Loadingicon As System.Drawing.Icon
-    Public MediaBar As New Mediabar(MainPlayer)
+    Public MediaBar As New mediabar(MainPlayer)
     Private _source As HwndSource
     Dim Hotkey As GlobalHotkey
-    Public HotkeyState As Boolean() = {False, False, False, False, False, False, False, False}
+    Public HotkeyState As Boolean() = {False, False, False, False, False, False, False, False, False}
     Public Gtracks As List(Of String)
     Public GArtists As List(Of Library.ArtistElement)
     Public GYears As List(Of Library.ArtistElement)
@@ -71,7 +73,10 @@ Class MainWindow
     Dim isSFXLoaded As Boolean = False
     Dim Visualiser_Target As New Forms.PictureBox With {.Dock = Forms.DockStyle.Fill, .SizeMode = Forms.PictureBoxSizeMode.StretchImage}
     Dim PosDurSwitch As Boolean = False
-    Dim WithEvents BS As New BuildString
+    'Dim WithEvents BS As New BuildString
+    Public TaskbarThumbnailManager As CustomTaskBarThumb
+    Dim PipeManager As NamedPipeManager = New NamedPipeManager("MuPlayPipe")
+    Public PIPO As API 'Yep PIPO seems a good name
 #Region "Utils"
     Public Sub Overlay(IsVisible As Boolean, isLoading As Boolean)
         If IsVisible = True Then
@@ -104,46 +109,27 @@ Class MainWindow
             overlay_loadingline.Visibility = Visibility.Hidden
         End If
     End Sub
-    Public Sub UpdateSkin(ByVal skin As HandyControl.Data.SkinType)
-        HandyControl.Themes.SharedResourceDictionary.SharedDictionaries.Clear()
-        Resources.MergedDictionaries.Add(HandyControl.Tools.ResourceHelper.GetSkin(skin))
-        Resources.MergedDictionaries.Add(New ResourceDictionary With {.Source = New Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")})
-        OnApplyTemplate()
-        Utils.UpdateSkin(skin, My.Windows.ChannelInfo)
-        Utils.UpdateSkin(skin, My.Windows.CoverViewer)
-        Utils.UpdateSkin(skin, My.Windows.DSPPlugins)
-        'Utils.UpdateSkin(skin, CType(My.Windows.Equalizer, Window))
-        'Utils.UpdateSkin(skin, CType(My.Windows.FullScreenPlayer, Window))
-        Utils.UpdateSkin(skin, My.Windows.GlobalHotkeysManager)
-        Utils.UpdateSkin(skin, My.Windows.LanBrowser)
-        Utils.UpdateSkin(skin, My.Windows.MiniPlayer)
-        Utils.UpdateSkin(skin, My.Windows.PlaylistBuilder)
-        Utils.UpdateSkin(skin, My.Windows.PlaylistManager)
-        Utils.UpdateSkin(skin, My.Windows.Plugins)
-        'Utils.UpdateSkin(skin, CType(My.Windows.Reverb, Window))
-        Utils.UpdateSkin(skin, My.Windows.Search)
-        Utils.UpdateSkin(skin, My.Windows.Settings)
-        Utils.UpdateSkin(skin, My.Windows.WUpdator)
+    Public Sub UpdateSkin(ByVal skin As HandyControl.Themes.ApplicationTheme)
+        ThemeManager.Current.ApplicationTheme = skin
         Try
             Select Case skin
-                Case HandyControl.Data.SkinType.Dark
-                    TitleBar_Clock.Foreground = Brushes.White
-                    Visualiser_Host.Background = Brushes.Black
-                    Favourites_Grid.Background = Brushes.Black
-                    Home_FancyBackground.Background = Brushes.Black
-                Case HandyControl.Data.SkinType.Default
-                    TitleBar_Clock.Foreground = Brushes.Black
-                    Visualiser_Host.Background = Nothing
-                    Favourites_Grid.Background = Nothing
-                    Home_FancyBackground.Background = Nothing
-                Case HandyControl.Data.SkinType.Violet
-                    TitleBar_Clock.Foreground = Brushes.Black
-                    Visualiser_Host.Background = Nothing
-                    Favourites_Grid.Background = Nothing
-                    Home_FancyBackground.Background = Nothing
+                Case HandyControl.Themes.ApplicationTheme.Dark
+                    'TitleBar_Clock.Foreground = Brushes.White
+                    'Visualiser_Host.Background = Brushes.Black                    
+                Case HandyControl.Themes.ApplicationTheme.Light
+                    'TitleBar_Clock.Foreground = Brushes.Black
+                    'Visualiser_Host.Background = Nothing                    
             End Select
         Catch ex As Exception
         End Try
+    End Sub
+    Private Sub SystemThemeChanged(sender As Object, e As FunctionEventArgs(Of ThemeManager.SystemTheme))
+        Select Case e.Info.CurrentTheme
+            Case ApplicationTheme.Dark
+                Home_FancyBackground.Background = Brushes.Black
+            Case ApplicationTheme.Light
+                Home_FancyBackground.Background = Nothing
+        End Select
     End Sub
     Public Async Sub ShowNotification(Title As String, Message As String, Icon As HandyControl.Data.NotifyIconInfoType)
         MEDIA_TITLE.Visibility = Visibility.Collapsed
@@ -294,31 +280,39 @@ Class MainWindow
         Select Case msg
             Case Constants.WM_HOTKEY_MSG_ID
                 HandleHotkey(wParam.ToString)
-            Case &H400
-                BS.BuildString(lParam)
-            Case &H500
-                BS.BuildString(lParam)
+                My.Windows.Console.Log(wParam.ToString & "-" & lParam.ToString)
+                'Case &H400 '                
+                '    BS.BuildString(lParam)
+                '    My.Windows.Console.Log(wParam.ToString & "-" & lParam.ToString)
+                'Case &H500 'api                
+                '    BS.BuildString(lParam)
+                '    My.Windows.Console.Log(wParam.ToString & "-" & lParam.ToString)
         End Select
-        Return IntPtr.Zero
     End Function
-    Private Sub BS_StringOK(Result As String) Handles BS.StringOK
-        'add lyrics section in tags menu , copy lyrics to file from lyrics search , fix single instance
-        If Result.Split(">>")(0) = "-api" Then
-            Dim ToHwnd = New IntPtr(CInt(Result.Split(">>")(3).Replace("-", "")))
-            Select Case Result.Split(">>")(2)
-                Case "-NOTIF_SHOW"
-                    ShowNotification("API", Process.GetProcessById(Result.Split(">>")(4).Replace("-", "")).ProcessName & "has now access to MuPlay.", HandyControl.Data.NotifyIconInfoType.Warning)
-                Case "-GET_URL"
-                    BS.PostString(ToHwnd, &H400, 0, MainPlayer.SourceURL)
-            End Select
-        Else
-            Dim Args = Result.Split(">>")
-            For Each song In Args
-                MainPlayer.LoadSong(song, MainPlaylist)
-            Next
-            MainPlayer.StreamPlay()
-        End If
-    End Sub
+    'Private Sub BS_StringOK(Result As String) Handles BS.StringOK
+    '    My.Windows.Console.Log("Received APPMSG : " & Result)
+    '    If Result.Split(">>")(0) = "-api" Then
+    '        Dim ToHwnd = New IntPtr(CInt(Result.Split(">>")(3).Replace("-", "")))
+    '        Select Case Result.Split(">>")(2)
+    '            Case "-NOTIF_SHOW"
+    '                ShowNotification("API", Process.GetProcessById(Result.Split(">>")(4).Replace("-", "")).ProcessName & "has now access to MuPlay.", HandyControl.Data.NotifyIconInfoType.Warning)
+    '            Case "-GET_URL"
+    '                BS.PostString(ToHwnd, &H400, 0, MainPlayer.SourceURL)
+    '        End Select
+    '    Else
+    '        Dim Rargs As New List(Of String)
+    '        Dim Args = Result.Split(">>")
+    '        For Each arg In Args
+    '            If Not String.IsNullOrEmpty(arg) AndAlso Not String.IsNullOrWhiteSpace(arg) Then
+    '                Rargs.Add(arg)
+    '            End If
+    '        Next
+    '        For Each song In Rargs
+    '            MainPlayer.LoadSong(song, MainPlaylist)
+    '        Next
+    '        MainPlayer.StreamPlay()
+    '    End If
+    'End Sub
 #End Region
     Private Sub RPCClient_OnConnectionFailed() Handles RPCClient.OnConnectionFailed
         'Me.Dispatcher.BeginInvoke(New System.Threading.ThreadStart(Sub()
@@ -370,8 +364,28 @@ Class MainWindow
     Private Sub drawerclosebtn_Click(sender As Object, e As RoutedEventArgs) Handles drawerclosebtn.Click
         DrawerLeft.IsOpen = False
     End Sub
-
+    Private Async Sub HandleNamedPipe_OpenRequest(filesToOpen As String)
+        'Dim Rargs As New List(Of String)
+        Dim Args = filesToOpen.Split(">")
+        'For Each arg In Args
+        '    If Not String.IsNullOrEmpty(arg) AndAlso Not String.IsNullOrWhiteSpace(arg) Then
+        '        Rargs.Add(arg)
+        '    End If
+        'Next
+        Await Dispatcher.BeginInvoke(Sub()
+                                         For Each song In Args
+                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
+                                         Next
+                                         MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.Count - 1), MainPlaylist, False)
+                                         MainPlayer.StreamPlay()
+                                     End Sub)
+    End Sub
     Private Sub Window_Initialized(sender As Object, e As EventArgs)
+        If My.Settings.API Then
+            PIPO = New API
+        End If
+        PipeManager.StartServer()
+        AddHandler PipeManager.ReceiveString, AddressOf HandleNamedPipe_OpenRequest
         If MainPlayer.IsInitialized = True Then
             MainUIManager.Start()
         Else
@@ -421,6 +435,7 @@ Class MainWindow
         ''Done Jlist
     End Sub
     Private Sub PrimWindow_Closed(sender As Object, e As EventArgs) Handles PrimWindow.Closed
+        PipeManager.StopServer()
         _source.RemoveHook(AddressOf WndProc)
         _source = Nothing
     End Sub
@@ -429,6 +444,7 @@ Class MainWindow
     End Sub
     Public FancyBackgroundManager As ParticleManager
     Private Async Function Load() As Task
+        Dim wasitfirststart As Boolean = My.Settings.IsFirstStart
         Await Dispatcher.BeginInvoke(Async Function()
                                          If My.Settings.IsFirstStart Then
                                              My.Windows.InitSetup.Owner = Me
@@ -436,6 +452,9 @@ Class MainWindow
                                              My.Settings.IsFirstStart = False
                                              My.Settings.Save()
                                          End If
+                                         Dim ghostwindow As New Window With {.WindowState = WindowState.Minimized}
+                                         ghostwindow.Show()
+                                         TaskbarThumbnailManager = New CustomTaskBarThumb(ghostwindow)
                                          If Not String.IsNullOrEmpty(My.Settings.Library_Path) Then
                                              MainLibrary = New Library(My.Settings.Library_Path)
                                              If MainLibrary.IsLoaded = False Then
@@ -582,10 +601,17 @@ Class MainWindow
                                          If My.Settings.UseDiscordRPC Then
                                              RPCClient.Initialize()
                                          End If
-                                         Try
-                                             UpdateSkin(My.Settings.DefaultTheme)
-                                         Catch ex As Exception
-                                         End Try
+                                         If My.Settings.DefaultTheme <> 2 Then
+                                             Try
+                                                 UpdateSkin(My.Settings.DefaultTheme)
+                                             Catch ex As Exception
+                                             End Try
+                                         Else
+                                             ThemeManager.Current.UsingSystemTheme = True
+                                             ThemeManager.Current.ApplicationTheme = ThemeManager.GetSystemTheme
+                                             ThemeManager.Current.AccentColor = ThemeManager.Current.GetAccentColorFromSystem
+                                             AddHandler ThemeManager.Current.SystemThemeChanged, AddressOf SystemThemeChanged
+                                         End If
                                          Visualiser_Host.Child = Visualiser_Target
                                          If My.Settings.BackgroundType = 1 Then
                                              Home_Background.Visibility = Visibility.Hidden
@@ -633,6 +659,8 @@ Class MainWindow
                                          HotkeyState(6) = Hotkey.Register()
                                          Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_VolumeMute_MOD), My.Settings.GlobalHotkey_VolumeMute, helper.Handle, 7)
                                          HotkeyState(7) = Hotkey.Register()
+                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_NowPlaying_MOD), My.Settings.GlobalHotkey_NowPlaying, helper.Handle, 8)
+                                         HotkeyState(8) = Hotkey.Register()
                                          If MainLibrary IsNot Nothing Then
                                              Gtracks = Await MainLibrary.GroupTracksAsync
                                              For i As Integer = 0 To Gtracks.Count - 1
@@ -687,8 +715,14 @@ Class MainWindow
         If My.Settings.UseAnimations Then
             Switches_RecChanger.IsChecked = True
         End If
+        If wasitfirststart Then
+            Overlay(True, False)
+            My.Windows.Changelog.Owner = Me
+            My.Windows.Changelog.ShowDialog()
+            Overlay(False, False)
+        End If
     End Function
-    Private Sub HandleHotkey(id As IntPtr)
+    Private Async Sub HandleHotkey(id As IntPtr)
         Select Case id
             Case 0 'PlayPause
                 media_play_btn_Click(Nothing, New RoutedEventArgs)
@@ -706,10 +740,22 @@ Class MainWindow
                 MainPlayer.SetVolume(MainPlayer.Volume - 0.02)
             Case 7 'V *
                 MainPlayer.Mute = Not MainPlayer.Mute
+            Case 8 'Now Playing
+                If Not String.IsNullOrEmpty(MainPlayer.CurrentMediaTitle) Then
+                    Dim oldvol = MainPlayer.Volume
+                    Await MainPlayer.FadeVol(0.1)
+                    Await Task.Run(Sub()
+                                       Synth.Speak("Now playing. " & MainPlayer.CurrentMediaTitle & ",By " & MainPlayer.CurrentMediaArtist)
+                                   End Sub)
+                    Await MainPlayer.FadeVol(oldvol)
+                End If
         End Select
     End Sub
     Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         Try
+            If PIPO IsNot Nothing Then
+                PIPO.Dispose()
+            End If
             If MainPlayer.SourceURL IsNot Nothing Then
                 My.Settings.LastMediaType = MainPlayer.CurrentMediaType
                 My.Settings.LastMediaTitle = MainPlayer.CurrentMediaTitle
@@ -722,9 +768,6 @@ Class MainWindow
                 For Each song In MainPlaylist.Playlist
                     My.Settings.LastPlaylist.Add(song)
                 Next
-                'For i As Integer = 0 To MainPlaylist.Count - 1
-                'My.Settings.LastPlaylist.Add(MainPlaylist.GetItem(i) & playlistItems(i).Type)
-                'Next
                 My.Settings.Save()
                 MainPlayer.Dispose()
                 visualiser_off_Click(Nothing, New RoutedEventArgs)
@@ -746,17 +789,12 @@ Class MainWindow
         DrawerLeft.IsOpen = False
     End Sub
 
-    Private Sub btn_favourites_Click(sender As Object, e As RoutedEventArgs) Handles btn_favourites.Click
+    Private Sub btn_visualiser_Click(sender As Object, e As RoutedEventArgs) Handles btn_visualiser.Click
         MainTabCtrl.SelectedIndex = 2
         DrawerLeft.IsOpen = False
     End Sub
-
-    Private Sub btn_visualiser_Click(sender As Object, e As RoutedEventArgs) Handles btn_visualiser.Click
-        MainTabCtrl.SelectedIndex = 3
-        DrawerLeft.IsOpen = False
-    End Sub
     Private Sub btn_library_Click(sender As Object, e As RoutedEventArgs) Handles btn_library.Click
-        MainTabCtrl.SelectedIndex = 4
+        MainTabCtrl.SelectedIndex = 3
         DrawerLeft.IsOpen = False
     End Sub
     Private Sub MainTabCtrl_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles MainTabCtrl.SelectionChanged
@@ -814,8 +852,11 @@ Class MainWindow
         End If
     End Sub
     Public Async Sub media_next_btn_Click(sender As Object, e As RoutedEventArgs) Handles media_next_btn.Click
-        media_prev_btn.IsEnabled = False
-        media_next_btn.IsEnabled = False
+        Select Case MainPlayer.RepeateType
+            Case Player.RepeateBehaviour.RepeatAll
+                media_prev_btn.IsEnabled = False
+                media_next_btn.IsEnabled = False
+        End Select
         MainPlayer_MediaEnded()
         Exit Sub
         Try
@@ -869,8 +910,11 @@ Class MainWindow
             MainPlayer.SetPosition(0)
             Exit Sub
         End If
-        media_prev_btn.IsEnabled = False
-        media_next_btn.IsEnabled = False
+        Select Case MainPlayer.RepeateType
+            Case Player.RepeateBehaviour.RepeatAll
+                media_prev_btn.IsEnabled = False
+                media_next_btn.IsEnabled = False
+        End Select
         Try
             Dim Pitem = MainPlaylist.Playlist.Item(MainPlaylist.GetPreviousSongIndex)
             Select Case Pitem.Substring(Pitem.IndexOf(">>") + 2, 1) 'Pitem.Substring(Pitem.Length - 1)
@@ -1247,8 +1291,12 @@ Class MainWindow
         SMTCPlayer.PlaybackRate = 1
         SMTCPlayer.ShuffleEnabled = True
         SMTCPlayer.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music
-        SMTCPlayer.DisplayUpdater.MusicProperties.Title = Title
-        SMTCPlayer.DisplayUpdater.MusicProperties.Artist = Artist
+        If String.IsNullOrEmpty(Title) Then
+            SMTCPlayer.DisplayUpdater.MusicProperties.Title = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
+        Else
+            SMTCPlayer.DisplayUpdater.MusicProperties.Title = Title
+        End If        
+            SMTCPlayer.DisplayUpdater.MusicProperties.Artist = Artist
         SMTCPlayer.PlaybackStatus = MediaPlaybackStatus.Playing
         If Cover IsNot Nothing Then
             Dim Ccover = Utils.BitmapFromImageSource(Cover)
@@ -2027,7 +2075,7 @@ Class MainWindow
                 Overlay(False, False)
             End If
         End If
-            Fbd = Nothing
+        Fbd = Nothing
     End Sub
 
     Private Sub TitleBar_Menu_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Menu.Click
@@ -2046,11 +2094,27 @@ Class MainWindow
             My.Settings.DefaultTheme = 0
         End If
         My.Settings.Save()
-        UpdateSkin(My.Settings.DefaultTheme)
-        My.Windows.MiniPlayer.UpdateSkin(My.Settings.DefaultTheme)
-        Dim CurrentTheme = System.Enum.GetName(GetType(HandyControl.Data.SkinType), My.Settings.DefaultTheme)
-        ShowNotification("MuPlay", "Current theme: " & CurrentTheme, HandyControl.Data.NotifyIconInfoType.Info)
-        CurrentTheme = Nothing
+        If My.Settings.DefaultTheme <> 2 Then
+            ThemeManager.Current.UsingSystemTheme = False
+            UpdateSkin(My.Settings.DefaultTheme)
+            Dim CurrentTheme = System.Enum.GetName(GetType(HandyControl.Themes.ApplicationTheme), My.Settings.DefaultTheme)
+            ShowNotification("MuPlay", "Current theme: " & CurrentTheme, HandyControl.Data.NotifyIconInfoType.Info)
+            CurrentTheme = Nothing
+        Else
+            ThemeManager.Current.UsingSystemTheme = True
+            ShowNotification("MuPlay", "Now using system theme", HandyControl.Data.NotifyIconInfoType.Info)
+        End If
+    End Sub
+
+    Private Sub TitleBar_Theme_MouseRightButtonUp(sender As Object, e As MouseButtonEventArgs) Handles TitleBar_Theme.MouseRightButtonUp
+        Select Case My.Settings.DefaultTheme
+            Case 0 'Light
+                ShowNotification("MuPlay", "Using light theme", HandyControl.Data.NotifyIconInfoType.Info)
+            Case 1 'Dark
+                ShowNotification("MuPlay", "Using dark theme", HandyControl.Data.NotifyIconInfoType.Info)
+            Case 2 'System Theme
+                ShowNotification("MuPlay", "Using system theme", HandyControl.Data.NotifyIconInfoType.Info)
+        End Select
     End Sub
 
     Private Sub TitleBar_Settings_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Settings.Click
@@ -2083,8 +2147,6 @@ Class MainWindow
             MainTabCtrl.SelectedIndex = 2
         ElseIf e.Key = Key.D4 AndAlso My.Computer.Keyboard.CtrlKeyDown = True Then
             MainTabCtrl.SelectedIndex = 3
-        ElseIf e.Key = Key.D5 AndAlso My.Computer.Keyboard.CtrlKeyDown = True Then
-            MainTabCtrl.SelectedIndex = 4
         End If
     End Sub
 #Region "TitleBar Buttons"
@@ -2095,22 +2157,71 @@ Class MainWindow
         Overlay(False, False)
     End Sub
     Private Sub MainPlayer_OnEqChanged(EQgains As Integer()) Handles MainPlayer.OnEqChanged
-        My.Windows.Equalizer.Eq1.Value = EQgains(0)
-        My.Windows.Equalizer.Eq2.Value = EQgains(1)
-        My.Windows.Equalizer.Eq3.Value = EQgains(2)
-        My.Windows.Equalizer.Eq4.Value = EQgains(3)
-        My.Windows.Equalizer.Eq5.Value = EQgains(4)
-        My.Windows.Equalizer.Eq6.Value = EQgains(5)
-        My.Windows.Equalizer.Eq7.Value = EQgains(6)
-        My.Windows.Equalizer.Eq8.Value = EQgains(7)
-        My.Windows.Equalizer.Eq9.Value = EQgains(8)
-        My.Windows.Equalizer.Eq10.Value = EQgains(9)
+        'My.Windows.Equalizer.Eq1.Value = EQgains(0)
+        'My.Windows.Equalizer.Eq2.Value = EQgains(1)
+        'My.Windows.Equalizer.Eq3.Value = EQgains(2)
+        'My.Windows.Equalizer.Eq4.Value = EQgains(3)
+        'My.Windows.Equalizer.Eq5.Value = EQgains(4)
+        'My.Windows.Equalizer.Eq6.Value = EQgains(5)
+        'My.Windows.Equalizer.Eq7.Value = EQgains(6)
+        'My.Windows.Equalizer.Eq8.Value = EQgains(7)
+        'My.Windows.Equalizer.Eq9.Value = EQgains(8)
+        'My.Windows.Equalizer.Eq10.Value = EQgains(9)
+        My.Windows.Equalizer.SetPreset(EQgains(0), EQgains(1), EQgains(2), EQgains(3), EQgains(4), EQgains(5), EQgains(6), EQgains(7), EQgains(8), EQgains(9))
     End Sub
-
+    Private Sub TitleBar_Sleep_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Sleep.Click
+        Dim ST As New SleepTimer
+        Dim DLGIB As New InputDialog("Input the delay in seconds.")
+        If DLGIB.ShowDialog Then
+            Dim DLG As New Ookii.Dialogs.Wpf.TaskDialog With {.AllowDialogCancellation = True, .ButtonStyle = Ookii.Dialogs.Wpf.TaskDialogButtonStyle.CommandLinks, .MainIcon = Ookii.Dialogs.Wpf.TaskDialogIcon.Information, .MainInstruction = "Select what to do when the timer finishes.", .WindowTitle = "Sleep Timer", .WindowIcon = System.Drawing.SystemIcons.Question, .CenterParent = True}
+            Dim DLGBTTTS As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Use TTS", .CommandLinkNote = "When timer finishes MuPlay will notify you via text to speech."}
+            Dim DLGBTPS As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Pause song", .CommandLinkNote = "When timer finishes MuPlay will pause the current song."}
+            Dim DLGBTET As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Exit", .CommandLinkNote = "When timer finishes MuPlay will close itself."}
+            DLG.Buttons.Add(DLGBTTTS)
+            DLG.Buttons.Add(DLGBTPS)
+            DLG.Buttons.Add(DLGBTET)
+            Dim result = DLG.ShowDialog
+            If result Is DLGBTTTS Then
+                ST.Count(TimeSpan.FromSeconds(DLGIB.Input), Sub()
+                                                                Synth.SpeakAsync("Sleep timer finished.")
+                                                            End Sub)
+            ElseIf result Is DLGBTPS Then
+                ST.Count(TimeSpan.FromSeconds(DLGIB.Input), Sub()
+                                                                MainPlayer.StreamPause()
+                                                            End Sub)
+            ElseIf result Is DLGBTET Then
+                ST.Count(TimeSpan.FromSeconds(DLGIB.Input), Sub()
+                                                                Me.Close()
+                                                            End Sub)
+            End If
+        End If
+    End Sub
     Private Sub TitleBar_Exit_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Exit.Click
         Me.Close()
     End Sub
-
+    Private Async Sub TitleBar_SyncScan_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SyncScan.Click
+        Overlay(True, True)
+        Dim Gtracks = Await MainLibrary.GroupTracksAsync
+        Dim files As New List(Of String)
+        For Each path In My.Settings.LibrariesPath
+            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
+                files.Add(song)
+            Next
+        Next
+        Dim ExcList = files.Except(Gtracks).ToList
+        Dim ExcListR = Gtracks.Except(files).ToList
+        If ExcList.Count <> 0 Then
+            ShowNotification("Scanner", "Found " & ExcList.Count & " songs new,adding to library...", HandyControl.Data.NotifyIconInfoType.Info)
+            Await MainLibrary.AddTracksToLibraryAsync(ExcList)
+        End If
+        If ExcListR.Count <> 0 Then
+            ShowNotification("Scanner", "Found " & ExcListR.Count & " songs ,removing from library...", HandyControl.Data.NotifyIconInfoType.Info)
+            Await MainLibrary.RemoveTracksFromLibraryAsync(ExcListR)
+        End If
+        Await MainLibrary.CacheArtists(Utils.AppDataPath)
+        Await MainLibrary.CacheYears(Utils.AppDataPath)
+        Overlay(False, False)
+    End Sub
     Private Sub TitleBar_Tags_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Tags.Click
         Try
             Dim Tags As New Tags(MainPlayer.SourceURL, MainPlayer) With {.Owner = Me}
@@ -2331,38 +2442,45 @@ Class MainWindow
             End If
         Else
             home_lyrics_block.Text = Lrcs
-            If MessageBox.Show(Me, "Do you want to copy the found lyrics to the song ?" & vbCrLf & "Lyrics: " & vbCrLf & Lrcs.Substring(0, 200) & "...", "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
-                Try
-                    Dim Fi As New IO.FileInfo(MainPlayer.SourceURL)
-                    Dim WasItReadOnly As Boolean = Fi.IsReadOnly
-                    If Fi.IsReadOnly = True Then
-                        If MessageBox.Show(Me, "The file you're trying to write to is read-only." & vbCrLf & "Would you like to temporarily disable write-protection ?", "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
-                            Fi.IsReadOnly = False
-                        Else
-                            Exit Sub
+            Select Case MessageBox.Show(Me, "Do you want to copy the found lyrics to the song ?,use cancel to clear lyrics." & vbCrLf & "Lyrics: " & vbCrLf & Lrcs.Substring(0, 200) & "...", "MuPlay", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
+                Case MessageBoxResult.Yes
+                    Try
+                        Dim Fi As New IO.FileInfo(MainPlayer.SourceURL)
+                        Dim WasItReadOnly As Boolean = Fi.IsReadOnly
+                        If Fi.IsReadOnly = True Then
+                            If MessageBox.Show(Me, "The file you're trying to write to is read-only." & vbCrLf & "Would you like to temporarily disable write-protection ?", "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
+                                Fi.IsReadOnly = False
+                            Else
+                                Exit Sub
+                            End If
                         End If
-                    End If
-                    Dim oldvol = MainPlayer.Volume
-                    Await MainPlayer.FadeVol(0, 1)
-                    Dim Pos = MainPlayer.GetPosition
-                    MainPlayer.StreamStop()
-                    MainPlayer.Dispose()
-                    Dim tags = TagLib.File.Create(MainPlayer.SourceURL)
-                    tags.Tag.Lyrics = Lrcs
-                    tags.Save()
-                    MainPlayer.Init()
-                    MainPlayer.LoadSong(MainPlayer.SourceURL, Nothing, False, False)
-                    MainPlayer.SetPosition(Pos)
-                    MainPlayer.SetVolume(0, False)
-                    MainPlayer.StreamPlay()
-                    Await MainPlayer.FadeVol(oldvol, 1)
-                    If WasItReadOnly = True Then
-                        Fi.IsReadOnly = True
-                    End If
-                Catch ex As Exception
-                    MessageBox.Show(Me, "An error occured, try again later." & vbCrLf & ex.Message, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End If
+                        Dim oldvol = MainPlayer.Volume
+                        If MainPlayer.FadeAudio Then
+                            Await MainPlayer.FadeVol(0, 1)
+                        End If
+                        Dim Pos = MainPlayer.GetPosition
+                        MainPlayer.StreamStop()
+                        MainPlayer.Dispose()
+                        Dim tags = TagLib.File.Create(MainPlayer.SourceURL)
+                        tags.Tag.Lyrics = Lrcs
+                        tags.Save()
+                        MainPlayer.Init()
+                        MainPlayer.LoadSong(MainPlayer.SourceURL, Nothing, False, False)
+                        MainPlayer.SetPosition(Pos)
+                        MainPlayer.SetVolume(0, False)
+                        MainPlayer.StreamPlay()
+                        If MainPlayer.FadeAudio Then
+                            Await MainPlayer.FadeVol(oldvol, 1)
+                        End If
+                        If WasItReadOnly = True Then
+                            Fi.IsReadOnly = True
+                        End If
+                    Catch ex As Exception
+                        MessageBox.Show(Me, "An error occured, try again later." & vbCrLf & ex.Message, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End Try
+                Case MessageBoxResult.Cancel
+                    home_lyrics_block.Text = String.Empty
+            End Select
         End If
         Overlay(False, False)
         TitleBar_Lyrics.IsEnabled = True
@@ -2413,7 +2531,7 @@ Class MainWindow
     Dim WithEvents SFXFPSReseter As New Timers.Timer With {.Interval = 1000}
     Dim FPS As Integer
     Dim WithEvents fftanalyzer As Analyzer
-    Private Sub hh(Data As List(Of Byte)) Handles fftanalyzer.DataArrived
+    Private Sub fftanalyzer_DataArrived(Data As List(Of Byte)) Handles fftanalyzer.DataArrived
         Visualiser_Monstercat_p1.SetSmoothValue(Data(0))
         Visualiser_Monstercat_p2.SetSmoothValue(Data(1))
         Visualiser_Monstercat_p3.SetSmoothValue(Data(2))
@@ -2504,21 +2622,21 @@ Class MainWindow
                 fftanalyzer = Nothing
             End If
             Visualiser_Host.Visibility = Visibility.Visible
-                SFXCurrentVisualiserLoc = loc
-                If (Not UseDefault) Then
-                    hSFX3 = BassSfx.BASS_SFX_PluginCreate(loc, Visualiser_Target.Handle, Visualiser_Target.Width, Visualiser_Target.Height, BASSSFXFlag.BASS_SFX_DEFAULT)
-                Else
-                    hSFX3 = BassSfx.BASS_SFX_PluginCreate("0AA02E8D-F851-4CB0-9F64-BBA9BE7A983D", Visualiser_Target.Handle, Visualiser_Target.Width, Visualiser_Target.Height, BASSSFXFlag.BASS_SFX_DEFAULT)
-                End If
-                BassSfx.BASS_SFX_PluginSetStream(hSFX3, MainPlayer.Stream)
-                BassSfx.BASS_SFX_PluginStart(hSFX3)
-                Resources("Visualiser_Tip") = BassSfx.BASS_SFX_PluginGetName(hSFX3)
-                SFXVisualRenderer.Start()
-                SFXFPSReseter.Start()
-                visualiser_off.Visibility = Visibility.Visible
-                visualiser_resize.Visibility = Visibility.Visible
-                visualiser_fps.Visibility = Visibility.Visible
+            SFXCurrentVisualiserLoc = loc
+            If (Not UseDefault) Then
+                hSFX3 = BassSfx.BASS_SFX_PluginCreate(loc, Visualiser_Target.Handle, Visualiser_Target.Width, Visualiser_Target.Height, BASSSFXFlag.BASS_SFX_DEFAULT)
+            Else
+                hSFX3 = BassSfx.BASS_SFX_PluginCreate("0AA02E8D-F851-4CB0-9F64-BBA9BE7A983D", Visualiser_Target.Handle, Visualiser_Target.Width, Visualiser_Target.Height, BASSSFXFlag.BASS_SFX_DEFAULT)
             End If
+            BassSfx.BASS_SFX_PluginSetStream(hSFX3, MainPlayer.Stream)
+            BassSfx.BASS_SFX_PluginStart(hSFX3)
+            Resources("Visualiser_Tip") = BassSfx.BASS_SFX_PluginGetName(hSFX3)
+            SFXVisualRenderer.Start()
+            SFXFPSReseter.Start()
+            visualiser_off.Visibility = Visibility.Visible
+            visualiser_resize.Visibility = Visibility.Visible
+            visualiser_fps.Visibility = Visibility.Visible
+        End If
     End Sub
     Private Sub SFXVisualRenderer_Tick() Handles SFXVisualRenderer.Tick
         If (hSFX3 <> -1) Then
@@ -3237,4 +3355,14 @@ Class MainWindow
     Private Sub TitleBar_Playlist_CustomPlaylistManager_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_CustomPlaylistManager.Click
         My.Windows.PlaylistManager.Show()
     End Sub
+    Dim WithEvents thumb As TabbedThumbnail = Nothing
+    Public Sub SetThumb()
+        thumb = TaskbarThumbnailManager.AddThumbnail(True, media_cover.Source, System.Drawing.SystemIcons.Error, "Debug", "Debug Tip")
+        'TaskbarThumbnailManager.Bind(Home_NowPlaying, thumb)
+        TaskbarThumbnailManager.Bind(CustomTaskBarThumb.Binding.FromVisualiser(MainPlayer, thumb, Player.Visualizers.SpectrumPeak, Drawing.Color.Black, Drawing.Color.Red, Drawing.Color.Empty, Drawing.Color.Black, 2, 1, 250, 2))
+    End Sub
+    Public Sub RemThumb()
+        TaskbarThumbnailManager.RemoveThumbnail(0)
+    End Sub
+
 End Class

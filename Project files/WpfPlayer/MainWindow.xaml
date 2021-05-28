@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:hc="https://handyorg.github.io/handycontrol"        
         xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"       
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:system="clr-namespace:System;assembly=mscorlib"          
         x:Name="PrimWindow" x:Class="MainWindow"                
         mc:Ignorable="d"
-        Title="MuPlay" Height="650" Width="1200" Initialized="Window_Initialized" MinWidth="1020" WindowStartupLocation="CenterScreen" ActiveGlowColor="#FFC500FF" InactiveGlowColor="#FFFF00D1" Icon="Res/icon.ico" AllowDrop="True">
+        Title="MuPlay" Height="650" Width="1200" Initialized="Window_Initialized" MinWidth="1020" WindowStartupLocation="CenterScreen" ActiveGlowColor="#FFC500FF" InactiveGlowColor="#FFFF00D1" Icon="Res/icon_n.ico" AllowDrop="True">
     <hc:GlowWindow.Resources>
         <system:String x:Key="fav_Tip">I love it!</system:String>
         <system:String x:Key="Vol_Tip">100</system:String>
@@ -356,19 +356,19 @@
                     <ImageBrush ImageSource="Res/search.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <TextBlock HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Clock" Foreground="White" Margin="0,4,120,0" Text="00:00" FontSize="16"/>
+            <TextBlock HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Clock" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow}" Margin="0,4,120,0" Text="00:00" FontSize="16"/>
         </Grid>
     </hc:GlowWindow.NonClientAreaContent>
     <Grid RenderTransformOrigin="0.484,0.497" Margin="0,0,0,33">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <hc:NotifyIcon x:Name="NotifyIconMain" Text="MuPlay" IsBlink="False" Visibility="Visible" Icon="Res/icon.ico">
+        <hc:NotifyIcon x:Name="NotifyIconMain" Text="MuPlay" IsBlink="False" Visibility="Visible" Icon="Res/icon_n.ico">
             <hc:NotifyIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="MuPlay" x:Name="NotifyIcon_MuPlay">
                         <MenuItem.Icon>
-                            <Image Source="Res/icon.ico"/>
+                            <Image Source="Res/icon_n.ico"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
@@ -438,9 +438,8 @@
                     <Button x:Name="drawerclosebtn" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                     <Button x:Name="btn_home" Content="Home" Margin="0,0,0,-100" HorizontalAlignment="Center" Height="30" Width="200"/>
                     <Button x:Name="btn_playlist" Content="Playlist" Margin="0,0,0,-160" HorizontalAlignment="Center" Height="30" Width="200"/>
-                    <Button x:Name="btn_favourites" Content="Favourites" Margin="0,0,0,-220" HorizontalAlignment="Center" Height="30" Width="200"/>
-                    <Button x:Name="btn_visualiser" Content="Visualiser" Margin="0,0,0,-280" HorizontalAlignment="Center" Height="30" Width="200"/>
-                    <Button x:Name="btn_library" Content="Library" Margin="0,0,0,-340" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_visualiser" Content="Visualiser" Margin="0,0,0,-220" HorizontalAlignment="Center" Height="30" Width="200"/>
+                    <Button x:Name="btn_library" Content="Library" Margin="0,0,0,-280" HorizontalAlignment="Center" Height="30" Width="200"/>
                 </Grid>
             </Border>
         </hc:Drawer>
@@ -824,12 +823,9 @@
                     </Label>
                 </Grid>
             </TabItem>
-            <TabItem Header="Favourites">
-                <Grid x:Name="Favourites_Grid" Margin="0" Background="#FFE5E5E5"/>
-            </TabItem>
             <TabItem Header="Visualiser">
                 <Grid Background="#FFE5E5E5">
-                    <WindowsFormsHost x:Name="Visualiser_Host" Background="{x:Null}" d:IsHidden="True" Visibility="Hidden"/>
+                    <WindowsFormsHost x:Name="Visualiser_Host" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow}" d:IsHidden="True" Visibility="Hidden"/>
                     <Grid x:Name="Visualiser_Monstercat" Background="Black" Visibility="Hidden">
                         <WrapPanel VerticalAlignment="Center" Margin="150,-32,68,126" HorizontalAlignment="Left">
                             <local:SmoothProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Visualiser_Monstercat_p1" Height="220" Width="10" Orientation="Vertical" Value="50" Margin="5,0,0,0" Maximum="255" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFC500FF" BorderThickness="0"/>
@@ -1065,7 +1061,7 @@
                     </TabControl>
                 </Grid>
             </TabItem>
-            <TabItem Header="Switches" Height="30" VerticalAlignment="Bottom">
+            <TabItem Header="Switches">
                 <Grid>
                     <CheckBox x:Name="Switches_TopBarCanvasVisChanger" Content="TopBarVis" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,10,0,0"/>
                     <CheckBox x:Name="Switches_OverlayChanger" Content="Overlay" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,33,0,0"/>
@@ -1082,9 +1078,14 @@
                     <CheckBox x:Name="Switches_Library_Favourites_Mitem" Content="Library Favourites Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,286,0,0"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Changelog">
+                <Grid Background="#FFE5E5E5">
+                    
+                </Grid>
+            </TabItem>
         </TabControl>
         <Grid x:Name="Home_Loading" Background="White" Margin="0,0,0,-36" d:IsHidden="True">
-            <Image x:Name="Home_Loading_IMG" Source="Res/MuPlayerV2.png"/>
+            <Image x:Name="Home_Loading_IMG" Source="Res/MuPlayLogoF.png"/>
         </Grid>
     </Grid>
 </hc:GlowWindow>
