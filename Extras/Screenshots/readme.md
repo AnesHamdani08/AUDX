@@ -1,0 +1,1 @@
+# MuPlay screenshots.
