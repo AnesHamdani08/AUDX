@@ -204,6 +204,60 @@ Public Class Library
                            LibDocument.Save(LibraryPath)
                        End Sub)
     End Function
+    Public Async Function RemoveTracksFromLibraryAsync(files As String()) As Task
+        Await Task.Run(Sub()
+                           Dim LibDocument As New XmlDocument
+                           LibDocument.Load(LibraryPath)
+                           Dim Cnt = LibDocument.SelectSingleNode("/MuPlay/Library").Attributes(1).Value
+                           Dim iCnt As Integer
+                           If Integer.TryParse(Cnt, iCnt) Then
+                               Cnt = iCnt
+                           Else
+                               Cnt = 0
+                           End If
+                           Cnt += files.Count
+                           Dim TrackNode = LibDocument.SelectSingleNode("/MuPlay/Tracks")
+                           Dim TBRNodes As New List(Of XmlNode)
+                           For Each songn As XmlNode In LibDocument.SelectNodes("/MuPlay/Tracks/Track")
+                               If files.Contains(songn.Attributes.Item(3).Value) Then
+                                   TBRNodes.Add(songn)
+                               End If
+                           Next
+                           For Each node In TBRNodes
+                               TrackNode.RemoveChild(node)
+                           Next
+                           LibDocument.SelectSingleNode("/MuPlay/Library").Attributes(1).Value = Cnt - TBRNodes.Count
+                           Count = Cnt - TBRNodes.Count
+                           LibDocument.Save(LibraryPath)
+                       End Sub)
+    End Function
+    Public Async Function RemoveTracksFromLibraryAsync(files As List(Of String)) As Task
+        Await Task.Run(Sub()
+                           Dim LibDocument As New XmlDocument
+                           LibDocument.Load(LibraryPath)
+                           Dim Cnt = LibDocument.SelectSingleNode("/MuPlay/Library").Attributes(1).Value
+                           Dim iCnt As Integer
+                           If Integer.TryParse(Cnt, iCnt) Then
+                               Cnt = iCnt
+                           Else
+                               Cnt = 0
+                           End If
+                           Cnt += files.Count
+                           Dim TrackNode = LibDocument.SelectSingleNode("/MuPlay/Tracks")
+                           Dim TBRNodes As New List(Of XmlNode)
+                           For Each songn As XmlNode In LibDocument.SelectNodes("/MuPlay/Tracks/Track")
+                               If files.Contains(songn.Attributes.Item(3).Value) Then
+                                   TBRNodes.Add(songn)
+                               End If
+                           Next
+                           For Each node In TBRNodes
+                               TrackNode.RemoveChild(node)
+                           Next
+                           LibDocument.SelectSingleNode("/MuPlay/Library").Attributes(1).Value = Cnt - TBRNodes.Count
+                           Count = Cnt - TBRNodes.Count
+                           LibDocument.Save(LibraryPath)
+                       End Sub)
+    End Function
     Public Function GroupArtists() As List(Of ArtistElement)
         Dim Artists As New List(Of ArtistElement)
         Dim LibDocument As New XmlDocument

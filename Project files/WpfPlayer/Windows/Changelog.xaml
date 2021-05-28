@@ -1,0 +1,18 @@
+﻿<Window x:Class="Changelog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfPlayer"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="Changelog" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Width="600" Height="600" Background="{x:Null}" >
+    <Grid>
+        <Image x:Name="Logo" HorizontalAlignment="Center" Height="Auto" Margin="0,10,0,0" VerticalAlignment="Top" Width="Auto" Source="/WpfPlayer;component/Res/MuPlayLogo.png"/>
+        <ScrollViewer x:Name="SC" Margin="0,127,0,20">
+            <TextBlock x:Name="Changelog_TB" TextWrapping="Wrap" Text="Changelog:" Foreground="White" FontFamily="Raleway Light" Margin="10"/>
+        </ScrollViewer>
+        <Button x:Name="done_btn" Content="OK" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Bottom" Background="#BF1E1E1E" Foreground="White" BorderBrush="Black" Width="75" Opacity="0"/>
+
+    </Grid>
+</Window>

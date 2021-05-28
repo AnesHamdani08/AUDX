@@ -37,7 +37,7 @@
                                                                 Dim ChangeLog As String = UpdatesDoc.SelectSingleNode("/MuPlay/ChangeLog").InnerText
                                                                 _LastVersion = New Version(LastVersion)
                                                                 _UpdatesLink = UpdateLink
-                                                                _ChangeLog = ChangeLog
+                                                                _ChangeLog = ChangeLog.Replace("&", Environment.NewLine)
                                                                 Return Await Task.FromResult(LastVersion)
                                                             End Using
                                                         Catch ex As Exception

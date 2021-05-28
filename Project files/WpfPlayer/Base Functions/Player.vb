@@ -8,14 +8,14 @@ Imports Un4seen.Bass.AddOn.Tags
 Imports Un4seen.Bass.AddOn.WaDsp
 Public Class Player
 #Region "Events"
-        Public Event PlayerStateChanged(State As State)
-        Public Event VolumeChanged(NewVal As Single, IsMuted As Boolean)
+    Public Event PlayerStateChanged(State As State)
+    Public Event VolumeChanged(NewVal As Single, IsMuted As Boolean)
     Public Event MediaLoaded(Title As String, Artist As String, Cover As System.Windows.Interop.InteropBitmap, Thumb As System.Windows.Interop.InteropBitmap, LyricsAvailable As Boolean, Lyrics As String)
     Public Event MediaEnded()
-        Private CurrentMediaEndedCALLBACK As SYNCPROC
-        Public Event OnFxChanged(FX As LinkHandles, State As Boolean)
-        Public Event OnMediaError(ErrorCode As BASSError)
-        Public Event OnRepeatChanged(NewType As RepeateBehaviour)
+    Private CurrentMediaEndedCALLBACK As SYNCPROC
+    Public Event OnFxChanged(FX As LinkHandles, State As Boolean)
+    Public Event OnMediaError(ErrorCode As BASSError)
+    Public Event OnRepeatChanged(NewType As RepeateBehaviour)
     Public Event OnShuffleChanged(NewType As RepeateBehaviour)
     Public Event OnDspAdded(DSP As DSPPlugin)
     Public Event OnDspRemoved(DSP As DSPPlugin)
@@ -90,6 +90,7 @@ Public Class Player
                     Dim pos = GetPosition()
                     StreamStop()
                     Stream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    SetFx()
                     SetPosition(pos)
                     StreamPlay()
                     pos = Nothing
@@ -100,6 +101,7 @@ Public Class Player
                     Dim pos = GetPosition()
                     StreamStop()
                     Stream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    SetFx()
                     SetPosition(pos)
                     StreamPlay()
                     pos = Nothing
@@ -153,8 +155,8 @@ Public Class Player
 #End Region
 #Region "FX"
     Private Property _fxEQ As Integer() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-        Private Property _fxEQgains As Integer() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-        Public Property IsReverb As Boolean = False
+    Private Property _fxEQgains As Integer() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    Public Property IsReverb As Boolean = False
         Public Property Reverb As BASS_DX8_REVERB = Nothing
         Private Property ReverbHandle As Integer
         Public Property IsLoudness As Boolean = False
@@ -465,12 +467,12 @@ Public Class Player
                     Dim Video = Await Yt.Videos.GetAsync(URL)
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
-                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                        CoverData = WC.DownloadData(Video.Thumbnails.Item(0).Url)
                     End Using
                     Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    Dim YTTrackStream = YTTrackManifest.GetMuxedStreams
                     SourceURL = Video.Url
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
                     Yt = Nothing
                     Video = Nothing
                     CoverData = Nothing
@@ -479,13 +481,13 @@ Public Class Player
                     Return Await Task.FromResult(True)
                 Else
                     Dim Yt As New YoutubeExplode.YoutubeClient
-                    Dim VideoId = Yt.Search.GetVideosAsync(YTquery, 1, 1).GetAsyncEnumerator
+                    Dim VideoId = Yt.Search.GetVideosAsync(YTquery).GetAsyncEnumerator
                     Await VideoId.MoveNextAsync()
                     Dim Video = VideoId.Current
-                    Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
+                    Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author.Title, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
                         Dim z As Boolean = Await VideoId.MoveNextAsync()
                         If z Then
-                            If Video.Title = VideoId.Current.Title AndAlso Video.Author = VideoId.Current.Author Then
+                            If Video.Title = VideoId.Current.Title AndAlso Video.Author.Title = VideoId.Current.Author.Title Then
                                 Exit Function
                             Else
                                 Video = VideoId.Current
@@ -496,12 +498,12 @@ Public Class Player
                     Loop
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
-                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                        CoverData = WC.DownloadData(Video.Thumbnails.Item(0).Url)
                     End Using
                     Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    Dim YTTrackStream = YTTrackManifest.GetMuxedStreams
                     SourceURL = Video.Url
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)), 0, Video.Url)
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)), 0, Video.Url)
                     Yt = Nothing
                     VideoId = Nothing
                     Video = Nothing
@@ -523,12 +525,12 @@ Public Class Player
                     Dim Video = Await Yt.Videos.GetAsync(URL)
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
-                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                        CoverData = WC.DownloadData(Video.Thumbnails.Item(0).Url)
                     End Using
                     Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    Dim YTTrackStream = YTTrackManifest.GetMuxedStreams()
                     SourceURL = Video.Url
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
                     Yt = Nothing
                     Video = Nothing
                     CoverData = Nothing
@@ -536,12 +538,12 @@ Public Class Player
                     YTTrackStream = Nothing
                 Else
                     Dim Yt As New YoutubeExplode.YoutubeClient
-                    Dim VideoId = Yt.Search.GetVideosAsync(YTquery, 1, 1).GetAsyncEnumerator
+                    Dim VideoId = Yt.Search.GetVideosAsync(YTquery).GetAsyncEnumerator
                     Await VideoId.MoveNextAsync()
                     Dim Video = VideoId.Current
-                    Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
+                    Do While MessageBox.Show(My.Windows.MainWindow, "Do you want to play: " & vbCrLf & Video.Title & "By: " & Video.Author.Title, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.No
                         Dim z As Boolean = Await VideoId.MoveNextAsync()
-                        If Video.Title = VideoId.Current.Title AndAlso Video.Author = VideoId.Current.Author Then
+                        If Video.Title = VideoId.Current.Title AndAlso Video.Author.Title = VideoId.Current.Author.Title Then
                             Exit Sub
                         Else
                             Video = VideoId.Current
@@ -549,12 +551,12 @@ Public Class Player
                     Loop
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
-                        CoverData = WC.DownloadData(Video.Thumbnails.MediumResUrl)
+                        CoverData = WC.DownloadData(Video.Thumbnails.Item(0).Url)
                     End Using
                     Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
-                    Dim YTTrackStream = YTTrackManifest.GetMuxed()
+                    Dim YTTrackStream = YTTrackManifest.GetMuxedStreams()
                     SourceURL = Video.Url
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)), 0, Video.Url)
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)), 0, Video.Url)
                     Yt = Nothing
                     VideoId = Nothing
                     Video = Nothing
@@ -904,8 +906,8 @@ Public Class Player
         End Function
         Public Function GetTags() As TAG_INFO
             If CurrentMediaType = StreamTypes.Local Then
-                Return BassTags.BASS_TAG_GetFromFile(SourceURL)
-            ElseIf CurrentMediaType = StreamTypes.URL Then
+            Return BassTags.BASS_TAG_GetFromFile(SourceURL)
+        ElseIf CurrentMediaType = StreamTypes.URL Then
                 Dim tags As New TAG_INFO
                 If BassTags.BASS_TAG_GetFromURL(Stream, tags) Then
                     Return tags

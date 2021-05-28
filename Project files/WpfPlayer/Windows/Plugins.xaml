@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:hc="https://handyorg.github.io/handycontrol" x:Class="Plugins"
         mc:Ignorable="d"
-        Title="Plugins" Height="512" Width="512" Icon="/WpfPlayer;component/Res/icon.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Plugins" Height="512" Width="512" Icon="/WpfPlayer;component/Res/icon_n.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
     <Grid>
         <ScrollViewer Margin="0">
             <ListView x:Name="Main_Plugins_View" VerticalAlignment="Top">

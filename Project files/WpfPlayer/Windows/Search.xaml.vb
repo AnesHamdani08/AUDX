@@ -63,4 +63,10 @@ Public Class Search
             search_btn_Click(Nothing, New RoutedEventArgs)
         End If
     End Sub
+
+    Private Sub Search_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
+        If e.Key = Key.Escape Then
+            Close()
+        End If
+    End Sub
 End Class

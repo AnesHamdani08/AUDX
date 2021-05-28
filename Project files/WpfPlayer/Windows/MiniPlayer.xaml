@@ -8,7 +8,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"  
         mc:Ignorable="d"
-        Title="MuPlay" Height="400" Width="300" Icon="/WpfPlayer;component/Res/icon.ico" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ActiveGlowColor="#FFFF00AE" InactiveGlowColor="#FF7400FF">
+        Title="MuPlay" Height="400" Width="300" Icon="/WpfPlayer;component/Res/icon_n.ico" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ActiveGlowColor="#FFFF00AE" InactiveGlowColor="#FF7400FF">
     <hc:GlowWindow.Resources>
         <BooleanToVisibilityConverter x:Key="b2vc"></BooleanToVisibilityConverter>
         <local:DoubleToInteger x:Key="DoubleToInteger"/>

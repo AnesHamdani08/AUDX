@@ -7,14 +7,14 @@
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:system="clr-namespace:System;assembly=mscorlib"   
         mc:Ignorable="d"
-        Title="Updator" Height="200" Width="300" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Updator" Height="200" Width="300" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon_n.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
     <Window.Resources>
-        <system:String x:Key="Res_State">Checking for updates...</system:String>
+        <system:String x:Key="Res_State">Click the circle to check for updates.</system:String>
     </Window.Resources>
     <Grid>
         <hc:WaveProgressBar x:Name="Upd_Wpb" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top" Opacity="0"/>
-        <hc:CircleProgressBar x:Name="Upd_Cpb" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top" Value="100" Background="#00326CF3"/>
+        <hc:CircleProgressBar x:Name="Upd_Cpb" HorizontalAlignment="Center" Margin="-10,0,0,0" VerticalAlignment="Top" Value="100" Background="#00326CF3"/>
         <TextBlock x:Name="Upd_State" Text="{DynamicResource Res_State}" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,135,0,0" Opacity="0"/>
-        <Button x:Name="Upd_Btn" Content="Update" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="75" Opacity="0"/>
+        <Button x:Name="Upd_Btn" Content="Update" hc:Poptip.Content="Shift + Click to see changelog." HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="75" Opacity="0"/>
     </Grid>
 </hc:Window>

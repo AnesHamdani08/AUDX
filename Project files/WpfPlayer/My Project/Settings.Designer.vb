@@ -319,7 +319,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
     Public Property OnMediaChange_FadeAudio() As Boolean
         Get
             Return CType(Me("OnMediaChange_FadeAudio"),Boolean)
@@ -415,7 +415,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("179")>  _
     Public Property GlobalHotkey_PlayPause() As Integer
         Get
             Return CType(Me("GlobalHotkey_PlayPause"),Integer)
@@ -439,7 +439,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("118")>  _
     Public Property GlobalHotkey_Next() As Integer
         Get
             Return CType(Me("GlobalHotkey_Next"),Integer)
@@ -451,7 +451,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_Next_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_Next_MOD"),Integer)
@@ -463,7 +463,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("116")>  _
     Public Property GlobalHotkey_Previous() As Integer
         Get
             Return CType(Me("GlobalHotkey_Previous"),Integer)
@@ -475,7 +475,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_Previous_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_Previous_MOD"),Integer)
@@ -487,7 +487,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("119")>  _
     Public Property GlobalHotkey_Skip10() As Integer
         Get
             Return CType(Me("GlobalHotkey_Skip10"),Integer)
@@ -499,7 +499,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_Skip10_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_Skip10_MOD"),Integer)
@@ -511,7 +511,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("117")>  _
     Public Property GlobalHotkey_Back10() As Integer
         Get
             Return CType(Me("GlobalHotkey_Back10"),Integer)
@@ -523,7 +523,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_Back10_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_Back10_MOD"),Integer)
@@ -535,7 +535,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("175")>  _
     Public Property GlobalHotkey_VolumeUp() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeUp"),Integer)
@@ -547,7 +547,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_VolumeUp_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeUp_MOD"),Integer)
@@ -559,7 +559,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("174")>  _
     Public Property GlobalHotkey_VolumeDown() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeDown"),Integer)
@@ -571,7 +571,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_VolumeDown_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeDown_MOD"),Integer)
@@ -583,7 +583,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("173")>  _
     Public Property GlobalHotkey_VolumeMute() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeMute"),Integer)
@@ -595,7 +595,7 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
     Public Property GlobalHotkey_VolumeMute_MOD() As Integer
         Get
             Return CType(Me("GlobalHotkey_VolumeMute_MOD"),Integer)
@@ -734,6 +734,115 @@ Partial Friend NotInheritable Class MySettings
         End Get
         Set
             Me("DSP_Plugins") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property Player_AutoPlay() As Boolean
+        Get
+            Return CType(Me("Player_AutoPlay"),Boolean)
+        End Get
+        Set
+            Me("Player_AutoPlay") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
+        "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
+    Public Property fxEQgains() As Global.System.Collections.Specialized.StringCollection
+        Get
+            Return CType(Me("fxEQgains"),Global.System.Collections.Specialized.StringCollection)
+        End Get
+        Set
+            Me("fxEQgains") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property GlobalHotkey_NowPlaying() As Integer
+        Get
+            Return CType(Me("GlobalHotkey_NowPlaying"),Integer)
+        End Get
+        Set
+            Me("GlobalHotkey_NowPlaying") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property GlobalHotkey_NowPlaying_MOD() As Integer
+        Get
+            Return CType(Me("GlobalHotkey_NowPlaying_MOD"),Integer)
+        End Get
+        Set
+            Me("GlobalHotkey_NowPlaying_MOD") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property API_ALLOWGET() As Boolean
+        Get
+            Return CType(Me("API_ALLOWGET"),Boolean)
+        End Get
+        Set
+            Me("API_ALLOWGET") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property API_ALLOWSET() As Boolean
+        Get
+            Return CType(Me("API_ALLOWSET"),Boolean)
+        End Get
+        Set
+            Me("API_ALLOWSET") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property API_LOG() As Boolean
+        Get
+            Return CType(Me("API_LOG"),Boolean)
+        End Get
+        Set
+            Me("API_LOG") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property API_ALLOWEVENTS() As Boolean
+        Get
+            Return CType(Me("API_ALLOWEVENTS"),Boolean)
+        End Get
+        Set
+            Me("API_ALLOWEVENTS") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property API() As Boolean
+        Get
+            Return CType(Me("API"),Boolean)
+        End Get
+        Set
+            Me("API") = value
         End Set
     End Property
 End Class

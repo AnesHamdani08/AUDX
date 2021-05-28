@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:hc="https://handyorg.github.io/handycontrol" x:Class="CoverViewer"
         mc:Ignorable="d"
-        Title="Cover Viewer" Height="512" Width="512" Initialized="Window_Initialized" Activated="Window_Activated" Icon="/WpfPlayer;component/Res/icon.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Cover Viewer" Height="512" Width="512" Initialized="Window_Initialized" Activated="Window_Activated" Icon="/WpfPlayer;component/Res/icon_n.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
     <hc:Window.NonClientAreaContent>
         <Grid>
             <Button HorizontalAlignment="Right" Grid.Column="1" Name="TitleBar_Save" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}">

@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="ChannelInfo" Height="269" Width="600" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="ChannelInfo" Height="269" Width="600" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}" Icon="/WpfPlayer;component/Res/icon_n.ico">
     <Grid>
         <ProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Peak_Master" HorizontalAlignment="Left" Height="200" Margin="10,10,0,0" VerticalAlignment="Top" Width="20" Orientation="Vertical" Maximum="32"/>
         <ProgressBar Style="{DynamicResource ProgressBarFlat}" x:Name="Peak_Left" HorizontalAlignment="Left" Height="200" Margin="35,10,0,0" VerticalAlignment="Top" Width="20" Orientation="Vertical" Foreground="Red" Maximum="32"/>

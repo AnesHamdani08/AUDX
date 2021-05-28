@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"        
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Global Hotkeys Manager" Height="200" Width="300" ActiveGlowColor="#FFE800FF" InactiveGlowColor="#FF9700FF" Icon="/WpfPlayer;component/Res/icon.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Global Hotkeys Manager" Height="200" Width="300" ActiveGlowColor="#FFE800FF" InactiveGlowColor="#FF9700FF" Icon="/WpfPlayer;component/Res/icon_n.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
     <Grid>
         <ComboBox x:Name="set_globalhotkey" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="272">
             <ComboBoxItem Content="Play/Pause"/>
@@ -17,6 +17,7 @@
             <ComboBoxItem Content="Volume Up"/>
             <ComboBoxItem Content="Volume Down"/>
             <ComboBoxItem Content="Volume Mute"/>
+            <ComboBoxItem Content="Now Playing"/>
         </ComboBox>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,45,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top"/>
         <TextBlock x:Name="set_ghstate" HorizontalAlignment="Left" Margin="60,45,0,0" TextWrapping="Wrap" Text="On/Off" VerticalAlignment="Top"/>

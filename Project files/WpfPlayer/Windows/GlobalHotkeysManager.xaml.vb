@@ -52,6 +52,10 @@ Public Class GlobalHotkeysManager
                 set_ghmodcb.SelectedIndex = My.Settings.GlobalHotkey_VolumeMute_MOD
                 set_ghkeycb.SelectedIndex = My.Settings.GlobalHotkey_VolumeMute
                 set_ghstate.Text = TryCast(Application.Current.MainWindow, MainWindow).HotkeyState(7)
+            Case 8 'Now Playing
+                set_ghmodcb.SelectedIndex = My.Settings.GlobalHotkey_NowPlaying_MOD
+                set_ghkeycb.SelectedIndex = My.Settings.GlobalHotkey_NowPlaying
+                set_ghstate.Text = TryCast(Application.Current.MainWindow, MainWindow).HotkeyState(8)
         End Select
     End Sub
 
@@ -116,7 +120,7 @@ Public Class GlobalHotkeysManager
                     TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("MuPlay", "Skip 10 seconds hook couldn't be registered.", HandyControl.Data.NotifyIconInfoType.Error)
                 End If
             Case 5 'V+
-                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 4)
+                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 5)
                 GlobalHotkey.Unregister()
                 My.Settings.GlobalHotkey_VolumeUp_MOD = set_ghmodcb.SelectedIndex
                 My.Settings.GlobalHotkey_VolumeUp = set_ghkeycb.SelectedIndex
@@ -126,7 +130,7 @@ Public Class GlobalHotkeysManager
                     TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("MuPlay", "Volume up seconds hook couldn't be registered.", HandyControl.Data.NotifyIconInfoType.Error)
                 End If
             Case 6 'V-
-                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 4)
+                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 6)
                 GlobalHotkey.Unregister()
                 My.Settings.GlobalHotkey_VolumeDown_MOD = set_ghmodcb.SelectedIndex
                 My.Settings.GlobalHotkey_VolumeDown = set_ghkeycb.SelectedIndex
@@ -136,7 +140,7 @@ Public Class GlobalHotkeysManager
                     TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("MuPlay", "Volume down hook couldn't be registered.", HandyControl.Data.NotifyIconInfoType.Error)
                 End If
             Case 7 'V *
-                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 4)
+                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, Hwnd, 7)
                 GlobalHotkey.Unregister()
                 My.Settings.GlobalHotkey_VolumeMute_MOD = set_ghmodcb.SelectedIndex
                 My.Settings.GlobalHotkey_VolumeMute = set_ghkeycb.SelectedIndex
@@ -144,6 +148,16 @@ Public Class GlobalHotkeysManager
                 GlobalHotkey = New GlobalHotkey(Utils.IntToMod(index:=set_ghmodcb.SelectedIndex), set_ghkeycb.SelectedIndex, Hwnd, 7)
                 If Not GlobalHotkey.Register() Then
                     TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("MuPlay", "Volume mute hook couldn't be registered.", HandyControl.Data.NotifyIconInfoType.Error)
+                End If
+            Case 8 'Now Playing
+                Dim GlobalHotkey As New GlobalHotkey(Utils.IntToMod(index:=My.Settings.GlobalHotkey_NowPlaying_MOD), My.Settings.GlobalHotkey_NowPlaying, Hwnd, 8)
+                GlobalHotkey.Unregister()
+                My.Settings.GlobalHotkey_NowPlaying_MOD = set_ghmodcb.SelectedIndex
+                My.Settings.GlobalHotkey_NowPlaying = set_ghkeycb.SelectedIndex
+                My.Settings.Save()
+                GlobalHotkey = New GlobalHotkey(Utils.IntToMod(index:=set_ghmodcb.SelectedIndex), set_ghkeycb.SelectedIndex, Hwnd, 8)
+                If Not GlobalHotkey.Register() Then
+                    TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("MuPlay", "Now playing hook couldn't be registered.", HandyControl.Data.NotifyIconInfoType.Error)
                 End If
         End Select
     End Sub

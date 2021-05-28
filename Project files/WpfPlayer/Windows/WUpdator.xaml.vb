@@ -22,13 +22,19 @@ Public Class WUpdator
         'End If
     End Sub
     Private Sub Upd_Btn_Click(sender As Object, e As RoutedEventArgs) Handles Upd_Btn.Click
-        Upd_Cpb.BeginAnimation(HandyControl.Controls.CircleProgressBar.OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromSeconds(1))))
-        wc = New Net.WebClient
-        Upd_Cpb.IsIndeterminate = True
-        updloc = IO.Path.Combine(Utils.AppDataPath, "Downloads", "update" & _Updator.LatestVersion.Major & _Updator.LatestVersion.Minor & _Updator.LatestVersion.Build & _Updator.LatestVersion.Revision & ".exe")
-        wc.DownloadFileAsync(New Uri(_Updator.UpdatesLink), updloc)
-        BeginAnimation(Window.HeightProperty, New Animation.DoubleAnimation(200, New Duration(TimeSpan.FromSeconds(1))))
-        Upd_Wpb.BeginAnimation(HandyControl.Controls.WaveProgressBar.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+        If My.Computer.Keyboard.ShiftKeyDown Then
+            MessageBox.Show(_Updator.ChangeLog, "MuPlay Updator", MessageBoxButton.OK, MessageBoxImage.Information)
+        Else
+            Upd_Btn.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+            'Upd_Cpb.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromSeconds(1))))
+            wc = New Net.WebClient
+            Upd_Cpb.IsIndeterminate = True
+            updloc = IO.Path.Combine(Utils.AppDataPath, "Downloads", "update" & _Updator.LatestVersion.Major & _Updator.LatestVersion.Minor & _Updator.LatestVersion.Build & _Updator.LatestVersion.Revision & ".exe")
+            wc.DownloadFileAsync(New Uri(_Updator.UpdatesLink), updloc)
+            BeginAnimation(HeightProperty, New Animation.DoubleAnimation(200, New Duration(TimeSpan.FromSeconds(1))))
+            Upd_Wpb.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+            MessageBox.Show("You are now safe to close this window.", "MuPlay Updator", MessageBoxButton.OK, MessageBoxImage.Information)
+        End If
     End Sub
     Private Sub wc_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles wc.DownloadFileCompleted
         BeginAnimation(Window.HeightProperty, New Animation.DoubleAnimation(200, New Duration(TimeSpan.FromSeconds(1))))
@@ -45,6 +51,7 @@ Public Class WUpdator
 
     Private Sub wc_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) Handles wc.DownloadProgressChanged
         Upd_Wpb.Value = e.ProgressPercentage
+        Upd_State.Text = Utils.FileSizeConverterSTR(e.BytesReceived) & "/" & Utils.FileSizeConverterSTR(e.TotalBytesToReceive)
     End Sub
     Private Async Sub Upd_Cpb_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs) Handles Upd_Cpb.MouseLeftButtonUp
         Upd_Btn.BeginAnimation(Button.OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(500))))
@@ -63,5 +70,10 @@ Public Class WUpdator
             BeginAnimation(Window.HeightProperty, New Animation.DoubleAnimation(240, New Duration(TimeSpan.FromSeconds(1))))
             Upd_Btn.BeginAnimation(Button.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
         End If
+    End Sub
+
+    Private Sub WUpdator_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        Hide()
+        e.Cancel = True
     End Sub
 End Class

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="mediabar" Height="80" Width="300" ShowInTaskbar="False" Topmost="True" Icon="/WpfPlayer;component/Res/icon.ico" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="{x:Null}">
+        Title="mediabar" Height="80" Width="300" ShowInTaskbar="False" Topmost="True" Icon="/WpfPlayer;component/Res/icon_n.ico" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="{x:Null}">
     <Grid>
         <Border x:Name="main_border" BorderThickness="1" Grid.Row="0"
         CornerRadius="50,50,50,50" Background="#BF000000"/>

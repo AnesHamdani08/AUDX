@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="DSP Plugins" Height="500" Width="400" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon.ico">
+        Title="DSP Plugins" Height="500" Width="400" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon_n.ico">
     <hc:Window.NonClientAreaContent>
         <Grid>
             <Grid.ColumnDefinitions>

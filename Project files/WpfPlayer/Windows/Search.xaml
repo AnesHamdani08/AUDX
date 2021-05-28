@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Search" Height="500" Width="421.895" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="/WpfPlayer;component/Res/icon.ico" ResizeMode="NoResize" WindowStyle="None" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Search" Height="500" Width="421.895" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="/WpfPlayer;component/Res/icon_n.ico" ResizeMode="NoResize" WindowStyle="None" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
     <Grid>
         <TextBox x:Name="search_box" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="273" Margin="10,10,0,0" HorizontalAlignment="Left"/>
         <ListView x:Name="LV_Main" Margin="0,45,0,10">

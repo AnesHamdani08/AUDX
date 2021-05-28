@@ -1,7 +1,7 @@
 ﻿Imports Un4seen.Bass
 
 Public Class Command
-    Public Shared Property Commands As String() = {"home hide overlay", "playlist show overlay", "playlist hide overlay", "home show reflection", "home hide reflection", "playlist index", "playlist count", "playlist items", "playlist items -s", "playlist items -n", "playlist items -u", "playlist add random", "exit", "exit n", "clear", "next", "previous", "stop", "pause", "play", "init", "free", "fade down", "fade down db", "fade up", "fade up db", "fade to", "fade to db", "eq enable", "eq disable", "reverb enable", "update reverb ingain", "update reverb mix", "update reverb time", "update reverb hfrtr", "reverb disable", "handle", "plugin fx", "plugin sfx", "set sfx fps", "source url", "discord disconnect", "discord connect", "discord set presence", "save", "channelinfo", "tags", "plugins", "notification", "debug", "error", "hooks", "set custom state", "library stats", "search", "refresh library stats", "library make", "library make artists", "library make years", "fullscreen", "library update artists", "library update years", "about", "hotkeys", "home show overlay", "home refresh recommended", "home show recommended", "home topmost off", "home topmost on", "home set visualizer refresh speed", "home hide recommended"}
+    Public Shared Property Commands As String() = {"home hide overlay", "playlist show overlay", "playlist hide overlay", "home show reflection", "home hide reflection", "playlist index", "playlist count", "playlist items", "playlist items -s", "playlist items -n", "playlist items -u", "playlist add random", "exit", "exit n", "clear", "next", "previous", "stop", "pause", "play", "init", "free", "fade down", "fade down db", "fade up", "fade up db", "fade to", "fade to db", "eq enable", "eq disable", "reverb enable", "update reverb ingain", "update reverb mix", "update reverb time", "update reverb hfrtr", "reverb disable", "handle", "plugin fx", "plugin sfx", "set sfx fps", "source url", "discord disconnect", "discord connect", "discord set presence", "save", "channelinfo", "tags", "plugins", "notification", "debug", "error", "hooks", "set custom state", "library stats", "search", "refresh library stats", "library make", "library make artists", "library make years", "fullscreen", "library update artists", "library update years", "about", "hotkeys", "home show overlay", "home refresh recommended", "home show recommended", "home topmost off", "home topmost on", "home set visualizer refresh speed", "home hide recommended", "version", "taskbar add thumbnail", "taskbar remove thumbnail"}
     Public Shared Async Sub Excute(command As String, Window As Window)
         Select Case command.ToLower
             Case "home topmost off"
@@ -422,6 +422,20 @@ Public Class Command
                 sb.AppendLine("Vol Down: " & My.Settings.GlobalHotkey_VolumeDown_MOD & "//" & My.Settings.GlobalHotkey_VolumeDown & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeDown).ToString & "]")
                 sb.AppendLine("Vol Mute: " & My.Settings.GlobalHotkey_VolumeMute_MOD & "//" & My.Settings.GlobalHotkey_VolumeMute & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeMute).ToString & "]")
                 MsgBox(sb.ToString, MsgBoxStyle.MsgBoxHelp)
+                Exit Sub
+            Case "taskbar add thumbnail"
+                'TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.AddThumbnail(True, TryCast(Application.Current.MainWindow, MainWindow).media_cover.Source, System.Drawing.SystemIcons.Information, "Debug", "Debug Tip")
+                TryCast(Application.Current.MainWindow, MainWindow).SetThumb()
+                Exit Sub
+            Case "taskbar remove thumbnail"
+                Dim sb As New Text.StringBuilder
+                For i As Integer = 0 To TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails.Count - 1
+                    sb.AppendLine(i + 1 & TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails(i).Title & ";" & TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails(i).Tooltip)
+                Next
+                TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.RemoveThumbnail(InputBox(sb.ToString, "Debug"))
+                Exit Sub
+            Case "vsettings"
+                MsgBox(SystemParameters.UxThemeName & "//" & SystemParameters.UxThemeColor)
                 Exit Sub
         End Select
         Throw New Exception("No such command!")

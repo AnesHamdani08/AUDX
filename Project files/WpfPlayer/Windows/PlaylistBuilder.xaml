@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Playlist Builder" Height="600" Width="450" Icon="/WpfPlayer;component/Res/icon.ico" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=Window}">
+        Title="Playlist Builder" Height="600" Width="450" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=Window}">
     <hc:Window.NonClientAreaContent>
         <Grid>
             <Grid.ColumnDefinitions>

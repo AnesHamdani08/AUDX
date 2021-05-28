@@ -14,12 +14,6 @@ Public Class MiniPlayer
     Private WithEvents TaskBarNext As ThumbnailToolBarButton
     Private PlayIcon = TryCast(Application.Current.MainWindow, MainWindow).Playicon
     Private PauseIcon = TryCast(Application.Current.MainWindow, MainWindow).Pauseicon
-    Public Sub UpdateSkin(ByVal skin As HandyControl.Data.SkinType)
-        HandyControl.Themes.SharedResourceDictionary.SharedDictionaries.Clear()
-        Resources.MergedDictionaries.Add(HandyControl.Tools.ResourceHelper.GetSkin(skin))
-        Resources.MergedDictionaries.Add(New ResourceDictionary With {.Source = New Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")})
-        OnApplyTemplate()
-    End Sub
     Private Sub MiniPlayer_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Media_Title.Text = Player.CurrentMediaTitle
         Media_Artist.Text = Player.CurrentMediaArtist
@@ -32,7 +26,6 @@ Public Class MiniPlayer
         TaskBarNext = New ThumbnailToolBarButton(TryCast(Application.Current.MainWindow, MainWindow).Nexticon, "Next")
         TaskbarManager.Instance.ThumbnailToolBars.AddButtons(helper.Handle, {TaskBarPrev, TaskBarPlayPause, TaskBarNext})
         TaskbarManager.Instance.TabbedThumbnail.SetThumbnailClip(helper.Handle, New System.Drawing.Rectangle(Media_Cover.Margin.Left + 5, Media_Cover.Margin.Top + 30, Media_Cover.Width, Media_Cover.Height))
-        UpdateSkin(My.Settings.DefaultTheme)
         If My.Settings.MiniPlayer_SmartColors Then
             Dim Clr = Utils.GetAverageColor(Player.CurrentMediaCover)
             Dim iClr = Utils.GetInverseColor(Clr)

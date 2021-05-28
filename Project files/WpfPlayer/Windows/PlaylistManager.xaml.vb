@@ -120,7 +120,7 @@ Public Class PlaylistManager
     End Sub
     Private Sub TitleBar_Add_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Add.Click
         Dim pb As New PlaylistBuilder
-        Utils.UpdateSkin(My.Settings.DefaultTheme, pb)
+        'Utils.UpdateSkin(My.Settings.DefaultTheme, pb)
         If pb.ShowDialog Then
             If pb.Result IsNot Nothing Then
                 With pb.Result

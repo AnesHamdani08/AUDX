@@ -6,9 +6,9 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Initial Setup" Height="200" Width="550" Icon="/WpfPlayer;component/Res/icon.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Initial Setup" Height="200" Width="550" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
-        <Image x:Name="Logo" Height="100" Margin="0" VerticalAlignment="Top" Width="200" Source="/WpfPlayer;component/Res/MuPlayerV2.png" Opacity="0"/>
+        <Image x:Name="Logo" Height="100" Margin="0" VerticalAlignment="Top" Width="200" Source="/WpfPlayer;component/Res/MuPlayLogoF.png"/>
         <TextBlock x:Name="Welcome_Message" Margin="78,95,125,45" TextWrapping="Wrap" Text="Welcome to Muplay. Let's setup a few things to get you started" VerticalAlignment="Center" HorizontalAlignment="Center" Width="341" Opacity="0" d:IsHidden="True"/>
         <Button x:Name="Start_Btn" hc:IconElement.Geometry="{StaticResource RightGeometry}" HorizontalAlignment="Left" Margin="410,100,0,0" VerticalAlignment="Top" Background="Transparent" BorderBrush="{x:Null}" Height="22" Opacity="0" d:IsHidden="True"/>
         <Grid x:Name="Setup_ST" Height="97" Margin="544,0,0,0" VerticalAlignment="Bottom" Width="544">

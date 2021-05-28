@@ -53,6 +53,11 @@ Public Class Settings
         End Select
         set_player_autoplay.IsChecked = My.Settings.Player_AutoPlay
         set_dragdropbehaviour.SelectedIndex = My.Settings.PlaylistDragDropAction
+        set_api.IsChecked = My.Settings.API
+        set_api_gcalls.IsChecked = My.Settings.API_ALLOWGET
+        set_api_log.IsChecked = My.Settings.API_LOG
+        set_api_recalls.IsChecked = My.Settings.API_ALLOWEVENTS
+        set_api_scalls.IsChecked = My.Settings.API_ALLOWSET
     End Sub
     Private Sub Lib_Loc_Remove_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Loc_Remove.Click
         If Lib_Loc_Cbox.SelectedIndex <> -1 Then
@@ -174,6 +179,7 @@ Public Class Settings
     End Sub
 
     Private Sub set_onmediachange_fadeaudio_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_onmediachange_fadeaudio.Unchecked
+        TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.FadeAudio = False
         My.Settings.OnMediaChange_FadeAudio = False
         My.Settings.Save()
     End Sub
@@ -248,23 +254,48 @@ Public Class Settings
     End Sub
 
     Private Async Sub set_scanlibrary_Click(sender As Object, e As RoutedEventArgs) Handles set_scanlibrary.Click
-        overlay_state.Text = "Scanning..."
-        Overlay.Visibility = Visibility.Visible
+        'overlay_state.Text = "Scanning..."
+        'Overlay.Visibility = Visibility.Visible
+        'Dim Gtracks = Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.GroupTracksAsync
+        'Dim files As New List(Of String)
+        'For Each path In My.Settings.LibrariesPath
+        '    For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
+        '        files.Add(song)
+        '    Next
+        'Next
+        'overlay_state.Text = "Adding songs ..."
+        'Dim ExcList = files.Except(Gtracks).ToList
+        'Dim ExcListR = Gtracks.Except(files).ToList
+        'If ExcList.Count <> 0 Then
+        '    overlay_state.Text = "Found " & ExcList.Count & " songs new,adding to library..."
+        '    Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.AddTracksToLibraryAsync(ExcList)
+        'End If
+        'If ExcListR.Count <> 0 Then
+        '    overlay_state.Text = "Found " & ExcListR.Count & " songs ,removing from library..."
+        '    Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.RemoveTracksFromLibraryAsync(ExcListR)
+        'End If
+        'Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
+        'Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
+        'Overlay.Visibility = Visibility.Hidden
         Dim Gtracks = Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.GroupTracksAsync
         Dim files As New List(Of String)
         For Each path In My.Settings.LibrariesPath
-            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
+            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
                 files.Add(song)
             Next
         Next
         Dim ExcList = files.Except(Gtracks).ToList
+        Dim ExcListR = Gtracks.Except(files).ToList
         If ExcList.Count <> 0 Then
-            overlay_state.Text = "Found " & ExcList.Count & "songs new,adding to library..."
+            TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("Scanner", "Found " & ExcList.Count & " songs new,adding to library...", HandyControl.Data.NotifyIconInfoType.Info)
             Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.AddTracksToLibraryAsync(ExcList)
+        End If
+        If ExcListR.Count <> 0 Then
+            TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("Scanner", "Found " & ExcListR.Count & " songs ,removing from library...", HandyControl.Data.NotifyIconInfoType.Info)
+            Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.RemoveTracksFromLibraryAsync(ExcListR)
         End If
         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
-        Overlay.Visibility = Visibility.Hidden
     End Sub
 
     Private Async Sub Lib_Refresh_btn_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Refresh_btn.Click
@@ -282,7 +313,6 @@ Public Class Settings
     Private Sub set_miniplayersmartcolors_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_miniplayersmartcolors.Unchecked
         My.Settings.MiniPlayer_SmartColors = False
         My.Settings.Save()
-        My.Windows.MiniPlayer.UpdateSkin(My.Settings.DefaultTheme)
     End Sub
 
     Private Sub set_cachelibrarydata_Checked(sender As Object, e As RoutedEventArgs) Handles set_cachelibrarydata.Checked
@@ -382,5 +412,82 @@ Public Class Settings
     Private Sub set_dragdropbehaviour_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_dragdropbehaviour.SelectionChanged
         My.Settings.PlaylistDragDropAction = set_dragdropbehaviour.SelectedIndex
         My.Settings.Save()
+    End Sub
+
+    Private Sub set_api_Checked(sender As Object, e As RoutedEventArgs) Handles set_api.Checked
+        My.Settings.API = True
+        My.Settings.Save()
+        TryCast(Application.Current.MainWindow, MainWindow).PIPO = New API
+    End Sub
+
+    Private Sub set_api_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api.Unchecked
+        My.Settings.API = False
+        My.Settings.Save()
+        TryCast(Application.Current.MainWindow, MainWindow).PIPO.Dispose()
+        TryCast(Application.Current.MainWindow, MainWindow).PIPO = Nothing
+    End Sub
+
+    Private Sub set_api_gcalls_Checked(sender As Object, e As RoutedEventArgs) Handles set_api_gcalls.Checked
+        My.Settings.API_ALLOWGET = True
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowGetCalls = True
+        End If
+    End Sub
+
+    Private Sub set_api_gcalls_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api_gcalls.Unchecked
+        My.Settings.API_ALLOWGET = False
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowGetCalls = False
+        End If
+    End Sub
+
+    Private Sub set_api_log_Checked(sender As Object, e As RoutedEventArgs) Handles set_api_log.Checked
+        My.Settings.API_LOG = True
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.Log = True
+        End If
+    End Sub
+
+    Private Sub set_api_log_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api_log.Unchecked
+        My.Settings.API_LOG = False
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.Log = False
+            End If
+    End Sub
+
+    Private Sub set_api_recalls_Checked(sender As Object, e As RoutedEventArgs) Handles set_api_recalls.Checked
+        My.Settings.API_ALLOWEVENTS = True
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowRaisingEvents = True
+        End If
+    End Sub
+
+    Private Sub set_api_recalls_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api_recalls.Unchecked
+        My.Settings.API_ALLOWEVENTS = False
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowRaisingEvents = False
+        End If
+    End Sub
+
+    Private Sub set_api_scalls_Checked(sender As Object, e As RoutedEventArgs) Handles set_api_scalls.Checked
+        My.Settings.API_ALLOWSET = True
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowSetCalls = True
+        End If
+    End Sub
+
+    Private Sub set_api_scalls_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api_scalls.Unchecked
+        My.Settings.API_ALLOWSET = False
+        My.Settings.Save()
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowSetCalls = False
+            End If
     End Sub
 End Class

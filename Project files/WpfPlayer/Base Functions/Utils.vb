@@ -24,6 +24,7 @@
     Public Shared ReadOnly Property brush_heart_filled As New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/heart_filled.png")))
     Public Shared ReadOnly Property AppDataPath As String = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MuPlay")
     Public Shared ReadOnly Property AppPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, My.Application.Info.AssemblyName & ".exe")
+    Public Shared ReadOnly Property Changelog As String() = {"V" & My.Application.Info.Version.ToString & " Changelog:" & vbCrLf & "Changelog popup." & vbCrLf & "All new icon and logo." & vbCrLf & "Lyrics can be now cleared" & vbCrLf & "You can now open files using open with from windows explorer" & vbCrLf & "MuPlay API is now available" & vbCrLf & "Extra EQ Presets" & vbCrLf & "Bug fixes" & vbCrLf & "File > Synced > Scan is now working" & vbCrLf & "Settings > Scan is now removing song that are no longer exists" & vbCrLf & "New theme engine" & vbCrLf & "Test your keyboard arrows in the about section ;)"}
 
     <Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint:="DeleteObject")>
     Public Shared Function DeleteObject(
@@ -297,12 +298,56 @@
                 Return 0
         End Select
     End Function
-    Public Shared Sub UpdateSkin(ByVal skin As HandyControl.Data.SkinType, Window As HandyControl.Controls.Window)
-        'HandyControl.Themes.SharedResourceDictionary.SharedDictionaries.Clear()
-        Window.Resources.MergedDictionaries.Add(HandyControl.Tools.ResourceHelper.GetSkin(skin))
-        Window.Resources.MergedDictionaries.Add(New ResourceDictionary With {.Source = New Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")})
-        Window.OnApplyTemplate()
-    End Sub
+    Public Shared Function FileSizeConverter(Size As ULong) As Double
+        Try
+            Dim DoubleBytes As Double
+            Select Case Size
+                Case Is >= 1099511627776
+                    DoubleBytes = CDbl(Size / 1099511627776) 'TB
+                    Return FormatNumber(DoubleBytes, 2)
+                Case 1073741824 To 1099511627775
+                    DoubleBytes = CDbl(Size / 1073741824) 'GB
+                    Return FormatNumber(DoubleBytes, 2)
+                Case 1048576 To 1073741823
+                    DoubleBytes = CDbl(Size / 1048576) 'MB
+                    Return FormatNumber(DoubleBytes, 2)
+                Case 1024 To 1048575
+                    DoubleBytes = CDbl(Size / 1024) 'KB
+                    Return FormatNumber(DoubleBytes, 2)
+                Case 0 To 1023
+                    DoubleBytes = Size ' bytes
+                    Return FormatNumber(DoubleBytes, 2)
+                Case Else
+            End Select
+        Catch
+            Return 0
+        End Try
+    End Function
+    Public Shared Function FileSizeConverterSTR(Size As ULong) As String
+        Try
+            Dim DoubleBytes As Double
+            Select Case Size
+                Case Is >= 1099511627776
+                    DoubleBytes = CDbl(Size / 1099511627776) 'TB
+                    Return FormatNumber(DoubleBytes, 2) & "TB"
+                Case 1073741824 To 1099511627775
+                    DoubleBytes = CDbl(Size / 1073741824) 'GB
+                    Return FormatNumber(DoubleBytes, 2) & "GB"
+                Case 1048576 To 1073741823
+                    DoubleBytes = CDbl(Size / 1048576) 'MB
+                    Return FormatNumber(DoubleBytes, 2) & "MB"
+                Case 1024 To 1048575
+                    DoubleBytes = CDbl(Size / 1024) 'KB
+                    Return FormatNumber(DoubleBytes, 2) & "KB"
+                Case 0 To 1023
+                    DoubleBytes = Size ' bytes
+                    Return FormatNumber(DoubleBytes, 2) & "Bytes"
+                Case Else
+            End Select
+        Catch
+            Return 0
+        End Try
+    End Function
 #Region "Enums"
     Public Enum DragDropPlaylistBehaviour
         Replace = 0
@@ -310,6 +355,13 @@
         AddToLast = 2
         AddToNext = 3
         AddToLastPlay = 4
+    End Enum
+    Public Enum FileSize
+        TB
+        GB
+        MB
+        KB
+        B
     End Enum
 #End Region
 End Class

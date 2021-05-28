@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Settings" Height="589.625" Width="420" WindowStartupLocation="CenterOwner" InactiveGlowColor="#FFD100FF" ActiveGlowColor="#FFFF0080" Icon="/WpfPlayer;component/Res/icon.ico">
+        Title="Settings" Height="589.625" Width="420" WindowStartupLocation="CenterOwner" InactiveGlowColor="#FFD100FF" ActiveGlowColor="#FFFF0080" Icon="/WpfPlayer;component/Res/icon_n.ico">
     <hc:GlowWindow.NonClientAreaContent>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -81,8 +81,7 @@
             </TabItem>
             <TabItem Header="Library">
                 <Grid Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
-                    <Label x:Name="label" Content="Location" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="70
-" BorderBrush="#FFE0E0E0" Background="White"/>
+                    <TextBlock x:Name="label" Text="Location" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
                     <ComboBox x:Name="Lib_Loc_Cbox" HorizontalAlignment="Left" Margin="85,10,0,0" VerticalAlignment="Top" Width="200"/>
                     <Button x:Name="Lib_Loc_Remove" Content="x" HorizontalAlignment="Left" Margin="290,10,0,0" VerticalAlignment="Top" Width="33"/>
                     <Button x:Name="Lib_Loc_Add" Content="+" HorizontalAlignment="Left" Margin="328,10,0,0" VerticalAlignment="Top" Width="33"/>
@@ -94,6 +93,11 @@
                     <TextBlock x:Name="textBlock" HorizontalAlignment="Right" Margin="0,17,51,0" TextWrapping="Wrap" Text="Updates Server" VerticalAlignment="Top"/>
                     <Button x:Name="CheckForUpdates_btn" Content="Update" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top"  hc:IconElement.Geometry="{StaticResource RotateLeftGeometry}"/>
                     <Button x:Name="Set_UpdatesServer_btn" HorizontalAlignment="Left" Margin="366,10,0,0" VerticalAlignment="Top"  hc:IconElement.Geometry="{StaticResource SaveGeometry}" Background="#00000000" BorderBrush="{x:Null}"/>
+                    <CheckBox x:Name="set_api" Content="API" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="set_api_scalls" Content="Set calls" HorizontalAlignment="Left" Margin="10,113,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="set_api_gcalls" Content="Get calls" HorizontalAlignment="Left" Margin="10,136,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="set_api_recalls" Content="Events call" HorizontalAlignment="Left" Margin="10,159,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="set_api_log" Content="Log activity" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>

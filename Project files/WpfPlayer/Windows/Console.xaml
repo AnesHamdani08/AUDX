@@ -6,10 +6,12 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Developer Console" Height="600" Width="800" Icon="/WpfPlayer;component/Res/icon.ico" WindowStartupLocation="CenterScreen" Background="Black">
+        Title="Developer Console" Height="600" Width="800" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterScreen" Background="Black">
     <Grid>
-        <TextBlock x:Name="TB_Log" TextWrapping="Wrap" Margin="0,0,0,23" Foreground="White" />
         <TextBox x:Name="TB_Command" Height="23" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="White" Foreground="White"/>
         <ComboBox x:Name="CB_AutoCommand" Margin="0,0,0,31" VerticalAlignment="Bottom" Foreground="White"/>
+        <ScrollViewer Margin="0,0,0,65" HorizontalScrollBarVisibility="Auto">
+            <TextBlock x:Name="TB_Log" TextWrapping="Wrap" Foreground="White" />
+        </ScrollViewer>
     </Grid>
 </hc:Window>
