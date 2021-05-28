@@ -1,5 +1,5 @@
 # MuPlay
-![MuPlayerV2](https://user-images.githubusercontent.com/38377619/114272147-3343bc80-9a15-11eb-93be-b1de7f3b5a0e.png)
+![MuPlayLogo](https://user-images.githubusercontent.com/38377619/119999253-d22a7500-bfd1-11eb-8ae9-d3257bc7a7d2.png)<br>
 A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
@@ -37,8 +37,20 @@ Thank you for stepping by.
  - Sleep timer
  - API
 # Screenshots
-![image](https://user-images.githubusercontent.com/38377619/114264431-3b870200-99eb-11eb-9fe3-849c481422e2.png)
- - More screenshots will be added.
+![Home](https://user-images.githubusercontent.com/38377619/119999378-fa19d880-bfd1-11eb-90cf-892ba8ee0a48.png)
+![Home 1](/Extras/Screenshots/HM_1.png)
+![Home 2](/Extras/Screenshots/HM_2.png) 
+![Home Dark Theme](/Extras/Screenshots/HM_DTH_1.png)
+![Home Light Theme](/Extras/Screenshots/HM_LTH_1.png)
+![Home System Theme](/Extras/Screenshots/HM_STH_1.png)
+![Home Search](/Extras/Screenshots/HM_SR_1.png)
+![Home Settings](/Extras/Screenshots/HM_ST_1.png)
+![Playlist](/Extras/Screenshots/PL_1.png)
+![Visualiser Built-In](/Extras/Screenshots/VIS_1.png)
+![Visualiser WMP](/Extras/Screenshots/VIS_2WMP.png)
+![Visualiser Plugin](/Extras/Screenshots/VIS_3PLUG.gif)
+![Miniplayer](/Extras/Screenshots/MP_1.png)
+![Miniplayer Playlist](/Extras/Screenshots/MP_PL.png)
 # Versions list
 V         | Release date | Availability | Notes
 ----------|--------------|--------------|-------
@@ -56,7 +68,7 @@ Made possible by:<br>
 -[Bass.Net](http://bass.radio42.com/)<br>
 -[Bass](https://www.un4seen.com/)<br>
 -[DiscordRPC](https://github.com/Lachee/discord-rpc-csharp)<br>
--[HandyControl](https://github.com/HandyOrg/HandyControl)<br>
+-[HandyControl CV](https://github.com/ghost1372/HandyControls), Based On: [HandyControl](https://github.com/HandyOrg/HandyControl)<br>
 -[Zastai MetaBrainz](https://github.com/Zastai/MetaBrainz.MusicBrainz)<br>
 -[BigGranu MusicBrainz](https://github.com/BigGranu/MusicBrainz)<br>
 -[Newtonsoft Json](https://github.com/JamesNK/Newtonsoft.Json)<br>
