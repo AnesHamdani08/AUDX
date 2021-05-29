@@ -1,3 +1,13 @@
+# V 0.1.0.2
+ - Major : 0
+ - Minor : 1
+ - Minor Revision : 0
+ - Build : 2
+ - Addition of a standalone tags manager
+ - Fullscreen player
+   - With Background
+   - Without Background
+ - Bug fixes 
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
