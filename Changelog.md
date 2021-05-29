@@ -7,7 +7,9 @@
  - Fullscreen player
    - With Background
    - Without Background
- - Bug fixes 
+ - Bug fixes
+ - Fixed Tag Manager bug with endless cover popup
+ - Fixed Tag Manager bug with "Must disconnect specified child from current parent Visual before attaching to new parent Visual."
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
