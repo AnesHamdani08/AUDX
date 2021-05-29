@@ -2,5 +2,5 @@
 <MuPlay>
  <LastVersion>0.1.0.2</LastVersion>
  <UpdateLink>http://speedtest.tele2.net/100MB.zip</UpdateLink>
- <ChangeLog>Addition of a standalone tags manager&;ampFullscreen player&;ampWith Background&;ampWithout Background&;ampBug fixes&;ampTag Manager bug fixes:&;amp&;amp  Endless cover search popup&;amp  "Must disconnect specified child from current parent Visual before attaching to new parent Visual."&;amp  Move from;to didn't work with 2 covers</ChangeLog>
+ <ChangeLog>- Addition of a standalone tags manager&amp; - Fullscreen player&amp; - Bug fixes&amp; - Tag Manager bug fixes:&amp;  - Endless cover search popup&amp;  - "Must disconnect specified child from current parent Visual before attaching to new parent Visual."&amp;  - Move from;to didn't work with 2 covers</ChangeLog>
 </MuPlay>
