@@ -12,6 +12,7 @@
    - Endless cover search popup
    - "Must disconnect specified child from current parent Visual before attaching to new parent Visual."
    - Move from;to didn't work with 2 covers
+ - Live Lyrics
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
