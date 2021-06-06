@@ -15,6 +15,7 @@
  - Live Lyrics
  - Custom TaskBar Thumbnail Manager
  - New Theme Engine 
+ - Double Output
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
