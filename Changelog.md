@@ -13,7 +13,6 @@
    - "Must disconnect specified child from current parent Visual before attaching to new parent Visual."
    - Move from;to didn't work with 2 covers
  - Live Lyrics
- - Custom TaskBar Thumbnail Manager
  - New Theme Engine 
  - Double Output
  - Single Instance Only
