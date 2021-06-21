@@ -1,8 +1,8 @@
-# V 0.1.0.2
+# V 0.2.0.0
  - Major : 0
- - Minor : 1
+ - Minor : 2
  - Minor Revision : 0
- - Build : 2
+ - Build : 0
  - Addition of a standalone tags manager
  - Fullscreen player
    - With Background
@@ -15,7 +15,16 @@
  - Live Lyrics
  - New Theme Engine 
  - Double Output
- - Single Instance Only
+ - Single/Multi Instance(s)
+ - Added default resume action in settings
+ - YoutubeExplode is no longer supported
+ - Added support for Youtube-DL
+ - Fixed Playlist Manager and Builder titlebar
+ - All dependcies are Up To Date
+ - Added the ability to change Tab Selector type
+ - Added the ability to shuffle current playlist
+ - Midi is now supported
+ - Added the ability to use custom Midi soundfonts
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
