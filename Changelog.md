@@ -26,6 +26,7 @@
  - Midi is now supported
  - Added the ability to use custom Midi soundfonts
  - Channel rotate ("8D Audio") should now sync with song changes
+ - A-B Loop should now indicate the state in the plugins section
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
