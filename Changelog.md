@@ -27,6 +27,9 @@
  - Added the ability to use custom Midi soundfonts
  - Channel rotate ("8D Audio") should now sync with song changes
  - A-B Loop should now indicate the state in the plugins section
+ - Added disable button to A-B Loop
+ - Added Library to titlebar menu
+ - No Updates for MuPlay are scheduled till 15/07/2021
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
