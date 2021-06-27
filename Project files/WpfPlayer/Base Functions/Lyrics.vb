@@ -13,7 +13,7 @@ Public Class Lyrics
         End Get
         Set(value As States)
             _Status = value
-            If My.Settings.LyricsNotify Then
+            If My.Settings.LYRICSNOTIFY Then
                 RaiseEvent OnStateChanged(value)
             End If
         End Set

@@ -200,6 +200,17 @@
             Return Nothing
         End Try
     End Function
+    Public Function GetItemByName(Item As String) As String
+        Return _Playlist.FirstOrDefault(Function(k) k.Contains(Item))
+    End Function
+    Public Function GetIndexByName(Item As String) As Integer
+        For i As Integer = 0 To _Playlist.Count - 1
+            If _Playlist.Item(i).Contains(Item) Then
+                Return i
+            End If
+        Next
+        Return 0
+    End Function
     Public Function JumpTo(Index As Integer) As String
         Try
             Idx = Index
@@ -266,4 +277,7 @@
             Return Nothing
         End Try
     End Function
+    Public Sub Shuffle()
+        _Playlist = Utils.Shuffle(_Playlist)
+    End Sub
 End Class

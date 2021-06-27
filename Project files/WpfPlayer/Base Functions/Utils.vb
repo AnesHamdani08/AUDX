@@ -17,14 +17,62 @@
             Right = _Right
         End Sub
     End Class
-    Public Shared ReadOnly Property FileFilters As String = "*.mp3|*.m4a|*.mp4|*.wav|*.aiff|*.mp2|*.mp1|*.ogg|*.wma|*.flac|*.alac|*.webm"
-    Public Shared ReadOnly Property OFDFileFilters As String = "Supported Files|*.mp3;*.m4a;*.wav;*.aiff;*.mp2;*.mp1;*.ogg;*.wma;*.flac;*.alac;*.webm"
+    Public Class PluginItem
+        Public Class Entry
+            Public Property Name As String
+            Public Property ID As Integer
+            Public Sub New(_ID As Integer, _Name As String)
+                Name = _Name
+                ID = _ID
+            End Sub
+            Public Shadows Function ToString(Spacer As String) As String
+                Return ID & Spacer & Name
+            End Function
+        End Class
+        Public Property Name As String
+        Public Property ID As Integer
+        Public Property Source As String
+        Public Property Entries As New List(Of Entry)
+        Public Sub New(_Name As String, _Src As String)
+            Name = _Name
+            Source = _Src
+        End Sub
+        Public Shadows Function ToString(Spacer As String) As String
+            Dim Sb As New Text.StringBuilder
+            For Each entry In Entries
+                Sb.Append(Spacer & entry.ID & "|" & entry.Name)
+            Next
+            Return ID & Spacer & Name & Spacer & Source & Sb.ToString
+        End Function
+        Public Shared Function FromString(Spacer As String, StrPluginItem As String) As PluginItem
+            Dim info = StrPluginItem.Split(Spacer)
+            If info.Count > 3 Then
+                Dim ID As Integer = info(0)
+                Dim Name As String = info(1)
+                Dim Source As String = info(2)
+                RemoveAt(info, 0)
+                RemoveAt(info, 0)
+                RemoveAt(info, 0)
+                Dim Entries As New List(Of Entry)
+                For Each entry In info
+                    Dim _info = entry.Split("|")
+                    Entries.Add(New Entry(_info(0), _info(1)))
+                Next
+                Dim PlugItem As New PluginItem(Name, Source) With {.ID = ID, .Entries = Entries}
+                Return PlugItem
+            Else
+                Return Nothing
+            End If
+        End Function
+    End Class
+    Public Shared ReadOnly Property FileFilters As String = "*.mp3|*.m4a|*.mp4|*.wav|*.aiff|*.mp2|*.mp1|*.ogg|*.wma|*.flac|*.alac|*.webm|*.midi|*.mid"
+    Public Shared ReadOnly Property OFDFileFilters As String = "Supported Files|*.mp3;*.m4a;*.wav;*.aiff;*.mp2;*.mp1;*.mid;*.midi;*.ogg;*.wma;*.flac;*.alac;*.webm"
     Public Shared ReadOnly Property ImageFilters As String = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG;*.JPEG)|*.BMP;*.JPG;*.GIF;*.PNG;*.JPEG|All Files(*.*)|*.*"
     Public Shared ReadOnly Property brush_heart As New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/heart.png")))
     Public Shared ReadOnly Property brush_heart_filled As New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/heart_filled.png")))
     Public Shared ReadOnly Property AppDataPath As String = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MuPlay")
     Public Shared ReadOnly Property AppPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, My.Application.Info.AssemblyName & ".exe")
-    Public Shared ReadOnly Property Changelog As String() = {"V" & My.Application.Info.Version.ToString & " Changelog:" & vbCrLf & "Changelog popup." & vbCrLf & "All new icon and logo." & vbCrLf & "Lyrics can be now cleared" & vbCrLf & "You can now open files using open with from windows explorer" & vbCrLf & "MuPlay API is now available" & vbCrLf & "Extra EQ Presets" & vbCrLf & "Bug fixes" & vbCrLf & "File > Synced > Scan is now working" & vbCrLf & "Settings > Scan is now removing song that are no longer exists" & vbCrLf & "New theme engine" & vbCrLf & "Test your keyboard arrows in the about section ;)"}
+    Public Shared ReadOnly Property Changelog As String() = {"V" & My.Application.Info.Version.ToString & " Changelog:" & Environment.NewLine & "Addition of a standalone tags manager" & Environment.NewLine & "Fullscreen player" & Environment.NewLine & "Bug fixes" & Environment.NewLine & "Fixed Tag Manager bug with endless cover popup" & Environment.NewLine & "Fixed Tag Manager bug with ""Must disconnect specified child from current parent Visual before attaching to new parent Visual.""" & Environment.NewLine & "Plugin system" & Environment.NewLine & "Custom taskbar thumbnail is now working !" & Environment.NewLine & "New Theme Engine" & Environment.NewLine & "Double Output" & Environment.NewLine & "Single/Multi Instance(s)" & Environment.NewLine & "Added default resume action in settings" & Environment.NewLine & "Added the ability to allow multiple instances from settings" & Environment.NewLine & "YoutubeExplode is no longer supported" & Environment.NewLine & "Added support for Youtube-DL" & Environment.NewLine & "Fixed Playlist Manager and Builder titlebar" & Environment.NewLine & "All dependcies are Up To Date" & Environment.NewLine & "Added the ability to change Tab Selector type" & Environment.NewLine & "Added the ability to shuffle current playlist" & Environment.NewLine & "Midi is now supported" & Environment.NewLine & "Added the ability to use custom Midi soundfonts" & Environment.NewLine & "Added the ability to play a single song from an artist or a year." & Environment.NewLine & "Channel rotate (""8D Audio"") should now sync with song changes" & Environment.NewLine & "A-B Loop should now indicate the state in the plugins section" & Environment.NewLine & "Added Library to titlebar menu" & Environment.NewLine & "No Updates for MuPlay are scheduled till 15/07/2021"}
 
     <Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint:="DeleteObject")>
     Public Shared Function DeleteObject(
@@ -162,6 +210,20 @@
             Return 0
         End Try
     End Function
+    Public Shared Function SecsToMs(sec As Double) As TimeSpan
+        Dim Pos = sec.ToString.IndexOf(".")
+        Dim Secs As Integer
+        Dim Ms As Integer
+        If Pos = -1 Then
+            Secs = 0
+            Ms = 0
+        Else
+            Secs = sec.ToString.Substring(0, Pos)
+            Ms = sec.ToString.Substring(Pos) * 1000
+        End If
+        Ms += (Secs * 1000)
+        Return TimeSpan.FromMilliseconds(Ms)
+    End Function
     ''' <summary>
     ''' Artist, Title, Album, Year, TrackNum, Genres, Lyrics, Bitrates
     ''' </summary>
@@ -182,14 +244,15 @@
             CompressedInfo = {Artist, Title, Album, Year, TrackNum, String.Join(";", Genres), Lyrics, Bitrates}
             Return CompressedInfo
         Catch ex As Exception
-            Return {"Not Available", "Not Available", "Not Available", 0, 0, "Not Available", "Not Available", 0}
+            'Return {"Not Available", "Not Available", "Not Available", 0, 0, "Not Available", "Not Available", 0}
+            Return {Nothing, Nothing, Nothing, 0, 0, Nothing, Nothing, 0}
         End Try
     End Function
     Public Shared Function GetAlbumArt(path As String) As System.Drawing.Image
         Try
             Dim Tag = TagLib.File.Create(path)
             If Tag.Tag.Pictures.Length >= 1 Then
-                Dim bin = DirectCast(Tag.Tag.Pictures(0).Data.Data, Byte())
+                Dim bin = Tag.Tag.Pictures(0).Data.Data
                 Dim Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(bin))
                 Return Cover
             Else
@@ -347,6 +410,107 @@
         Catch
             Return 0
         End Try
+    End Function
+    Public Shared Sub RemoveAt(Of T)(ByRef arr As T(), ByVal index As Integer)
+        Dim uBound = arr.GetUpperBound(0)
+        Dim lBound = arr.GetLowerBound(0)
+        Dim arrLen = uBound - lBound
+
+        If index < lBound OrElse index > uBound Then
+            Throw New ArgumentOutOfRangeException(
+        String.Format("Index must be from {0} to {1}.", lBound, uBound))
+
+        Else
+            'create an array 1 element less than the input array
+            Dim outArr(arrLen - 1) As T
+            'copy the first part of the input array
+            Array.Copy(arr, 0, outArr, 0, index)
+            'then copy the second part of the input array
+            Array.Copy(arr, index + 1, outArr, index, uBound - index)
+
+            arr = outArr
+        End If
+    End Sub
+    Public Shared Function NumFromSTR(ByVal value As String) As Integer
+        Dim returnVal As String = String.Empty
+        Dim collection As Text.RegularExpressions.MatchCollection = Text.RegularExpressions.Regex.Matches(value, "\d+")
+        For Each m As Text.RegularExpressions.Match In collection
+            returnVal += m.ToString()
+        Next
+        Return Convert.ToInt32(returnVal)
+    End Function
+    Public Shared Function ValToPercentage(Val As Double, Min As Double, Max As Double) As Integer
+        If Val > Min AndAlso Val < Max Then
+            Return ((Val - Min) * 100) / (Max - Min)
+        ElseIf Val = Max Then
+            Return 100
+        Else
+            Return 0
+        End If
+    End Function
+    Public Shared Function PercentageToVal(Percentage As Double, Min As Double, Max As Double) As Integer
+        If Percentage > 0 AndAlso Percentage < 100 Then
+            Return (((Max - Min) * Percentage) + (Min * 100)) / 100
+        ElseIf Percentage >= 100 Then
+            Return Max
+        Else
+            Return Min
+        End If
+    End Function
+    Public Shared Function PercentageToFiveMax(Percentage As Double) As Integer
+        Dim PercentageChunk As Integer = 20
+        If Percentage = 0 Then
+            Return 0
+        ElseIf IsInRange(Percentage, 0, 20) Then
+            Return 1
+        ElseIf IsInRange(Percentage, 20, 40, True) Then
+            Return 2
+        ElseIf IsInRange(Percentage, 40, 60, True) Then
+            Return 3
+        ElseIf IsInRange(Percentage, 60, 80, True) Then
+            Return 4
+        ElseIf IsInRange(Percentage, 80, 100, True, True) Then
+            Return 5
+        End If
+    End Function
+    Public Shared Function IsInRange(Val As Integer, Min As Integer, Max As Integer, Optional IsEqualLower As Boolean = False, Optional IsEqualGreater As Boolean = False) As Boolean
+        If IsEqualLower = True AndAlso IsEqualLower = False Then
+            If Val >= Min AndAlso Val < Max Then
+                Return True
+            Else
+                Return False
+            End If
+        ElseIf IsEqualLower = True AndAlso IsEqualLower = True Then
+            If Val >= Min AndAlso Val <= Max Then
+                Return True
+            Else
+                Return False
+            End If
+        ElseIf IsEqualLower = False AndAlso IsEqualLower = True Then
+            If Val > Min AndAlso Val <= Max Then
+                Return True
+            Else
+                Return False
+            End If
+        ElseIf IsEqualLower = False AndAlso IsEqualLower = False Then
+            If Val > Min AndAlso Val < Max Then
+                Return True
+            Else
+                Return False
+            End If
+        Else
+            If Val > Min AndAlso Val < Max Then
+                Return True
+            Else
+                Return False
+            End If
+        End If
+    End Function
+    Public Shared Function ReverseToMin(Val As Double, Min As Double, Max As Double) As Double
+        Return (Max - Val) + Min
+    End Function
+    Public Shared Function ReverseToMax(Val As Double, Min As Double, Max As Double) As Double
+        Return Max - (Val - Min)
     End Function
 #Region "Enums"
     Public Enum DragDropPlaylistBehaviour

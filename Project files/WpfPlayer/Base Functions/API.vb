@@ -6,7 +6,13 @@ Public Class API
     Public Property AllowGetCalls As Boolean = True
     Public Property Log As Boolean = False
     Public Property AllowRaisingEvents As Boolean = True
+    ''' <summary>
+    ''' Recieve only , running from here
+    ''' </summary>
     Private WithEvents RNamedPipeServer As New NamedPipeManager("MuPlayAPI_MuPlay") 'Recieve only , running from here
+    ''' <summary>
+    ''' Send only , running from API
+    ''' </summary>
     Private WithEvents SNamedPipeServer As New NamedPipeManager("MuPlayAPI_API") 'Send only , running from API
     Private Window As MainWindow = TryCast(Application.Current.MainWindow, MainWindow)
     Private WithEvents Player As Player = Window.MainPlayer
@@ -48,46 +54,48 @@ Public Class API
                                                  Utils.BitmapFromImageSource(Player.CurrentMediaCover).Save(MEMCover, System.Drawing.Imaging.ImageFormat.Png)
                                              End Sub)
                     Dim STRCover = Convert.ToBase64String(MEMCover.ToArray)
-                    SNamedPipeServer.Write(ID & Spacer & STRCover)
+                    SNamedPipeServer.Write(ID & Spacer & STRCover, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetCurrent
                 If AllowGetCalls Then
-                    SNamedPipeServer.Write(ID & Spacer & Player.CurrentMediaTitle & Spacer & Player.CurrentMediaArtist & Spacer & "TBI" & Spacer & Player.CurrentMediaType)
+                    SNamedPipeServer.Write(ID & Spacer & Player.CurrentMediaTitle & Spacer & Player.CurrentMediaArtist & Spacer & "TBI" & Spacer & Player.CurrentMediaType, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetRepeatShuffleType
                 If AllowGetCalls Then
-                    SNamedPipeServer.Write(ID & Spacer & Player.RepeateType & Spacer & Player.Shuffle)
+                    SNamedPipeServer.Write(ID & Spacer & Player.RepeateType & Spacer & Player.Shuffle, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetIsMono
                 If AllowGetCalls Then
                     If Player.Mono Then
-                        SNamedPipeServer.Write(ID & Spacer & 1)
+                        SNamedPipeServer.Write(ID & Spacer & 1, My.Settings.API_TIMEOUT)
                     Else
-                        SNamedPipeServer.Write(ID & Spacer & 0)
+                        SNamedPipeServer.Write(ID & Spacer & 0, My.Settings.API_TIMEOUT)
                     End If
                 End If
             Case CMDType.GetVolume
                 If AllowGetCalls Then
-                    SNamedPipeServer.Write(ID & Spacer & Player.Volume)
+                    SNamedPipeServer.Write(ID & Spacer & Player.Volume, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetPosition
                 If AllowGetCalls Then
-                    SNamedPipeServer.Write(ID & Spacer & Player.GetPosition)
+                    SNamedPipeServer.Write(ID & Spacer & Player.GetPosition, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetLength
                 If AllowGetCalls Then
-                    SNamedPipeServer.Write(ID & Spacer & Player.GetLength)
+                    SNamedPipeServer.Write(ID & Spacer & Player.GetLength, My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetTags
                 If AllowGetCalls Then
                     Dim Tag = Utils.GetSongInfo(Player.SourceURL)
-                    SNamedPipeServer.Write(ID & Spacer & Tag(0) & Spacer & Tag(1) & Spacer & Tag(2) & Spacer & Tag(3) & Spacer & Tag(4) & Spacer & Tag(5) & Spacer & Tag(6) & Spacer & Tag(7))
+                    SNamedPipeServer.Write(ID & Spacer & Tag(0) & Spacer & Tag(1) & Spacer & Tag(2) & Spacer & Tag(3) & Spacer & Tag(4) & Spacer & Tag(5) & Spacer & Tag(6) & Spacer & Tag(7), My.Settings.API_TIMEOUT)
                 End If
             Case CMDType.GetPeak
                 If AllowGetCalls Then
                     Dim Peak = Player.GetPeak
-                    SNamedPipeServer.Write(ID & Spacer & Peak.Left & Spacer & Peak.Right & Spacer & Peak.Master)
+                    SNamedPipeServer.Write(ID & Spacer & Peak.Left & Spacer & Peak.Right & Spacer & Peak.Master, My.Settings.API_TIMEOUT)
                 End If
+            Case CMDType.Ping
+                SNamedPipeServer.Write(ID & Spacer & AllowGetCalls & Spacer & AllowSetCalls & Spacer & AllowRaisingEvents & Spacer & Process.GetCurrentProcess.Id)
             Case CMDType.SetPlay
                 If AllowSetCalls Then
                     Application.Current.Dispatcher.Invoke(Sub()
@@ -124,37 +132,64 @@ Public Class API
                                                               Player.SetPosition(CMD)
                                                           End Sub)
                 End If
-                'complete api
+            Case CMDType.PluginRegister
+                Utils.RemoveAt(CMDARGS, 0)
+                Dim Plugin = Utils.PluginItem.FromString(Spacer, String.Join(Spacer, CMDARGS))
+                Select Case MessageBox.Show("Do you want to install the following plugin: " & Plugin.Name & vbCrLf & "Note: to manage api permissions go to ""Other"" in Settings", "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question)
+                    Case MessageBoxResult.Yes
+                        Dim Rnd As New Random
+                        Dim PlugID As Integer = Rnd.Next
+                        Plugin.ID = PlugID
+                        My.Settings.API_Plugins.Add(Plugin.ToString(Spacer))
+                        My.Settings.Save()
+                        SNamedPipeServer.Write(CMDType.PluginRegister & Spacer & PlugID)
+                    Case MessageBoxResult.No
+                        SNamedPipeServer.Write(CMDType.PluginRegister & Spacer & 1)
+                End Select
+            Case CMDType.PluginPing
+                Dim PlugID As Integer : Integer.TryParse(CMD, PlugID)
+                If PlugID <> 0 Then
+                    Dim Plugins As New List(Of Utils.PluginItem)
+                    For Each plug In My.Settings.API_Plugins
+                        Plugins.Add(Utils.PluginItem.FromString(Spacer, plug))
+                    Next
+                    Dim DBPlug = Plugins.FirstOrDefault(Function(k) k.ID = PlugID)
+                    If DBPlug IsNot Nothing Then
+                        SNamedPipeServer.Write(CMDType.PluginPing & Spacer & True)
+                    Else
+                        SNamedPipeServer.Write(CMDType.PluginPing & Spacer & False)
+                    End If
+                End If
         End Select
     End Sub
 #Region "Player Events"
     Private Sub Player_MediaLoaded(Title As String, Artist As String, Cover As InteropBitmap, Thumb As InteropBitmap, LyricsAvailable As Boolean, Lyrics As String) Handles Player.MediaLoaded
         If AllowRaisingEvents Then
-            SNamedPipeServer.Write(CMDType.EventOnMediaLoaded & Spacer & "NOTHING")
+            SNamedPipeServer.Write(CMDType.EventOnMediaLoaded & Spacer & "NOTHING", My.Settings.API_TIMEOUT)
         End If
     End Sub
 
     Private Sub Player_OnRepeatChanged(NewType As Player.RepeateBehaviour) Handles Player.OnRepeatChanged
         If AllowRaisingEvents Then
-            SNamedPipeServer.Write(CMDType.EventOnRepeatChanged & Spacer & NewType)
+            SNamedPipeServer.Write(CMDType.EventOnRepeatChanged & Spacer & NewType, My.Settings.API_TIMEOUT)
         End If
     End Sub
 
     Private Sub Player_OnShuffleChanged(NewType As Player.RepeateBehaviour) Handles Player.OnShuffleChanged
         If AllowRaisingEvents Then
-            SNamedPipeServer.Write(CMDType.EventOnShuffleChanged & Spacer & NewType)
+            SNamedPipeServer.Write(CMDType.EventOnShuffleChanged & Spacer & NewType, My.Settings.API_TIMEOUT)
         End If
     End Sub
 
     Private Sub Player_PlayerStateChanged(State As Player.State) Handles Player.PlayerStateChanged
         If AllowRaisingEvents Then
-            SNamedPipeServer.Write(CMDType.EventOnStateChanged & Spacer & State)
+            SNamedPipeServer.Write(CMDType.EventOnStateChanged & Spacer & State, My.Settings.API_TIMEOUT)
         End If
     End Sub
 
     Private Sub Player_VolumeChanged(NewVal As Single, IsMuted As Boolean) Handles Player.VolumeChanged
         If AllowRaisingEvents Then
-            SNamedPipeServer.Write(CMDType.EventOnVolumeChanged & Spacer & NewVal & Spacer & IsMuted)
+            SNamedPipeServer.Write(CMDType.EventOnVolumeChanged & Spacer & NewVal & Spacer & IsMuted, My.Settings.API_TIMEOUT)
         End If
     End Sub
 #End Region
@@ -169,6 +204,7 @@ Public Class API
         GetLength = 6
         GetTags = 7
         GetPeak = 8
+        Ping = 9
         SetPlay = 1000
         SetPause = 1001
         SetNext = 1002
@@ -180,5 +216,7 @@ Public Class API
         EventOnShuffleChanged = 2002
         EventOnStateChanged = 2003
         EventOnVolumeChanged = 2004
+        PluginRegister = 3000
+        PluginPing = 3001
     End Enum
 End Class

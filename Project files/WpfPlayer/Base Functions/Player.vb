@@ -6,6 +6,7 @@ Imports Un4seen.Bass.AddOn.Fx
 Imports Un4seen.Bass.AddOn.Sfx
 Imports Un4seen.Bass.AddOn.Tags
 Imports Un4seen.Bass.AddOn.WaDsp
+Imports Un4seen.Bass.AddOn.Midi
 Public Class Player
 #Region "Events"
     Public Event PlayerStateChanged(State As State)
@@ -20,6 +21,7 @@ Public Class Player
     Public Event OnDspAdded(DSP As DSPPlugin)
     Public Event OnDspRemoved(DSP As DSPPlugin)
     Public Event OnEqChanged(EQgains As Integer())
+    Public Event OnABLoopChanged(Item As ABLoopItem)
 #End Region
 #Region "Properties"
     Private IsFirstStream As Boolean = True
@@ -33,6 +35,7 @@ Public Class Player
         Public Property IsFXLoaded As Boolean = False
     Public Property IsSFXLoaded As Boolean = False
     Public Property IsDSPLoaded As Boolean = False
+    Public Property IsMidiLoaded As Boolean = False
     Private Property IsMute As Boolean = False
         Public Property IsInitialized As Boolean = False
     Public Property IsInitializedReason As Exception = Nothing
@@ -146,12 +149,51 @@ Public Class Player
             SetABLoop()
         End Set
     End Property
+    Private _DoubleOutput As Boolean = False
+    Public Property DOStream As Integer = 0
+    Private DODeviceIndex As Integer = 0
+    Public Property DoubleOutput As Boolean
+        Get
+            Return _DoubleOutput
+        End Get
+        Set(value As Boolean)
+            _DoubleOutput = value
+            If value Then
+                If CurrentMediaType <> StreamTypes.URL Then
+                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        End If
+                    Else
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(SourceURL, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        End If
+                    End If
+                    If DOStream <> 0 Then
+                        Bass.BASS_ChannelSetDevice(DOStream, DODeviceIndex)
+                        Bass.BASS_ChannelSetPosition(DOStream, GetPosition)
+                        If PlayerState = State.Playing Then Bass.BASS_ChannelPlay(DOStream, False)
+                    End If
+                End If
+            Else
+                If Bass.BASS_StreamFree(DOStream) Then
+                    DOStream = 0
+                End If
+            End If
+        End Set
+    End Property
+
 #Region "Handles"
     Public Property Stream As Integer = 0
         Private Property BassFX_Handle As Integer = 0
         Private Property BassSFX_Handle As Integer = 0
     Private Property BassFlac_Handle As Integer = 0
     Private Property BassWaDSP_Handle As Integer = 0
+    Private Property BassMidi_Handle As Integer = 0
 #End Region
 #Region "FX"
     Private Property _fxEQ As Integer() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -214,12 +256,12 @@ Public Class Player
                 Catch ex As Exception
                     IsSFXLoaded = False
                 End Try
+                Dim Hwnd = New Interop.WindowInteropHelper(Application.Current.MainWindow)
                 Try
                     BassWaDSP_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bass_wadsp.dll"))
                     If BassWaDsp.BASS_WADSP_GetVersion = 0 Then
                         IsDSPLoaded = False
                     Else
-                        Dim Hwnd = New Interop.WindowInteropHelper(Application.Current.MainWindow)
                         If BassWaDsp.BASS_WADSP_Init(Hwnd.Handle) Then
                             IsDSPLoaded = True
                         Else
@@ -229,9 +271,19 @@ Public Class Player
                 Catch ex As Exception
                     IsDSPLoaded = False
                 End Try
-                If My.Settings.fxEQgains.Count = 10 Then
-                    For i As Integer = 0 To My.Settings.fxEQgains.Count - 1
-                        _fxEQgains(i) = My.Settings.fxEQgains.Item(i)
+                Try
+                    BassMidi_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bassmidi.dll"))
+                    If BassMidi_Handle = 0 Then
+                        IsMidiLoaded = False
+                    Else
+                        IsMidiLoaded = True
+                    End If
+                Catch ex As Exception
+                    IsMidiLoaded = False
+                End Try
+                If My.Settings.FXEQGAINS.Count = 10 Then
+                    For i As Integer = 0 To My.Settings.FXEQGAINS.Count - 1
+                        _fxEQgains(i) = My.Settings.FXEQGAINS.Item(i)
                     Next
                     RaiseEvent OnEqChanged(_fxEQgains)
                 End If
@@ -269,12 +321,12 @@ Public Class Player
         BassWaDsp.FreeMe()
         Bass.BASS_Free()
         If _fxEQgains(0) <> 0 Or _fxEQgains(1) <> 0 Or _fxEQgains(2) <> 0 Or _fxEQgains(3) <> 0 Or _fxEQgains(4) <> 0 Or _fxEQgains(5) <> 0 Or _fxEQgains(6) <> 0 Or _fxEQgains(7) <> 0 Or _fxEQgains(8) <> 0 Or _fxEQgains(9) <> 0 Then
-            My.Settings.fxEQgains.Clear()
+            My.Settings.FXEQGAINS.Clear()
             For Each gain In _fxEQgains
-                My.Settings.fxEQgains.Add(gain)
+                My.Settings.FXEQGAINS.Add(gain)
             Next
         Else
-            My.Settings.fxEQgains.Clear()
+            My.Settings.FXEQGAINS.Clear()
         End If
         If IsReverb Then
             My.Settings.FX_REVERB = Reverb
@@ -299,9 +351,42 @@ Public Class Player
         My.Settings.Save()
     End Sub
     Public Sub Init()
+        'If Not Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, System.IntPtr.Zero) Then
+        '    MessageBox.Show("Error: " & Bass.BASS_ErrorGetCode.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
+        'Else
+        '    BassFlac_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bassflac.dll"))
+        '    Try
+        '        BassFX_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bass_fx.dll"))
+        '        If BassFx.BASS_FX_GetVersion() = 0 Then
+        '            IsFXLoaded = False
+        '        Else
+        '            IsFXLoaded = True
+        '        End If
+        '    Catch ex As Exception
+        '        IsFXLoaded = False
+        '    End Try
+        '    Try
+        '        BassSFX_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "BASS_SFX.dll"))
+        '        If BassSfx.BASS_SFX_GetVersion() = 0 Then
+        '            IsSFXLoaded = False
+        '        Else
+        '            IsSFXLoaded = True
+        '        End If
+        '    Catch ex As Exception
+        '        IsSFXLoaded = False
+        '    End Try
+        '    Visualizer = New Visuals
+        '    PlayerState = State.Undefined
+        'End If
+        Try
             If Not Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, System.IntPtr.Zero) Then
-                MessageBox.Show("Error: " & Bass.BASS_ErrorGetCode.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
+                If Bass.BASS_ErrorGetCode <> BASSError.BASS_ERROR_ALREADY Then
+                    IsInitialized = False
+                    MessageBox.Show("Error: " & Bass.BASS_ErrorGetCode.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
+                End If
             Else
+                IsInitialized = True
+                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1)
                 BassFlac_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bassflac.dll"))
                 Try
                     BassFX_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bass_fx.dll"))
@@ -323,10 +408,65 @@ Public Class Player
                 Catch ex As Exception
                     IsSFXLoaded = False
                 End Try
+                Dim Hwnd = New Interop.WindowInteropHelper(Application.Current.MainWindow)
+                Try
+                    BassWaDSP_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bass_wadsp.dll"))
+                    If BassWaDsp.BASS_WADSP_GetVersion = 0 Then
+                        IsDSPLoaded = False
+                    Else
+                        If BassWaDsp.BASS_WADSP_Init(Hwnd.Handle) Then
+                            IsDSPLoaded = True
+                        Else
+                            IsDSPLoaded = False
+                        End If
+                    End If
+                Catch ex As Exception
+                    IsDSPLoaded = False
+                End Try
+                Try
+                    BassMidi_Handle = Bass.BASS_PluginLoad(IO.Path.Combine(My.Application.Info.DirectoryPath, "bassmidi.dll"))
+                    If BassMidi_Handle = 0 Then
+                        IsMidiLoaded = False
+                    Else
+                        IsMidiLoaded = True
+                    End If
+                Catch ex As Exception
+                    IsMidiLoaded = False
+                End Try
+                If My.Settings.FXEQGAINS.Count = 10 Then
+                    For i As Integer = 0 To My.Settings.FXEQGAINS.Count - 1
+                        _fxEQgains(i) = My.Settings.FXEQGAINS.Item(i)
+                    Next
+                    RaiseEvent OnEqChanged(_fxEQgains)
+                End If
+                If My.Settings.FX_REVERB IsNot Nothing Then
+                    Reverb = My.Settings.FX_REVERB
+                    IsReverb = True
+                End If
+                If My.Settings.FX_DAMP IsNot Nothing Then
+                    Loudness = My.Settings.FX_DAMP
+                    IsLoudness = True
+                End If
+                If My.Settings.FX_BALANCE <> 0 Then
+                    Balance = My.Settings.FX_BALANCE
+                    IsBalance = True
+                End If
+                If My.Settings.FX_SAMPLERATE <> 0 Then
+                    SampleRate = My.Settings.FX_SAMPLERATE
+                    IsSampleRate = True
+                End If
+                If TryCast(My.Settings.FX_STEREOMIX, BASS_BFX_MIX) IsNot Nothing Then
+                    StereoMix = CType(My.Settings.FX_STEREOMIX, BASS_BFX_MIX)
+                    IsStereoMix = True
+                End If
                 Visualizer = New Visuals
                 PlayerState = State.Undefined
             End If
-        End Sub
+        Catch ex As Exception
+            IsInitialized = False
+            IsInitializedReason = ex
+        End Try
+    End Sub
 #End Region
 #Region "Navigation"
     Private oldvol As Single = Volume
@@ -336,23 +476,113 @@ Public Class Player
         End If
         StreamStop()
         Bass.BASS_StreamFree(Stream)
+        If DoubleOutput Then
+            Bass.BASS_ChannelStop(DOStream)
+            Bass.BASS_StreamFree(DOStream)
+        End If
         PlayerState = State.Stopped
         If RaiseEvents = True Then
             RaiseEvent PlayerStateChanged(State.Stopped)
         End If
         If Not UseURL Then
-            If _RepeateType <> RepeateBehaviour.RepeatOne Then
-                If Mono Then
-                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+            Dim Ex = New IO.FileInfo(Loc)?.Extension
+            If Ex.ToLower = ".mid" Or Ex = ".midi" Then
+                If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "Data", "MidiSF.sf2")) Then
+                    Dim soundFont As Integer = BassMidi.BASS_MIDI_FontInit(IO.Path.Combine(My.Application.Info.DirectoryPath, "Data", "MidiSF.sf2"))
+                    If Not BassMidi.BASS_MIDI_FontLoad(soundFont, -1, -1) Then
+                        Throw New InvalidOperationException("Midi sound font load error. Please check the file.")
+                    End If
+                    Dim soundFontInstance(0) As BASS_MIDI_FONT
+                    soundFontInstance(0) = New BASS_MIDI_FONT(soundFont, -1, 0)
+                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                        If Mono Then
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        Else
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        End If
+                    Else
+                        If Mono Then
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        Else
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        End If
+                    End If
+                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        End If
+                    Else
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        End If
+                    End If
+                    BassMidi.BASS_MIDI_StreamSetFonts(Stream, soundFontInstance, 1)
+                    BassMidi.BASS_MIDI_StreamLoadSamples(Stream)
                 Else
-                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    Throw New InvalidOperationException("No Midi Sound Font was found. Please check all the files or download a new one and save it to the Data folder under the name ""MidiSF.sf2""")
+                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                        If Mono Then
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        Else
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        End If
+                    Else
+                        If Mono Then
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        Else
+                            Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        End If
+                    End If
+                    If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                        End If
+                    Else
+                        If Mono Then
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        Else
+                            DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                        End If
+                    End If
                 End If
             Else
-                If Mono Then
-                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                    If Mono Then
+                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    Else
+                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    End If
                 Else
-                    Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                    If Mono Then
+                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                    Else
+                        Stream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                    End If
                 End If
+                If _RepeateType <> RepeateBehaviour.RepeatOne Then
+                    If Mono Then
+                        DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    Else
+                        DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE)
+                    End If
+                Else
+                    If Mono Then
+                        DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_MONO Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                    Else
+                        DOStream = Bass.BASS_StreamCreateFile(Loc, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT Or BASSFlag.BASS_STREAM_AUTOFREE Or BASSFlag.BASS_SAMPLE_LOOP)
+                    End If
+                End If
+            End If
+            If DOStream <> 0 Then
+                Bass.BASS_ChannelSetDevice(DOStream, DODeviceIndex)
+                Bass.BASS_ChannelSetPosition(DOStream, GetPosition)
+                If PlayerState = State.Playing Then Bass.BASS_ChannelPlay(DOStream, False)
             End If
             If Stream <> 0 Then
                 TryCast(Application.Current.MainWindow, MainWindow).AddToJlist(Loc)
@@ -457,13 +687,14 @@ Public Class Player
             StreamPlay()
         End If
     End Sub
+    <Obsolete("Use LoadSong to load URL directly")>
     Public Async Function LoadStreamAsync(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True) As Task(Of Boolean)
         Select Case Type
             Case StreamTypes.URL
                 LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
             Case StreamTypes.Youtube
                 If URL IsNot Nothing Then
-                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim Yt 'As New YoutubeExplode.YoutubeClient
                     Dim Video = Await Yt.Videos.GetAsync(URL)
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
@@ -472,7 +703,12 @@ Public Class Player
                     Dim YTTrackManifest = Await Yt.Videos.Streams.GetManifestAsync(Video.Id)
                     Dim YTTrackStream = YTTrackManifest.GetMuxedStreams
                     SourceURL = Video.Url
-                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData)))
+                    Dim Cover As System.Drawing.Image
+                    Try
+                        Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverData))
+                    Catch ex As Exception
+                    End Try
+                    LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, YTTrackStream(0).Url, True, Video.Title, Video.Author.Title, Cover)
                     Yt = Nothing
                     Video = Nothing
                     CoverData = Nothing
@@ -480,7 +716,7 @@ Public Class Player
                     YTTrackStream = Nothing
                     Return Await Task.FromResult(True)
                 Else
-                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim Yt 'As New YoutubeExplode.YoutubeClient
                     Dim VideoId = Yt.Search.GetVideosAsync(YTquery).GetAsyncEnumerator
                     Await VideoId.MoveNextAsync()
                     Dim Video = VideoId.Current
@@ -515,13 +751,14 @@ Public Class Player
             Case StreamTypes.Soundcloud
         End Select
     End Function
+    <Obsolete("Use LoadSong to load URL directly")>
     Public Async Sub LoadStream(URL As String, Type As StreamTypes, Playlist As Playlist, Optional YTquery As String = Nothing, Optional UpdatePlaylist As Boolean = True)
         Select Case Type
             Case StreamTypes.URL
                 LoadSong(Nothing, Playlist, UpdatePlaylist, True, True, URL)
             Case StreamTypes.Youtube
                 If URL IsNot Nothing Then
-                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim Yt 'As New YoutubeExplode.YoutubeClient
                     Dim Video = Await Yt.Videos.GetAsync(URL)
                     Dim CoverData As Byte() = Nothing
                     Using WC As New System.Net.WebClient
@@ -537,7 +774,7 @@ Public Class Player
                     YTTrackManifest = Nothing
                     YTTrackStream = Nothing
                 Else
-                    Dim Yt As New YoutubeExplode.YoutubeClient
+                    Dim Yt 'As New YoutubeExplode.YoutubeClient
                     Dim VideoId = Yt.Search.GetVideosAsync(YTquery).GetAsyncEnumerator
                     Await VideoId.MoveNextAsync()
                     Dim Video = VideoId.Current
@@ -573,6 +810,9 @@ Public Class Player
                 RaiseEvent PlayerStateChanged(State.Playing)
                 PlayerState = State.Playing
             End If
+            If DoubleOutput Then
+                Bass.BASS_ChannelPlay(DOStream, False)
+            End If
             If FadeAudio Then
                 Await FadeVol(oldvol)
             End If
@@ -587,6 +827,7 @@ Public Class Player
                 RaiseEvent PlayerStateChanged(State.Paused)
                 PlayerState = State.Paused
             End If
+            Bass.BASS_ChannelPause(DOStream)
         Else
             SetVolume(oldvol, True, True)
         End If
@@ -594,8 +835,12 @@ Public Class Player
     Public Sub StreamStop()
             If Bass.BASS_ChannelStop(Stream) Then
                 RaiseEvent PlayerStateChanged(State.Stopped)
-                PlayerState = State.Stopped
+            PlayerState = State.Stopped
             Stream = 0
+            If DoubleOutput Then
+                Bass.BASS_ChannelStop(DOStream)
+                DOStream = 0
+            End If
         End If
         End Sub
 #End Region
@@ -624,6 +869,9 @@ Public Class Player
                     End If
                 End If
         End Select
+        If DoubleOutput Then
+            Bass.BASS_ChannelSetAttribute(DOStream, BASSAttribute.BASS_ATTRIB_VOL, Volume)
+        End If
         If IsFadeAudioCalled = False Then
             oldvol = Volume
         End If
@@ -637,16 +885,26 @@ Public Class Player
         Return Vol
     End Function
         Public Sub SetPosition(Seconds As Double)
-            Bass.BASS_ChannelSetPosition(Stream, Seconds)
-        End Sub
-        Public Function GetPosition() As Long
-            Try
-                Return Bass.BASS_ChannelBytes2Seconds(Stream, Bass.BASS_ChannelGetPosition(Stream, BASSMode.BASS_POS_BYTES))
-            Catch ex As Exception
+        Bass.BASS_ChannelSetPosition(Stream, Seconds)
+        If DoubleOutput Then
+            Bass.BASS_ChannelSetPosition(DOStream, Seconds)
+        End If
+    End Sub
+    Public Function GetPosition() As Long
+        Try
+            Return Bass.BASS_ChannelBytes2Seconds(Stream, Bass.BASS_ChannelGetPosition(Stream, BASSMode.BASS_POS_BYTE))
+        Catch ex As Exception
             Return -1
         End Try
-        End Function
-        Public Function GetLength() As Long
+    End Function
+    Public Function GetPrecisePosition() As Double
+        Try
+            Return Bass.BASS_ChannelBytes2Seconds(Stream, Bass.BASS_ChannelGetPosition(Stream, BASSMode.BASS_POS_BYTE))
+        Catch ex As Exception
+            Return -1
+        End Try
+    End Function
+    Public Function GetLength() As Long
             Try
                 Return Bass.BASS_ChannelBytes2Seconds(Stream, Bass.BASS_ChannelGetLength(Stream, BASSMode.BASS_POS_BYTES))
             Catch ex As Exception
@@ -873,6 +1131,13 @@ Public Class Player
         Else
             RaiseEvent OnFxChanged(LinkHandles.StereoMix, False)
         End If
+        If IsRotate Then
+            SetRotate(True)
+            UpdateRotate(RotatePreset.Med, Rotate.fRate)
+            RaiseEvent OnFxChanged(LinkHandles.Rotate, True)
+        Else
+            RaiseEvent OnFxChanged(LinkHandles.Rotate, False)
+        End If
         If IsFirstStream = False Then
             For Each DSP In LoadedDSP
                 DSP.HDSP = BassWaDsp.BASS_WADSP_ChannelSetDSP(DSP.Handle, Stream, 0)
@@ -1012,19 +1277,24 @@ Public Class Player
             End If
         End If
     End Sub
-    Public Sub UpdateRotate(Preset As RotatePreset)
+    Public Sub UpdateRotate(Preset As RotatePreset, Optional Rate As Single = Single.NaN)
         If IsRotate Then
-            Select Case Preset
-                Case RotatePreset.Slow
-                    Rotate.fRate = 0.05
-                    Bass.BASS_FXSetParameters(RotateHandle, Rotate)
-                Case RotatePreset.Med
-                    Rotate.fRate = 0.1
-                    Bass.BASS_FXSetParameters(RotateHandle, Rotate)
-                Case RotatePreset.Fast
-                    Rotate.fRate = 0.3
-                    Bass.BASS_FXSetParameters(RotateHandle, Rotate)
-            End Select
+            If Single.IsNaN(Rate) Then
+                Select Case Preset
+                    Case RotatePreset.Slow
+                        Rotate.fRate = 0.05
+                        Bass.BASS_FXSetParameters(RotateHandle, Rotate)
+                    Case RotatePreset.Med
+                        Rotate.fRate = 0.1
+                        Bass.BASS_FXSetParameters(RotateHandle, Rotate)
+                    Case RotatePreset.Fast
+                        Rotate.fRate = 0.3
+                        Bass.BASS_FXSetParameters(RotateHandle, Rotate)
+                End Select
+            Else
+                Rotate.fRate = Rate
+                Bass.BASS_FXSetParameters(RotateHandle, Rotate)
+            End If
         End If
     End Sub
     Public Function DetectSilence(Filename As String) As Double()
@@ -1181,7 +1451,7 @@ Public Class Player
                        End Sub)
     End Function
 #End Region
-    Public Function GetOutputDevices()
+    Public Function GetOutputDevices() As List(Of String)
         Dim n As Integer = 0
         Dim DevicesList As New List(Of String)
         Dim info As New BASS_DEVICEINFO()
@@ -1196,18 +1466,22 @@ Public Class Player
         Bass.BASS_SetDevice(index)
         Bass.BASS_ChannelSetDevice(Stream, index)
     End Sub
+    Public Sub SetDoubleOutputDevice(index As Integer)
+        Bass.BASS_Init(index, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)
+        Bass.BASS_ChannelSetDevice(DOStream, index)
+        DODeviceIndex = index
+    End Sub
     Private Sub SetABLoop()
         If _ABLoop IsNot Nothing Then
             _ABLoopTimer.Start()
         Else
             _ABLoopTimer.Stop()
         End If
+        RaiseEvent OnABLoopChanged(_ABLoop)
     End Sub
     Private Sub _ABLoopTimer_Elapsed(sender As Object, e As ElapsedEventArgs) Handles _ABLoopTimer.Elapsed
         If GetPosition() >= _ABLoop.B Then
             SetPosition(_ABLoop.A)
-            'ElseIf GetPosition() < _ABLoop.A Then
-            '    SetPosition(_ABLoop.A)
         End If
     End Sub
     Public Sub ImportDSP(file As String)
@@ -1238,6 +1512,13 @@ Public Class Player
             End If
         End If
     End Sub
+    ''' <summary>
+    ''' Returns an array that represents {IsInitialized,IsFXLoaded, IsSFXLoaded, IsDSPLoaded, IsMidiLoaded}
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function GetEngineState() As Boolean()
+        Return New Boolean() {IsInitialized, IsFXLoaded, IsSFXLoaded, IsDSPLoaded, IsMidiLoaded}
+    End Function
 #End Region
 #Region "Visuals"
     Public Function CreateVisualizer(type As Visualizers, width As Integer, height As Integer, color1 As System.Drawing.Color, color2 As System.Drawing.Color, color3 As System.Drawing.Color, background As System.Drawing.Color, linewidth As Integer, peakwidth As Integer, distance As Integer, peakdelay As Integer, linear As Boolean, fullspectrum As Boolean, highquality As Boolean) As System.Drawing.Bitmap

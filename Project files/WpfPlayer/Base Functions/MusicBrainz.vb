@@ -12,7 +12,7 @@ Public Class MusicBrainz
         End Get
         Set(value As States)
             _Status = value
-            If My.Settings.MusicBrainzNotify Then
+            If My.Settings.MUSICBRAINZNOTIFY Then
                 RaiseEvent OnStateChanged(value)
             End If
         End Set

@@ -1,7 +1,6 @@
-﻿Imports Un4seen.Bass
-
-Public Class Command
-    Public Shared Property Commands As String() = {"home hide overlay", "playlist show overlay", "playlist hide overlay", "home show reflection", "home hide reflection", "playlist index", "playlist count", "playlist items", "playlist items -s", "playlist items -n", "playlist items -u", "playlist add random", "exit", "exit n", "clear", "next", "previous", "stop", "pause", "play", "init", "free", "fade down", "fade down db", "fade up", "fade up db", "fade to", "fade to db", "eq enable", "eq disable", "reverb enable", "update reverb ingain", "update reverb mix", "update reverb time", "update reverb hfrtr", "reverb disable", "handle", "plugin fx", "plugin sfx", "set sfx fps", "source url", "discord disconnect", "discord connect", "discord set presence", "save", "channelinfo", "tags", "plugins", "notification", "debug", "error", "hooks", "set custom state", "library stats", "search", "refresh library stats", "library make", "library make artists", "library make years", "fullscreen", "library update artists", "library update years", "about", "hotkeys", "home show overlay", "home refresh recommended", "home show recommended", "home topmost off", "home topmost on", "home set visualizer refresh speed", "home hide recommended", "version", "taskbar add thumbnail", "taskbar remove thumbnail"}
+﻿Public Class Command
+#Const WIN1010240 = True
+    Public Shared Property Commands As String() = {"home hide overlay", "playlist show overlay", "playlist hide overlay", "home show reflection", "home hide reflection", "playlist index", "playlist count", "playlist items", "playlist items -s", "playlist items -n", "playlist items -u", "playlist add random", "exit", "exit n", "clear", "next", "previous", "stop", "pause", "play", "init", "free", "fade down", "fade down db", "fade up", "fade up db", "fade to", "fade to db", "eq enable", "eq disable", "reverb enable", "update reverb ingain", "update reverb mix", "update reverb time", "update reverb hfrtr", "reverb disable", "handle", "plugin fx", "plugin sfx", "set sfx fps", "source url", "discord disconnect", "discord connect", "discord set presence", "save", "channelinfo", "tags", "plugins", "notification", "debug", "error", "hooks", "set custom state", "library stats", "search", "refresh library stats", "library make", "library make artists", "library make years", "fullscreen", "fullscreen -0", "library update artists", "library update years", "about", "hotkeys", "home show overlay", "home refresh recommended", "home show recommended", "home topmost off", "home topmost on", "home set visualizer refresh speed", "home hide recommended", "version", "taskbar add thumbnail", "taskbar remove thumbnail", "taskbar clear thumbnail", "taskbar thumbnail manager", "test plugin system", "set api timeout", "enable double output", "disable double output", "set double output", "val to percentage", "percentage to val", "home visualiser", "settings browse", "engine state", "library manager", "library manager new", "playlist get previous", "playlist get next", "playlist play at", "playlist play at force"}
     Public Shared Async Sub Excute(command As String, Window As Window)
         Select Case command.ToLower
             Case "home topmost off"
@@ -85,12 +84,12 @@ Public Class Command
                 Dim limit = InputBox("Return limit")
                 Dim SB As New Text.StringBuilder
                 If limit = -1 Then
-                    For i As Integer = 0 To My.Settings.LastPlaylist.Count - 1
-                        SB.AppendLine(My.Settings.LastPlaylist(i))
+                    For i As Integer = 0 To My.Settings.LASTPLAYLIST.Count - 1
+                        SB.AppendLine(My.Settings.LASTPLAYLIST(i))
                     Next
                 Else
                     For i As Integer = 0 To limit
-                        SB.AppendLine(My.Settings.LastPlaylist(i))
+                        SB.AppendLine(My.Settings.LASTPLAYLIST(i))
                     Next
                 End If
                 MsgBox(SB.ToString)
@@ -255,16 +254,16 @@ Public Class Command
             Case "save"
                 With CType(Window, MainWindow).MainPlayer
                     If .SourceURL IsNot Nothing Then
-                        My.Settings.LastMediaType = .CurrentMediaType
-                        My.Settings.LastMediaTitle = .CurrentMediaTitle
-                        My.Settings.LastMediaArtist = .CurrentMediaArtist
-                        My.Settings.LastMedia = .SourceURL
-                        My.Settings.LastMediaSeek = .GetPosition
-                        My.Settings.LastMediaDuration = .GetLength
-                        My.Settings.LastMediaIndex = CType(Window, MainWindow).MainPlaylist.Index
-                        My.Settings.LastPlaylist.Clear()
+                        My.Settings.LASTMEDIATYPE = .CurrentMediaType
+                        My.Settings.LASTMEDIATITLE = .CurrentMediaTitle
+                        My.Settings.LASTMEDIAARTIST = .CurrentMediaArtist
+                        My.Settings.LASTMEDIA = .SourceURL
+                        My.Settings.LASTMEDIASEEK = .GetPosition
+                        My.Settings.LASTMEDIADURATION = .GetLength
+                        My.Settings.LASTMEDIAINDEX = CType(Window, MainWindow).MainPlaylist.Index
+                        My.Settings.LASTPLAYLIST.Clear()
                         For Each song In CType(Window, MainWindow).MainPlaylist.Playlist
-                            My.Settings.LastPlaylist.Add(song)
+                            My.Settings.LASTPLAYLIST.Add(song)
                         Next
                         'For i As Integer = 0 To MainPlaylist.Count - 1
                         'My.Settings.LastPlaylist.Add(MainPlaylist.GetItem(i) & playlistItems(i).Type)
@@ -278,7 +277,7 @@ Public Class Command
                 Exit Sub
             Case "tags"
                 Try
-                    Dim Tags = CType(Application.Current.MainWindow, MainWindow).MainPlayer.GetTags
+                    Dim Tags = CType(Window, MainWindow).MainPlayer.GetTags
                     Dim Artist = Tags.artist
                     Dim Title = Tags.title
                     Dim Album = Tags.album
@@ -288,7 +287,7 @@ Public Class Command
                     Dim Genres = Tags.genre
                     Dim Bitrates = Tags.bitrate
                     Dim CompressedInfo As String()
-                    Dim Channelinfo = Un4seen.Bass.Bass.BASS_ChannelGetInfo(CType(Application.Current.MainWindow, MainWindow).MainPlayer.Stream)
+                    Dim Channelinfo = Un4seen.Bass.Bass.BASS_ChannelGetInfo(CType(Window, MainWindow).MainPlayer.Stream)
                     CompressedInfo = {Artist, Title, Album, Year, TrackNum, Genres, Lyrics, Channelinfo.chans, Channelinfo.freq, Channelinfo.origres, Channelinfo.filename, Bitrates}
                     MsgBox(String.Join(vbCrLf, CompressedInfo))
                     Exit Sub
@@ -299,30 +298,32 @@ Public Class Command
                 My.Windows.Plugins.Show()
                 Exit Sub
             Case "notification"
-                TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("Debug", InputBox("Message"), HandyControl.Data.NotifyIconInfoType.Info)
+                TryCast(Window, MainWindow).ShowNotification("Debug", InputBox("Message"), HandyControl.Data.NotifyIconInfoType.Info)
                 Exit Sub
             Case "debug"
-                If InputBox("Password ?", "Debug", "Hello admin !") = "anes2002" Then
-                    TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("Hello admin !", "Debug mode: enabled", HandyControl.Data.NotifyIconInfoType.Info)
+                Dim Password As String = "AneS2002" & DateTime.UtcNow.Hour & DateTime.UtcNow.Minute & "//" & DateTime.UtcNow.Day & DateTime.UtcNow.Month & DateTime.UtcNow.Year
+                If InputBox("Password ?", "Debug", "Hello admin !") = Password Then
+                    TryCast(Window, MainWindow).ShowNotification("Welcome To Debug Mode", "All Devlopper options are now availble.", HandyControl.Data.NotifyIconInfoType.Info)
                     With My.Windows.Settings
                         .onerror_stacktrace.IsEnabled = True
                         .onerror_tostring.IsEnabled = True
                     End With
+                    My.Windows.Console.LogDebug = True
+                    Exit Sub
                 End If
-                Exit Sub
             Case "error"
                 Throw New Exception("error")
                 Exit Sub
             Case "hooks"
                 Dim SB As New Text.StringBuilder
-                SB.AppendLine("PlayPause: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_PlayPause_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_PlayPause))
-                SB.AppendLine("Next: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_Next_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_Next))
-                SB.AppendLine("Previous: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_Previous_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_Previous))
-                SB.AppendLine("Skip 10: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_Skip10_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_Skip10))
-                SB.AppendLine("Back 10: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_Back10_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_Back10))
-                SB.AppendLine("Volume Up: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_VolumeUp_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeUp))
-                SB.AppendLine("Volume Down: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_VolumeDown_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeDown))
-                SB.AppendLine("Volume Mute: " & Utils.IntToModSTR(My.Settings.GlobalHotkey_VolumeMute_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeMute))
+                SB.AppendLine("PlayPause: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_PLAYPAUSE_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_PLAYPAUSE))
+                SB.AppendLine("Next: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_NEXT_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_NEXT))
+                SB.AppendLine("Previous: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_PREVIOUS_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_PREVIOUS))
+                SB.AppendLine("Skip 10: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_SKIP10_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_SKIP10))
+                SB.AppendLine("Back 10: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_BACK10_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_BACK10))
+                SB.AppendLine("Volume Up: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_VOLUMEUP_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEUP))
+                SB.AppendLine("Volume Down: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_VOLUMEDOWN_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEDOWN))
+                SB.AppendLine("Volume Mute: " & Utils.IntToModSTR(My.Settings.GLOBALHOTKEY_VOLUMEMUTE_MOD) & "+" & System.Enum.GetName(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEMUTE))
                 MsgBox(SB.ToString)
                 SB = Nothing
                 Exit Sub
@@ -332,25 +333,25 @@ Public Class Command
                 For i As Integer = 0 To states.Count - 1
                     sb.AppendLine(i & "-" & states(i))
                 Next
-                CType(Application.Current.MainWindow, MainWindow).MainPlayer.SetCustomState(InputBox(sb.ToString))
+                CType(Window, MainWindow).MainPlayer.SetCustomState(InputBox(sb.ToString))
                 Exit Sub
             Case "library stats"
-                MsgBox(TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.DateCreated & "//" & TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.Count)
+                MsgBox(TryCast(Window, MainWindow).MainLibrary.DateCreated & "//" & TryCast(Window, MainWindow).MainLibrary.Count)
                 Exit Sub
             Case "search"
                 My.Windows.Search.Show()
                 Exit Sub
             Case "refresh library stats"
-                Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.RefreshStats
+                Await TryCast(Window, MainWindow).MainLibrary.RefreshStats
                 Exit Sub
             Case "library make"
                 Dim Temp_List As New List(Of String)
-                For Each path In My.Settings.LibrariesPath
+                For Each path In My.Settings.LIBRARIESPATH
                     Temp_List.Add(path)
                 Next
                 Dim Temp_Library As New Library(Await Library.MakeLibrary(Utils.AppDataPath, Temp_List))
                 Dim files As New List(Of String)
-                For Each path In My.Settings.LibrariesPath
+                For Each path In My.Settings.LIBRARIESPATH
                     For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
                         files.Add(song)
                     Next
@@ -359,17 +360,23 @@ Public Class Command
                 Temp_List = Nothing
                 Exit Sub
             Case "library make artists"
-                Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
+                Await TryCast(Window, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
                 Exit Sub
             Case "library make years"
-                Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
+                Await TryCast(Window, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
                 Exit Sub
             Case "fullscreen"
-                My.Windows.FullScreenPlayer.Owner = Application.Current.MainWindow
+                My.Windows.FullScreenPlayer.Owner = Window
+                My.Windows.FullScreenPlayer.Main_BG.Opacity = 1
+                My.Windows.FullScreenPlayer.ShowDialog()
+                Exit Sub
+            Case "fullscreen -0"
+                My.Windows.FullScreenPlayer.Owner = Window
+                My.Windows.FullScreenPlayer.Main_BG.Opacity = 0
                 My.Windows.FullScreenPlayer.ShowDialog()
                 Exit Sub
             Case "library update artists"
-                With TryCast(Application.Current.MainWindow, MainWindow)
+                With TryCast(Window, MainWindow)
                     .GArtists = Await .MainLibrary.ReadArtistsCache(Utils.AppDataPath)
                     For i As Integer = 0 To .GArtists.Count - 1
                         Try
@@ -379,11 +386,11 @@ Public Class Command
                     Next
                 End With
             Case "library update years"
-                With TryCast(Application.Current.MainWindow, MainWindow)
+                With TryCast(Window, MainWindow)
                     .GYears = Await .MainLibrary.ReadYearsCache(Utils.AppDataPath)
                     For i As Integer = 0 To .GYears.Count - 1
                         Try
-                            .libraryYearsItems.Add(New ArtistItem(i + 1, .GYears(i)))
+                            .libraryYearsItems.Add(New YearItem(i + 1, .GYears(i)))
                         Catch ex As Exception
                         End Try
                     Next
@@ -405,37 +412,153 @@ Public Class Command
                     sb.AppendLine(" Minor Revision: " & .Version.MinorRevision)
                     sb.AppendLine(" Revision: " & .Version.Revision)
                     sb.AppendLine("Working Set: " & .WorkingSet)
+#If WIN1010240 Then
                     sb.AppendLine("Compatiblity: WIN10 10240+")
-                    'sb.AppendLine("Compatiblity: WIN7+")
-                    MessageBox.Show(Application.Current.MainWindow, sb.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Information)
+#Else
+                    sb.AppendLine("Compatiblity: WIN7+")
+#End If
+                    MessageBox.Show(Window, sb.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Information)
                 End With
                 Exit Sub
             Case "hotkeys"
                 Dim names = System.Enum.GetNames(GetType(Forms.Keys))
                 Dim sb As New Text.StringBuilder
-                sb.AppendLine("PlayPause: " & My.Settings.GlobalHotkey_PlayPause_MOD & "//" & My.Settings.GlobalHotkey_PlayPause & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_PlayPause).ToString & "]")
-                sb.AppendLine("Next: " & My.Settings.GlobalHotkey_Next_MOD & "//" & My.Settings.GlobalHotkey_Next & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Next).ToString & "]")
-                sb.AppendLine("Previous: " & My.Settings.GlobalHotkey_Previous_MOD & "//" & My.Settings.GlobalHotkey_Previous & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Previous).ToString & "]")
-                sb.AppendLine("+10s: " & My.Settings.GlobalHotkey_Skip10_MOD & "//" & My.Settings.GlobalHotkey_Skip10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Skip10).ToString & "]")
-                sb.AppendLine("-10s: " & My.Settings.GlobalHotkey_Back10_MOD & "//" & My.Settings.GlobalHotkey_Back10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_Back10).ToString & "]")
-                sb.AppendLine("Vol Up: " & My.Settings.GlobalHotkey_VolumeUp_MOD & "//" & My.Settings.GlobalHotkey_VolumeUp & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeUp).ToString & "]")
-                sb.AppendLine("Vol Down: " & My.Settings.GlobalHotkey_VolumeDown_MOD & "//" & My.Settings.GlobalHotkey_VolumeDown & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeDown).ToString & "]")
-                sb.AppendLine("Vol Mute: " & My.Settings.GlobalHotkey_VolumeMute_MOD & "//" & My.Settings.GlobalHotkey_VolumeMute & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GlobalHotkey_VolumeMute).ToString & "]")
+                sb.AppendLine("PlayPause: " & My.Settings.GLOBALHOTKEY_PLAYPAUSE_MOD & "//" & My.Settings.GLOBALHOTKEY_PLAYPAUSE & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_PLAYPAUSE).ToString & "]")
+                sb.AppendLine("Next: " & My.Settings.GLOBALHOTKEY_NEXT_MOD & "//" & My.Settings.GLOBALHOTKEY_NEXT & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_NEXT).ToString & "]")
+                sb.AppendLine("Previous: " & My.Settings.GLOBALHOTKEY_PREVIOUS_MOD & "//" & My.Settings.GLOBALHOTKEY_PREVIOUS & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_PREVIOUS).ToString & "]")
+                sb.AppendLine("+10s: " & My.Settings.GLOBALHOTKEY_SKIP10_MOD & "//" & My.Settings.GLOBALHOTKEY_SKIP10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_SKIP10).ToString & "]")
+                sb.AppendLine("-10s: " & My.Settings.GLOBALHOTKEY_BACK10_MOD & "//" & My.Settings.GLOBALHOTKEY_BACK10 & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_BACK10).ToString & "]")
+                sb.AppendLine("Vol Up: " & My.Settings.GLOBALHOTKEY_VOLUMEUP_MOD & "//" & My.Settings.GLOBALHOTKEY_VOLUMEUP & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEUP).ToString & "]")
+                sb.AppendLine("Vol Down: " & My.Settings.GLOBALHOTKEY_VOLUMEDOWN_MOD & "//" & My.Settings.GLOBALHOTKEY_VOLUMEDOWN & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEDOWN).ToString & "]")
+                sb.AppendLine("Vol Mute: " & My.Settings.GLOBALHOTKEY_VOLUMEMUTE_MOD & "//" & My.Settings.GLOBALHOTKEY_VOLUMEMUTE & "[" & System.Enum.ToObject(GetType(Forms.Keys), My.Settings.GLOBALHOTKEY_VOLUMEMUTE).ToString & "]")
                 MsgBox(sb.ToString, MsgBoxStyle.MsgBoxHelp)
                 Exit Sub
             Case "taskbar add thumbnail"
-                'TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.AddThumbnail(True, TryCast(Application.Current.MainWindow, MainWindow).media_cover.Source, System.Drawing.SystemIcons.Information, "Debug", "Debug Tip")
-                TryCast(Application.Current.MainWindow, MainWindow).SetThumb()
+                My.Windows.TaskbarThumbnailManager.SetThumb(My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.AddWindow())
                 Exit Sub
             Case "taskbar remove thumbnail"
                 Dim sb As New Text.StringBuilder
-                For i As Integer = 0 To TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails.Count - 1
-                    sb.AppendLine(i + 1 & TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails(i).Title & ";" & TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.Thumbnails(i).Tooltip)
+                For i As Integer = 0 To My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.Wnds.Count - 1
+                    Try
+                        sb.AppendLine(i & My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.Wnds(i).Thumbnail.Title & ";" & My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.Wnds(i).Thumbnail.Tooltip)
+                    Catch ex As Exception
+                        sb.AppendLine(i & ": Nothing")
+                    End Try
                 Next
-                TryCast(Application.Current.MainWindow, MainWindow).TaskbarThumbnailManager.RemoveThumbnail(InputBox(sb.ToString, "Debug"))
+                My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.RemoveThumbnail(InputBox(sb.ToString, "Debug"))
                 Exit Sub
-            Case "vsettings"
-                MsgBox(SystemParameters.UxThemeName & "//" & SystemParameters.UxThemeColor)
+            Case "taskbar clear thumbnail"
+                For i As Integer = 0 To My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.Wnds.Count - 1
+                    My.Windows.TaskbarThumbnailManager.TaskbarThumbnailManager.RemoveThumbnail(i)
+                Next
+                Exit Sub
+            Case "taskbar thumbnail manager"
+                My.Windows.TaskbarThumbnailManager.Show()
+                Exit Sub
+            Case "test plugin system"
+                Dim Plugitem As New Utils.PluginItem("Debug Plugin", "MuPlay///DebugPlugin") With {.ID = 1234}
+                Plugitem.Entries.Add(New Utils.PluginItem.Entry(5678, "Entry 1"))
+                Plugitem.Entries.Add(New Utils.PluginItem.Entry(9012, "Entry 2"))
+                Plugitem.Entries.Add(New Utils.PluginItem.Entry(3456, "Entry 3"))
+                Dim STRPlugin As String = Plugitem.ToString(">")
+                Dim Plugin = Utils.PluginItem.FromString(">", STRPlugin)
+                Dim Result As New List(Of String)
+                If Plugitem.Name = Plugin.Name Then Result.Add("Name: " & True) Else Result.Add("Name: " & False)
+                If Plugitem.ID = Plugin.ID Then Result.Add("ID: " & True) Else Result.Add("ID: " & False)
+                If Plugitem.Source = Plugin.Source Then Result.Add("Source: " & True) Else Result.Add("Source: " & False)
+                If Plugitem.Entries.Count = Plugin.Entries.Count Then
+                    Result.Add("Entries.Count: " & True)
+                    For i As Integer = 0 To Plugitem.Entries.Count - 1
+                        Result.Add("Entries.Item(" & i & ") = " & Plugitem.Entries.Item(i).ToString("|") & " >|< " & "Entries.Item(" & i & ") = " & Plugin.Entries.Item(i).ToString("|"))
+                    Next
+                Else
+                    Result.Add("Entries.Count: " & False)
+                    Result.Add("Entries.Items: Obviously failed.")
+                End If
+                MessageBox.Show("Result: " & Environment.NewLine & String.Join(Environment.NewLine, Result), "Debug", MessageBoxButton.OK, MessageBoxImage.Information)
+                Exit Sub
+            Case "set api timeout"
+                Dim timeout As Integer
+                If Integer.TryParse(InputBox("Time out in ms:"), timeout) Then
+                    My.Settings.API_TIMEOUT = timeout
+                    My.Settings.Save()
+                End If
+                Exit Sub
+            Case "enable double output"
+                TryCast(Window, MainWindow).MainPlayer.DoubleOutput = True
+                Exit Sub
+            Case "disable double output"
+                TryCast(Window, MainWindow).MainPlayer.DoubleOutput = False
+                Exit Sub
+            Case "set double output"
+                Dim Device As Integer = 0
+                If Integer.TryParse(InputBox("Device index :" & String.Join(vbCrLf, TryCast(Window, MainWindow).MainPlayer.GetOutputDevices)), Device) Then
+                    TryCast(Window, MainWindow).MainPlayer.SetDoubleOutputDevice(Device)
+                End If
+                Exit Sub
+            Case "val to percentage"
+                Dim args = InputBox("Val;Min;Max").Split(";")
+                My.Windows.Console.Log(Utils.ValToPercentage(args(0), args(1), args(2)) & "%")
+                Exit Sub
+            Case "percentage to val"
+                Dim args = InputBox("Percentage;Min;Max").Split(";")
+                My.Windows.Console.Log(Utils.PercentageToVal(args(0), args(1), args(2)))
+                Exit Sub
+            Case "mixer"
+                'Under devlopment
+                My.Windows.PlayerMixer.Owner = Window
+                My.Windows.PlayerMixer.Show()
+                Exit Sub
+            Case "home visualiser"
+                My.Settings.HOMEVISUALISERTYPE = InputBox(String.Join(Environment.NewLine, System.Enum.GetNames(GetType(Player.Visualizers))))
+                My.Settings.Save()
+                Exit Sub
+            Case "settings browse"
+                My.Windows.SettingsBrowser.Show()
+                Exit Sub
+            Case "engine state"
+                '{IsInitialized,IsFXLoaded, IsSFXLoaded, IsDSPLoaded, IsMidiLoaded}
+                Dim EngineState = TryCast(Window, MainWindow).MainPlayer.GetEngineState()
+                Dim SB As New Text.StringBuilder
+                SB.AppendLine("IsInitialized: " & EngineState(0))
+                SB.AppendLine("IsFXLoaded :  " & EngineState(1))
+                SB.AppendLine("IsSFXLoaded: " & EngineState(2))
+                SB.AppendLine("IsDSPLoaded: " & EngineState(3))
+                SB.AppendLine("IsMidiLoaded: " & EngineState(4))
+                MessageBox.Show(SB.ToString, "MuPlay", MessageBoxButton.OK, MessageBoxImage.Information)
+                Exit Sub
+            Case "library manager"
+                My.Windows.LibraryManager.Show()
+                Exit Sub
+            Case "library manager new"
+                Dim libmgr As New LibraryManager
+                libmgr.Show()
+                Exit Sub
+            Case "playlist get previous"
+                Dim Playlist = TryCast(Window, MainWindow).MainPlaylist
+                My.Windows.Console.Log(Playlist.GetPreviousSong & " At " & Playlist.GetPreviousSongIndex)
+                Exit Sub
+            Case "playlist get next"
+                Dim Playlist = TryCast(Window, MainWindow).MainPlaylist
+                My.Windows.Console.Log(Playlist.GetNextSong & " At " & Playlist.GetNextSongIndex)
+                Exit Sub
+            Case "playlist play at"
+                Dim i As Integer = 0
+                If Integer.TryParse(InputBox("Index..."), i) Then
+                    Dim Playlist = TryCast(Window, MainWindow).MainPlaylist
+                    If i < Playlist.Count Then
+                        TryCast(Window, MainWindow).MainPlayer.LoadSong(Playlist.JumpTo(i), Nothing, False)
+                    Else
+                        My.Windows.Console.Log("Index cannot be less then the playlist count.")
+                    End If
+                End If
+                Exit Sub
+            Case "playlist play at force"
+                Dim i As Integer = 0
+                If Integer.TryParse(InputBox("Index..."), i) Then
+                    Dim Playlist = TryCast(Window, MainWindow).MainPlaylist
+                    TryCast(Window, MainWindow).MainPlayer.LoadSong(Playlist.JumpTo(i), Nothing, False)
+                    End If
                 Exit Sub
         End Select
         Throw New Exception("No such command!")

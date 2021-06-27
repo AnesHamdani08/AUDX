@@ -17,6 +17,19 @@ Public Class Library
     Public Property Paths As New List(Of String)
     Public Event OnCountChanged(Count As Integer)
     Public Event OnItemsChanged()
+    Private CTracks As List(Of String) = Nothing
+    Private CArtists As List(Of ArtistElement) = Nothing
+    Private CYears As List(Of YearElement) = Nothing
+    Public ReadOnly Property Cache As LibraryCache
+        Get
+            Return New LibraryCache With {.Tracks = CTracks, .Artists = CArtists, .Years = CYears}
+        End Get
+    End Property
+    Public Class LibraryCache
+        Public Property Tracks As List(Of String)
+        Public Property Artists As List(Of ArtistElement)
+        Public Property Years As List(Of YearElement)
+    End Class
     Public Class ArtistElement
         Public Property Name As String
         Public Property Songs As New List(Of String)
@@ -30,6 +43,21 @@ Public Class Library
         End Sub
         Public Sub New(_name As String)
             Name = _name
+        End Sub
+    End Class
+    Public Class YearElement
+        Public Property Year As String
+        Public Property Songs As New List(Of String)
+        Public Sub New(_year As String, files As String())
+            Year = _year
+            Songs.AddRange(files)
+        End Sub
+        Public Sub New(_year As String, listfiles As List(Of String))
+            Year = _year
+            Songs.AddRange(listfiles)
+        End Sub
+        Public Sub New(_year As String)
+            Year = _year
         End Sub
     End Class
     Public Sub New(path As String)
@@ -272,6 +300,7 @@ Public Class Library
             End If
         Next
         Artists = Artists.OrderBy(Function(k) k.Name).ToList
+        CArtists = Artists
         Return Artists
     End Function
     Public Async Function GroupArtistsAsync() As Task(Of List(Of ArtistElement))
@@ -289,41 +318,44 @@ Public Class Library
                                               End If
                                           Next
                                           Artists = Artists.OrderBy(Function(k) k.Name).ToList
+                                          CArtists = Artists
                                           Return Artists
                                       End Function)
         Return Await Task.FromResult(GArtists)
     End Function
-    Public Function GroupYears() As List(Of ArtistElement)
-        Dim Years As New List(Of ArtistElement)
+    Public Function GroupYears() As List(Of YearElement)
+        Dim Years As New List(Of YearElement)
         Dim LibDocument As New XmlDocument
         LibDocument.Load(LibraryPath)
         Dim ArtistNode = LibDocument.SelectNodes("/MuPlay/Tracks/Track")
         For Each song As XmlNode In ArtistNode
-            Dim _artist = Years.FirstOrDefault(Function(artist) artist.Name = song.Attributes.Item(2).Value)
+            Dim _artist = Years.FirstOrDefault(Function(artist) artist.Year = song.Attributes.Item(2).Value)
             If _artist IsNot Nothing Then
                 _artist.Songs.Add(song.Attributes.Item(3).Value)
             Else
-                Years.Add(New ArtistElement(song.Attributes.Item(2).Value, {song.Attributes.Item(3).Value}))
+                Years.Add(New YearElement(song.Attributes.Item(2).Value, {song.Attributes.Item(3).Value}))
             End If
         Next
-        Years = Years.OrderByDescending(Function(k) CInt(k.Name)).ToList
+        Years = Years.OrderByDescending(Function(k) CInt(k.Year)).ToList
+        CYears = Years
         Return Years
     End Function
-    Public Async Function GroupYearsAsync() As Task(Of List(Of ArtistElement))
+    Public Async Function GroupYearsAsync() As Task(Of List(Of YearElement))
         Dim GYears = Await Task.Run(Function()
-                                        Dim Years As New List(Of ArtistElement)
+                                        Dim Years As New List(Of YearElement)
                                         Dim LibDocument As New XmlDocument
                                         LibDocument.Load(LibraryPath)
                                         Dim ArtistNode = LibDocument.SelectNodes("/MuPlay/Tracks/Track")
                                         For Each song As XmlNode In ArtistNode
-                                            Dim _artist = Years.FirstOrDefault(Function(artist) artist.Name = song.Attributes.Item(2).Value)
+                                            Dim _artist = Years.FirstOrDefault(Function(artist) artist.Year = song.Attributes.Item(2).Value)
                                             If _artist IsNot Nothing Then
                                                 _artist.Songs.Add(song.Attributes.Item(3).Value)
                                             Else
-                                                Years.Add(New ArtistElement(song.Attributes.Item(2).Value, {song.Attributes.Item(3).Value}))
+                                                Years.Add(New YearElement(song.Attributes.Item(2).Value, {song.Attributes.Item(3).Value}))
                                             End If
                                         Next
-                                        Years = Years.OrderByDescending(Function(k) CInt(k.Name)).ToList
+                                        Years = Years.OrderByDescending(Function(k) CInt(k.Year)).ToList
+                                        CYears = Years
                                         Return Years
                                     End Function)
         Return Await Task.FromResult(GYears)
@@ -337,6 +369,7 @@ Public Class Library
             Tracks.Add(song.Attributes.Item(3).Value)
         Next
         Tracks.Sort()
+        CTracks = Tracks
         Return Tracks
     End Function
     Public Async Function GroupTracksAsync() As Task(Of List(Of String))
@@ -348,6 +381,7 @@ Public Class Library
                                          For Each song As XmlNode In SongNode
                                              Tracks.Add(song.Attributes.Item(3).Value)
                                          Next
+                                         CTracks = Tracks
                                          Return Tracks
                                      End Function)
         Return Await Task.FromResult(GTracks)
@@ -395,6 +429,7 @@ Public Class Library
                                                   Artists.Add(New ArtistElement(__Artist.Attributes.Item(0).Value, Songs))
                                               End If
                                           Next
+                                          CArtists = Artists
                                           Return Artists
                                       End Function)
         Return Await Task.FromResult(GArtists)
@@ -410,7 +445,7 @@ Public Class Library
                            Writer.WriteStartElement("Years")
                            For Each _Year In Gyears
                                Writer.WriteStartElement("Year")
-                               Writer.WriteAttributeString("Name", _Year.Name)
+                               Writer.WriteAttributeString("Name", _Year.Year)
                                For Each song In _Year.Songs
                                    Writer.WriteElementString("Song", song)
                                Next
@@ -422,14 +457,14 @@ Public Class Library
                            Writer.Close()
                        End Function)
     End Function
-    Public Async Function ReadYearsCache(DirectoryPath As String) As Task(Of List(Of ArtistElement))
+    Public Async Function ReadYearsCache(DirectoryPath As String) As Task(Of List(Of YearElement))
         Dim GYears = Await Task.Run(Function()
-                                        Dim Years As New List(Of ArtistElement)
+                                        Dim Years As New List(Of YearElement)
                                         Dim LibDocument As New XmlDocument
                                         LibDocument.Load(IO.Path.Combine(DirectoryPath, "Library", "years.xml"))
                                         Dim _Years = LibDocument.SelectNodes("/MuPlay/Years/Year")
                                         For Each __Year As XmlNode In _Years
-                                            Dim _year = Years.FirstOrDefault(Function(year) year.Name = __Year.Attributes.Item(0).Value)
+                                            Dim _year = Years.FirstOrDefault(Function(year) year.Year = __Year.Attributes.Item(0).Value)
                                             If _year IsNot Nothing Then
                                                 For Each song As XmlNode In __Year.SelectNodes("Song")
                                                     _year.Songs.Add(song.InnerText)
@@ -439,11 +474,20 @@ Public Class Library
                                                 For Each song As XmlNode In __Year.SelectNodes("Song")
                                                     Songs.Add(song.InnerText)
                                                 Next
-                                                Years.Add(New ArtistElement(__Year.Attributes.Item(0).Value, Songs))
+                                                Years.Add(New YearElement(__Year.Attributes.Item(0).Value, Songs))
                                             End If
                                         Next
+                                        CYears = Years
                                         Return Years
                                     End Function)
         Return Await Task.FromResult(GYears)
+    End Function
+    Public Async Function IsSongExists(file As String) As Task(Of Boolean)
+        If CTracks IsNot Nothing Then
+            Return CTracks.Contains(file)
+        Else
+            Await GroupTracksAsync()
+            Return CTracks.Contains(file)
+        End If
     End Function
 End Class

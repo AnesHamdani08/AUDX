@@ -69,14 +69,35 @@ Public Class SoundCloud
     Public Async Function GetInfoAsync(URL As String) As Task(Of SoundCloudMusicItem)
         Try
             Return Await Task.FromResult(Await Task.Run(Function()
-                                                            Try
-                                                                Using I As New WebClient
-                                                                    Dim result As String = I.DownloadString(New Uri("https://api.soundcloud.com/resolve.json?url=" & URL & "&" & client_id))
-                                                                    Status = State.Connected
-                                                                    Dim Title As String = Regex.Match(result, ",""title"":""(.*?)"",").Groups.Item(1).Value
-                                                                    Dim UploadDate As String = Regex.Match(result, ",""created_at"":""(.*?)"",").Groups.Item(1).Value
-                                                                    Dim artist As String = Regex.Match(result, ",""username"":""(.*?)"",").Groups.Item(1).Value
-                                                                    Dim SongSize = F(Regex.Match(result, ",""original_content_size"":(.*?),").Groups.Item(1).Value)
+                                                            Using I As New WebClient
+                                                                Dim result As String = I.DownloadString(New Uri("https://api.soundcloud.com/resolve.json?url=" & URL & "&" & client_id))
+                                                                Status = State.Connected
+                                                                Dim Title As String
+                                                                Try
+                                                                    Title = Regex.Match(result, ",""title"":""(.*?)"",").Groups.Item(1).Value
+                                                                Catch
+                                                                End Try
+                                                                Dim UploadDate As String
+                                                                Try
+                                                                    UploadDate = Regex.Match(result, ",""created_at"":""(.*?)"",").Groups.Item(1).Value
+                                                                Catch
+                                                                End Try
+                                                                Dim artist As String
+                                                                Try
+                                                                    artist = Regex.Match(result, ",""username"":""(.*?)"",").Groups.Item(1).Value
+                                                                Catch
+                                                                End Try
+                                                                Dim SongSize
+                                                                Try
+                                                                    SongSize = Regex.Match(result, ",""original_content_size"":(.*?),").Groups.Item(1).Value
+                                                                Catch
+                                                                End Try
+                                                                Dim avatar As Bitmap
+                                                                Try
+                                                                    avatar = Bitmap.FromStream(New WebClient() With {.Proxy = Nothing}.OpenRead(Regex.Match(result, ",""avatar_url"":""(.*?)""}").Groups.Item(1).Value)).Clone
+                                                                Catch
+                                                                End Try
+                                                                Try
                                                                     Dim URI As Uri = New Uri("https://api.soundcloud.com/tracks/" & Regex.Match(result, ",""id"":(.*?),").Groups.Item(1).Value & "/stream?" & client_id)
                                                                     ' Create a 'WebRequest' object with the specified url. 
                                                                     Dim myWebRequest As WebRequest = WebRequest.Create(URI)
@@ -85,12 +106,12 @@ Public Class SoundCloud
                                                                     ' "ResponseUri" property is used to get the actual Uri from where the response was attained.
                                                                     Status = State.Free
                                                                     URI = myWebResponse.ResponseUri
-                                                                    Dim avatar = Bitmap.FromStream(New WebClient() With {.Proxy = Nothing}.OpenRead(Regex.Match(result, ",""avatar_url"":""(.*?)""}").Groups.Item(1).Value)).Clone
                                                                     Return New SoundCloudMusicItem(Title, artist, avatar, UploadDate, URI) With {.Size = SongSize}
-                                                                End Using
-                                                            Catch ex As Exception
-                                                                Return Nothing
-                                                            End Try
+                                                                Catch ex As Exception
+                                                                    Throw New Exception("Couldn't connect to SoundClound, try again later.")
+                                                                    Return Nothing
+                                                                End Try
+                                                            End Using
                                                         End Function))
         Catch ex As Exception
             Status = State.FatalError

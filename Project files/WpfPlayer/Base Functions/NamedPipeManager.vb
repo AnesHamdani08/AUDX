@@ -51,7 +51,7 @@ Public Class NamedPipeManager
 
             Try
                 client.Connect(connectTimeout)
-            Catch
+            Catch ex As Exception
                 Return False
             End Try
 
