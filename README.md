@@ -4,6 +4,7 @@ A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
 # Features(Arranged by number of appearance) 
+ - Clean and Modern UI Based on HandyControls
  - Support for: MP3, M4A, MP2, MP1, OGG, WAV, FLAC, ALAC, Webm, WMA, AIFF, custom generated, and more via OS codecs and add-ons<br>
  - Load from: Local, Youtube, Soundcloud, URL
  - Library Scanning
@@ -31,7 +32,8 @@ Thank you for stepping by.
    - Lyrics finding
    - DLNA And NAS Browser with support for controlling DLNA renderers
    - A/B Loop
-   - Live lyrics(Only SRT is supported at the moment)
+   - Live lyrics(Only SRT is supported at the moment)   
+   - Custom Taskbar thumbnails
  - Playlists:
    - Favourite songs
    - All
@@ -88,9 +90,7 @@ Thank you for stepping by.
    - Thumbnail
    - Progress
 # To be implemented features
- - Plugins support<br> 
- - Custom theme support<br>
- - Custom Taskbar thumbnails<br>   
+ - Plugins support<br>    
 # Screenshots
 ![Home](https://user-images.githubusercontent.com/38377619/119999378-fa19d880-bfd1-11eb-90cf-892ba8ee0a48.png)
 ![Home 1](/Extras/Screenshots/HM_1.png)
@@ -115,6 +115,7 @@ V         | Release date | Availability | Notes
 0.0.1.0|28/3/2021|Private|NaN
 0.1.0.0|12/5/2021|Public|First public version
 0.1.0.1|28/5/2021|Public|NaN
+0.2.0.0|27/6/2021|Public|No updates till 15/7/2021
 # Resources
 -All icons used in MuPlay are from [Icons8](https://icons8.com) Style:Windows 10<br>
 # Used libraries
@@ -130,7 +131,6 @@ Made possible by:<br>
 -[Ookii Dialogs](https://github.com/ookii-dialogs/ookii-dialogs-wpf)<br>
 -[SciChart Transitionz](https://github.com/ABTSoftware/SciChart.Wpf.UI/wiki/Transitionz-Library)<br>
 -[Taglib-Sharp](https://github.com/mono/taglib-sharp)<br>
--[YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode)<br>
 # Disclaimer
 If you find any copyright infringement  in MuPlay feel free to leave a post in "Issues" , or contact me via email: aneshamdani9@gmail.com<br>
 # Thank you
