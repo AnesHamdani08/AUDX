@@ -7,7 +7,7 @@ Public Class WUpdator
     Dim WithEvents wc As Net.WebClient
     Dim updloc As String = Nothing
     Private Sub WUpdator_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        Upd_Cpb.BeginAnimation(HandyControl.Controls.CircleProgressBar.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+        Upd_Cpb.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
         Upd_State.BeginAnimation(TextBlock.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
         '_Updator = New Updator(My.Settings.UpdatesServer)
         'Await _Updator.CheckForUpdates
@@ -57,7 +57,7 @@ Public Class WUpdator
         Upd_Btn.BeginAnimation(Button.OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(500))))
         BeginAnimation(Window.HeightProperty, New Animation.DoubleAnimation(200, New Duration(TimeSpan.FromSeconds(1))))
         Upd_Cpb.IsIndeterminate = True
-        _Updator = New Updator(My.Settings.UpdatesServer)
+        _Updator = New Updator(My.Settings.UPDATESSERVER)
         Await _Updator.CheckForUpdates
         If _Updator.LatestVersion = _Updator.Version Then
             Upd_Cpb.IsIndeterminate = False

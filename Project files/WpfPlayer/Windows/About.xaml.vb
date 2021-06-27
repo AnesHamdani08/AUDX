@@ -614,6 +614,13 @@ Public Class About
 
     Private Sub About_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         MilkAndMochaGIF.BeginAnimation(MarginProperty, New Animation.ThicknessAnimation(New Thickness(0, 0, 0, 0), New Duration(TimeSpan.FromMilliseconds(150))))
+        Dim ani = New Animation.ThicknessAnimation(New Thickness(0, 600, 0, 0), New Thickness(0, -2777, 0, 0), New Duration(TimeSpan.FromSeconds(20)))
+        Dim sb As New Animation.Storyboard
+        sb.RepeatBehavior = Animation.RepeatBehavior.Forever
+        Animation.Storyboard.SetTarget(ani, Credits)
+        Animation.Storyboard.SetTargetProperty(ani, New PropertyPath("Margin"))
+        sb.Children.Add(ani)
+        sb.Begin()
     End Sub
 
     Private Async Sub OpAniTmr_Tick(sender As Object, e As EventArgs) Handles OpAniTmr.Tick

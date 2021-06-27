@@ -56,12 +56,12 @@ Partial Friend NotInheritable Class MySettings
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property LastMediaTitle() As String
+    Public Property LASTMEDIATITLE() As String
         Get
-            Return CType(Me("LastMediaTitle"),String)
+            Return CType(Me("LASTMEDIATITLE"),String)
         End Get
         Set
-            Me("LastMediaTitle") = value
+            Me("LASTMEDIATITLE") = value
         End Set
     End Property
     
@@ -69,60 +69,60 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
         "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
-    Public Property LastPlaylist() As Global.System.Collections.Specialized.StringCollection
+    Public Property LASTPLAYLIST() As Global.System.Collections.Specialized.StringCollection
         Get
-            Return CType(Me("LastPlaylist"),Global.System.Collections.Specialized.StringCollection)
+            Return CType(Me("LASTPLAYLIST"),Global.System.Collections.Specialized.StringCollection)
         End Get
         Set
-            Me("LastPlaylist") = value
+            Me("LASTPLAYLIST") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property LastMediaSeek() As Double
+    Public Property LASTMEDIASEEK() As Double
         Get
-            Return CType(Me("LastMediaSeek"),Double)
+            Return CType(Me("LASTMEDIASEEK"),Double)
         End Get
         Set
-            Me("LastMediaSeek") = value
+            Me("LASTMEDIASEEK") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property LastMediaDuration() As Double
+    Public Property LASTMEDIADURATION() As Double
         Get
-            Return CType(Me("LastMediaDuration"),Double)
+            Return CType(Me("LASTMEDIADURATION"),Double)
         End Get
         Set
-            Me("LastMediaDuration") = value
+            Me("LASTMEDIADURATION") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property LastMediaIndex() As Integer
+    Public Property LASTMEDIAINDEX() As Integer
         Get
-            Return CType(Me("LastMediaIndex"),Integer)
+            Return CType(Me("LASTMEDIAINDEX"),Integer)
         End Get
         Set
-            Me("LastMediaIndex") = value
+            Me("LASTMEDIAINDEX") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property DefaultTheme() As Integer
+    Public Property DEFAULTTHEME() As Integer
         Get
-            Return CType(Me("DefaultTheme"),Integer)
+            Return CType(Me("DEFAULTTHEME"),Integer)
         End Get
         Set
-            Me("DefaultTheme") = value
+            Me("DEFAULTTHEME") = value
         End Set
     End Property
     
@@ -130,24 +130,24 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
         "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
-    Public Property LibrariesPath() As Global.System.Collections.Specialized.StringCollection
+    Public Property LIBRARIESPATH() As Global.System.Collections.Specialized.StringCollection
         Get
-            Return CType(Me("LibrariesPath"),Global.System.Collections.Specialized.StringCollection)
+            Return CType(Me("LIBRARIESPATH"),Global.System.Collections.Specialized.StringCollection)
         End Get
         Set
-            Me("LibrariesPath") = value
+            Me("LIBRARIESPATH") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property UseAnimations() As Boolean
+    Public Property USEANIMATIONS() As Boolean
         Get
-            Return CType(Me("UseAnimations"),Boolean)
+            Return CType(Me("USEANIMATIONS"),Boolean)
         End Get
         Set
-            Me("UseAnimations") = value
+            Me("USEANIMATIONS") = value
         End Set
     End Property
     
@@ -176,12 +176,12 @@ Partial Friend NotInheritable Class MySettings
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property UseDiscordRPC() As Boolean
+    Public Property USEDISCORDRPC() As Boolean
         Get
-            Return CType(Me("UseDiscordRPC"),Boolean)
+            Return CType(Me("USEDISCORDRPC"),Boolean)
         End Get
         Set
-            Me("UseDiscordRPC") = value
+            Me("USEDISCORDRPC") = value
         End Set
     End Property
     
@@ -199,96 +199,96 @@ Partial Friend NotInheritable Class MySettings
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property LastMediaType() As Integer
+    Public Property LASTMEDIATYPE() As Integer
         Get
-            Return CType(Me("LastMediaType"),Integer)
+            Return CType(Me("LASTMEDIATYPE"),Integer)
         End Get
         Set
-            Me("LastMediaType") = value
+            Me("LASTMEDIATYPE") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property LastMediaArtist() As String
+    Public Property LASTMEDIAARTIST() As String
         Get
-            Return CType(Me("LastMediaArtist"),String)
+            Return CType(Me("LASTMEDIAARTIST"),String)
         End Get
         Set
-            Me("LastMediaArtist") = value
+            Me("LASTMEDIAARTIST") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property LastMedia() As String
+    Public Property LASTMEDIA() As String
         Get
-            Return CType(Me("LastMedia"),String)
+            Return CType(Me("LASTMEDIA"),String)
         End Get
         Set
-            Me("LastMedia") = value
+            Me("LASTMEDIA") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property LastMediaYear() As Integer
+    Public Property LASTMEDIAYEAR() As Integer
         Get
-            Return CType(Me("LastMediaYear"),Integer)
+            Return CType(Me("LASTMEDIAYEAR"),Integer)
         End Get
         Set
-            Me("LastMediaYear") = value
+            Me("LASTMEDIAYEAR") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property MusicBrainzNotify() As Boolean
+    Public Property MUSICBRAINZNOTIFY() As Boolean
         Get
-            Return CType(Me("MusicBrainzNotify"),Boolean)
+            Return CType(Me("MUSICBRAINZNOTIFY"),Boolean)
         End Get
         Set
-            Me("MusicBrainzNotify") = value
+            Me("MUSICBRAINZNOTIFY") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property LyricsNotify() As Boolean
+    Public Property LYRICSNOTIFY() As Boolean
         Get
-            Return CType(Me("LyricsNotify"),Boolean)
+            Return CType(Me("LYRICSNOTIFY"),Boolean)
         End Get
         Set
-            Me("LyricsNotify") = value
+            Me("LYRICSNOTIFY") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property BackgroundType() As Integer
+    Public Property BACKGROUNDTYPE() As Integer
         Get
-            Return CType(Me("BackgroundType"),Integer)
+            Return CType(Me("BACKGROUNDTYPE"),Integer)
         End Get
         Set
-            Me("BackgroundType") = value
+            Me("BACKGROUNDTYPE") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property MediaBar_AnimType() As Integer
+    Public Property MEDIABAR_ANIMTYPE() As Integer
         Get
-            Return CType(Me("MediaBar_AnimType"),Integer)
+            Return CType(Me("MEDIABAR_ANIMTYPE"),Integer)
         End Get
         Set
-            Me("MediaBar_AnimType") = value
+            Me("MEDIABAR_ANIMTYPE") = value
         End Set
     End Property
     
@@ -296,60 +296,60 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
         "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
-    Public Property FavouriteTracks() As Global.System.Collections.Specialized.StringCollection
+    Public Property FAVOURITETRACKS() As Global.System.Collections.Specialized.StringCollection
         Get
-            Return CType(Me("FavouriteTracks"),Global.System.Collections.Specialized.StringCollection)
+            Return CType(Me("FAVOURITETRACKS"),Global.System.Collections.Specialized.StringCollection)
         End Get
         Set
-            Me("FavouriteTracks") = value
+            Me("FAVOURITETRACKS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property Home_ShowVisualiser() As Boolean
+    Public Property HOME_SHOWVISUALISER() As Boolean
         Get
-            Return CType(Me("Home_ShowVisualiser"),Boolean)
+            Return CType(Me("HOME_SHOWVISUALISER"),Boolean)
         End Get
         Set
-            Me("Home_ShowVisualiser") = value
+            Me("HOME_SHOWVISUALISER") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property OnMediaChange_FadeAudio() As Boolean
+    Public Property ONMEDIACHANGE_FADEAUDIO() As Boolean
         Get
-            Return CType(Me("OnMediaChange_FadeAudio"),Boolean)
+            Return CType(Me("ONMEDIACHANGE_FADEAUDIO"),Boolean)
         End Get
         Set
-            Me("OnMediaChange_FadeAudio") = value
+            Me("ONMEDIACHANGE_FADEAUDIO") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property StreamDownloaderNotify() As Boolean
+    Public Property STREAMDOWNLOADERNOTIFY() As Boolean
         Get
-            Return CType(Me("StreamDownloaderNotify"),Boolean)
+            Return CType(Me("STREAMDOWNLOADERNOTIFY"),Boolean)
         End Get
         Set
-            Me("StreamDownloaderNotify") = value
+            Me("STREAMDOWNLOADERNOTIFY") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property Notificationtts() As Boolean
+    Public Property NOTIFICATIONTTS() As Boolean
         Get
-            Return CType(Me("Notificationtts"),Boolean)
+            Return CType(Me("NOTIFICATIONTTS"),Boolean)
         End Get
         Set
-            Me("Notificationtts") = value
+            Me("NOTIFICATIONTTS") = value
         End Set
     End Property
     
@@ -380,252 +380,252 @@ Partial Friend NotInheritable Class MySettings
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property OnErrorShow() As Integer
+    Public Property ONERRORSHOW() As Integer
         Get
-            Return CType(Me("OnErrorShow"),Integer)
+            Return CType(Me("ONERRORSHOW"),Integer)
         End Get
         Set
-            Me("OnErrorShow") = value
+            Me("ONERRORSHOW") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property SuppressErrors() As Boolean
+    Public Property SUPRESSERRORS() As Boolean
         Get
-            Return CType(Me("SuppressErrors"),Boolean)
+            Return CType(Me("SUPRESSERRORS"),Boolean)
         End Get
         Set
-            Me("SuppressErrors") = value
+            Me("SUPRESSERRORS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property AllowGlobalHotkeys() As Boolean
+    Public Property ALLOWGLOBALHOTKEYS() As Boolean
         Get
-            Return CType(Me("AllowGlobalHotkeys"),Boolean)
+            Return CType(Me("ALLOWGLOBALHOTKEYS"),Boolean)
         End Get
         Set
-            Me("AllowGlobalHotkeys") = value
+            Me("ALLOWGLOBALHOTKEYS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("179")>  _
-    Public Property GlobalHotkey_PlayPause() As Integer
+    Public Property GLOBALHOTKEY_PLAYPAUSE() As Integer
         Get
-            Return CType(Me("GlobalHotkey_PlayPause"),Integer)
+            Return CType(Me("GLOBALHOTKEY_PLAYPAUSE"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_PlayPause") = value
+            Me("GLOBALHOTKEY_PLAYPAUSE") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property GlobalHotkey_PlayPause_MOD() As Integer
+    Public Property GLOBALHOTKEY_PLAYPAUSE_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_PlayPause_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_PLAYPAUSE_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_PlayPause_MOD") = value
+            Me("GLOBALHOTKEY_PLAYPAUSE_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("118")>  _
-    Public Property GlobalHotkey_Next() As Integer
+    Public Property GLOBALHOTKEY_NEXT() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Next"),Integer)
+            Return CType(Me("GLOBALHOTKEY_NEXT"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Next") = value
+            Me("GLOBALHOTKEY_NEXT") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_Next_MOD() As Integer
+    Public Property GLOBALHOTKEY_NEXT_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Next_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_NEXT_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Next_MOD") = value
+            Me("GLOBALHOTKEY_NEXT_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("116")>  _
-    Public Property GlobalHotkey_Previous() As Integer
+    Public Property GLOBALHOTKEY_PREVIOUS() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Previous"),Integer)
+            Return CType(Me("GLOBALHOTKEY_PREVIOUS"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Previous") = value
+            Me("GLOBALHOTKEY_PREVIOUS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_Previous_MOD() As Integer
+    Public Property GLOBALHOTKEY_PREVIOUS_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Previous_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_PREVIOUS_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Previous_MOD") = value
+            Me("GLOBALHOTKEY_PREVIOUS_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("119")>  _
-    Public Property GlobalHotkey_Skip10() As Integer
+    Public Property GLOBALHOTKEY_SKIP10() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Skip10"),Integer)
+            Return CType(Me("GLOBALHOTKEY_SKIP10"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Skip10") = value
+            Me("GLOBALHOTKEY_SKIP10") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_Skip10_MOD() As Integer
+    Public Property GLOBALHOTKEY_SKIP10_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Skip10_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_SKIP10_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Skip10_MOD") = value
+            Me("GLOBALHOTKEY_SKIP10_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("117")>  _
-    Public Property GlobalHotkey_Back10() As Integer
+    Public Property GLOBALHOTKEY_BACK10() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Back10"),Integer)
+            Return CType(Me("GLOBALHOTKEY_BACK10"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Back10") = value
+            Me("GLOBALHOTKEY_BACK10") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_Back10_MOD() As Integer
+    Public Property GLOBALHOTKEY_BACK10_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_Back10_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_BACK10_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_Back10_MOD") = value
+            Me("GLOBALHOTKEY_BACK10_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("175")>  _
-    Public Property GlobalHotkey_VolumeUp() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEUP() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeUp"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEUP"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeUp") = value
+            Me("GLOBALHOTKEY_VOLUMEUP") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_VolumeUp_MOD() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEUP_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeUp_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEUP_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeUp_MOD") = value
+            Me("GLOBALHOTKEY_VOLUMEUP_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("174")>  _
-    Public Property GlobalHotkey_VolumeDown() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEDOWN() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeDown"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEDOWN"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeDown") = value
+            Me("GLOBALHOTKEY_VOLUMEDOWN") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_VolumeDown_MOD() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEDOWN_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeDown_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEDOWN_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeDown_MOD") = value
+            Me("GLOBALHOTKEY_VOLUMEDOWN_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("173")>  _
-    Public Property GlobalHotkey_VolumeMute() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEMUTE() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeMute"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEMUTE"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeMute") = value
+            Me("GLOBALHOTKEY_VOLUMEMUTE") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
-    Public Property GlobalHotkey_VolumeMute_MOD() As Integer
+    Public Property GLOBALHOTKEY_VOLUMEMUTE_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_VolumeMute_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_VOLUMEMUTE_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_VolumeMute_MOD") = value
+            Me("GLOBALHOTKEY_VOLUMEMUTE_MOD") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property Library_Path() As String
+    Public Property LIBRARY_PATH() As String
         Get
-            Return CType(Me("Library_Path"),String)
+            Return CType(Me("LIBRARY_PATH"),String)
         End Get
         Set
-            Me("Library_Path") = value
+            Me("LIBRARY_PATH") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property SoundCloud_Notify() As Boolean
+    Public Property SOUNDCLOUD_NOTIFY() As Boolean
         Get
-            Return CType(Me("SoundCloud_Notify"),Boolean)
+            Return CType(Me("SOUNDCLOUD_NOTIFY"),Boolean)
         End Get
         Set
-            Me("SoundCloud_Notify") = value
+            Me("SOUNDCLOUD_NOTIFY") = value
         End Set
     End Property
     
@@ -643,84 +643,85 @@ Partial Friend NotInheritable Class MySettings
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property MiniPlayer_SmartColors() As Boolean
+    Public Property MINIPLAYER_SMARTCOLORS() As Boolean
         Get
-            Return CType(Me("MiniPlayer_SmartColors"),Boolean)
+            Return CType(Me("MINIPLAYER_SMARTCOLORS"),Boolean)
         End Get
         Set
-            Me("MiniPlayer_SmartColors") = value
+            Me("MINIPLAYER_SMARTCOLORS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property CacheLibraryData() As Boolean
+    Public Property CACHELIBRARYDATA() As Boolean
         Get
-            Return CType(Me("CacheLibraryData"),Boolean)
+            Return CType(Me("CACHELIBRARYDATA"),Boolean)
         End Get
         Set
-            Me("CacheLibraryData") = value
+            Me("CACHELIBRARYDATA") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property IsFirstStart() As Boolean
+    Public Property ISFIRSTSTART() As Boolean
         Get
-            Return CType(Me("IsFirstStart"),Boolean)
+            Return CType(Me("ISFIRSTSTART"),Boolean)
         End Get
         Set
-            Me("IsFirstStart") = value
+            Me("ISFIRSTSTART") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property UpdatesServer() As String
+     Global.System.Configuration.DefaultSettingValueAttribute("https://github.com/AnesHamdani08/MuPlay/blob/main/Extras/Updates%20Server/MuPlayL"& _ 
+        "ocalUpdatesServer.xml")>  _
+    Public Property UPDATESSERVER() As String
         Get
-            Return CType(Me("UpdatesServer"),String)
+            Return CType(Me("UPDATESSERVER"),String)
         End Get
         Set
-            Me("UpdatesServer") = value
+            Me("UPDATESSERVER") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property SkipSilences() As Boolean
+    Public Property SKIPSILENCES() As Boolean
         Get
-            Return CType(Me("SkipSilences"),Boolean)
+            Return CType(Me("SKIPSILENCES"),Boolean)
         End Get
         Set
-            Me("SkipSilences") = value
+            Me("SKIPSILENCES") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("4")>  _
-    Public Property PlaylistDragDropAction() As Integer
+    Public Property PLAYLISTDRAGDROPACTION() As Integer
         Get
-            Return CType(Me("PlaylistDragDropAction"),Integer)
+            Return CType(Me("PLAYLISTDRAGDROPACTION"),Integer)
         End Get
         Set
-            Me("PlaylistDragDropAction") = value
+            Me("PLAYLISTDRAGDROPACTION") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("TopDirectoryOnly")>  _
-    Public Property FBD_QuickAcess_SubFolders() As Global.System.IO.SearchOption
+    Public Property FBD_QUICKACESS_SUBFOLDERS() As Global.System.IO.SearchOption
         Get
-            Return CType(Me("FBD_QuickAcess_SubFolders"),Global.System.IO.SearchOption)
+            Return CType(Me("FBD_QUICKACESS_SUBFOLDERS"),Global.System.IO.SearchOption)
         End Get
         Set
-            Me("FBD_QuickAcess_SubFolders") = value
+            Me("FBD_QUICKACESS_SUBFOLDERS") = value
         End Set
     End Property
     
@@ -728,24 +729,24 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
         "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
-    Public Property DSP_Plugins() As Global.System.Collections.Specialized.StringCollection
+    Public Property DSP_PLUGINS() As Global.System.Collections.Specialized.StringCollection
         Get
-            Return CType(Me("DSP_Plugins"),Global.System.Collections.Specialized.StringCollection)
+            Return CType(Me("DSP_PLUGINS"),Global.System.Collections.Specialized.StringCollection)
         End Get
         Set
-            Me("DSP_Plugins") = value
+            Me("DSP_PLUGINS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-    Public Property Player_AutoPlay() As Boolean
+    Public Property PLAYER_AUTOPLAY() As Boolean
         Get
-            Return CType(Me("Player_AutoPlay"),Boolean)
+            Return CType(Me("PLAYER_AUTOPLAY"),Boolean)
         End Get
         Set
-            Me("Player_AutoPlay") = value
+            Me("PLAYER_AUTOPLAY") = value
         End Set
     End Property
     
@@ -753,36 +754,36 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
         "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
-    Public Property fxEQgains() As Global.System.Collections.Specialized.StringCollection
+    Public Property FXEQGAINS() As Global.System.Collections.Specialized.StringCollection
         Get
-            Return CType(Me("fxEQgains"),Global.System.Collections.Specialized.StringCollection)
+            Return CType(Me("FXEQGAINS"),Global.System.Collections.Specialized.StringCollection)
         End Get
         Set
-            Me("fxEQgains") = value
+            Me("FXEQGAINS") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property GlobalHotkey_NowPlaying() As Integer
+    Public Property GLOBALHOTKEY_NOWPLAYING() As Integer
         Get
-            Return CType(Me("GlobalHotkey_NowPlaying"),Integer)
+            Return CType(Me("GLOBALHOTKEY_NOWPLAYING"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_NowPlaying") = value
+            Me("GLOBALHOTKEY_NOWPLAYING") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-    Public Property GlobalHotkey_NowPlaying_MOD() As Integer
+    Public Property GLOBALHOTKEY_NOWPLAYING_MOD() As Integer
         Get
-            Return CType(Me("GlobalHotkey_NowPlaying_MOD"),Integer)
+            Return CType(Me("GLOBALHOTKEY_NOWPLAYING_MOD"),Integer)
         End Get
         Set
-            Me("GlobalHotkey_NowPlaying_MOD") = value
+            Me("GLOBALHOTKEY_NOWPLAYING_MOD") = value
         End Set
     End Property
     
@@ -843,6 +844,103 @@ Partial Friend NotInheritable Class MySettings
         End Get
         Set
             Me("API") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("300")>  _
+    Public Property API_TIMEOUT() As Integer
+        Get
+            Return CType(Me("API_TIMEOUT"),Integer)
+        End Get
+        Set
+            Me("API_TIMEOUT") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("<?xml version=""1.0"" encoding=""utf-16""?>"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<ArrayOfString xmlns:xsi=""http://www.w3."& _ 
+        "org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" />")>  _
+    Public Property API_Plugins() As Global.System.Collections.Specialized.StringCollection
+        Get
+            Return CType(Me("API_Plugins"),Global.System.Collections.Specialized.StringCollection)
+        End Get
+        Set
+            Me("API_Plugins") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property DEFAULTRESUMEACTION() As Integer
+        Get
+            Return CType(Me("DEFAULTRESUMEACTION"),Integer)
+        End Get
+        Set
+            Me("DEFAULTRESUMEACTION") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property ALLOW_MULTIPLEINSTANCES() As Boolean
+        Get
+            Return CType(Me("ALLOW_MULTIPLEINSTANCES"),Boolean)
+        End Get
+        Set
+            Me("ALLOW_MULTIPLEINSTANCES") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("3")>  _
+    Public Property HOMEVISUALISERTYPE() As Integer
+        Get
+            Return CType(Me("HOMEVISUALISERTYPE"),Integer)
+        End Get
+        Set
+            Me("HOMEVISUALISERTYPE") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1")>  _
+    Public Property TABSELECTORTYPE() As Integer
+        Get
+            Return CType(Me("TABSELECTORTYPE"),Integer)
+        End Get
+        Set
+            Me("TABSELECTORTYPE") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property USECOVERCACHING() As Boolean
+        Get
+            Return CType(Me("USECOVERCACHING"),Boolean)
+        End Get
+        Set
+            Me("USECOVERCACHING") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property DUMMY() As Integer
+        Get
+            Return CType(Me("DUMMY"),Integer)
+        End Get
+        Set
+            Me("DUMMY") = value
         End Set
     End Property
 End Class

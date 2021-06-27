@@ -3,27 +3,44 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
+       xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
         Title="Playlist Manager" Height="500" Width="400" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterOwner" Background="{Binding NonClientAreaBackground, ElementName=Window}">
     <hc:Window.NonClientAreaContent>
-        <Grid>
+        <Menu>
+            <MenuItem Header="Edit">
+                <MenuItem.Icon>
+                    <Image Source="/Res/editg.png"/>
+                </MenuItem.Icon>
+                <MenuItem x:Name="TitleBar_Add" Header="Add">
+                    <MenuItem.Icon>
+                        <Image Source="/Res/plus.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="TitleBar_Remove" Header="Remove">
+                    <MenuItem.Icon>
+                        <Image Source="/Res/cross.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+       <!--<Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Add" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}">
-                <Button.Background>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Add" hc:IconElement.Geometry="{StaticResource AddGeometry}" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}">
+          <Button.Background>
                     <ImageBrush ImageSource="/Res/plus.png" Stretch="Uniform"/>
                 </Button.Background>
-            </Button>
-            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Remove" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,30,0">
-                <Button.Background>
+        </Button>
+        <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_Remove" hc:IconElement.Geometry="{StaticResource DeleteGeometry}" Style="{StaticResource ButtonIcon}" Foreground="{x:Null}" Margin="0,0,30,0">
+            <Button.Background>
                     <ImageBrush ImageSource="/Res/cross.png" Stretch="Uniform"/>
                 </Button.Background>
-            </Button>
-        </Grid>
+        </Button>
+        </Grid>-->
     </hc:Window.NonClientAreaContent>
     <Grid>
         <ListView x:Name="Main_CustomPlaylist_View" Margin="0">

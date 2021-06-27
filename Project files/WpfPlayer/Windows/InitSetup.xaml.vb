@@ -39,10 +39,10 @@
     Private Sub ST_Import_Click(sender As Object, e As RoutedEventArgs) Handles ST_Import.Click
         Try
             My.Settings.Upgrade()
-            My.Settings.IsFirstStart = False
+            My.Settings.ISFIRSTSTART = False
             My.Settings.Save()
         Catch ex As Exception
-            My.Settings.IsFirstStart = True
+            My.Settings.ISFIRSTSTART = True
             My.Settings.Save()
         End Try
         MessageBox.Show(Me, "All settings have been restored from the old version.", "MuPlay", MessageBoxButton.OK, MessageBoxImage.Information)
@@ -57,9 +57,9 @@
                     Select Case MessageBox.Show(Me, "Does this seems correct ?" & vbCrLf & "Songs count: " & TEMP_LIB.Count & vbCrLf & "Date created: " & TEMP_LIB.DateCreated, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question)
                         Case MessageBoxResult.Yes
                             For Each path In TEMP_LIB.Paths
-                                My.Settings.LibrariesPath.Add(path)
+                                My.Settings.LIBRARIESPATH.Add(path)
                             Next
-                            My.Settings.Library_Path = TEMP_LIB.LibraryPath
+                            My.Settings.LIBRARY_PATH = TEMP_LIB.LibraryPath
                             My.Settings.Save()
                             Exit Do
                         Case MessageBoxResult.No

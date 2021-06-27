@@ -18,8 +18,8 @@
                 <DropShadowEffect ShadowDepth="0" BlurRadius="30"/>
             </TextBlock.Effect>
         </TextBlock>
-        <Button x:Name="btn_preview" hc:IconElement.Geometry="{StaticResource EyeOpenGeometry}"  HorizontalAlignment="Left" Margin="155,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}"/>
-        <Button x:Name="btn_add" hc:IconElement.Geometry="{StaticResource AddGeometry}"  HorizontalAlignment="Left" Margin="204,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}">
+        <Button x:Name="btn_preview" hc:IconElement.Geometry="{StaticResource EyeOpenGeometry}"  HorizontalAlignment="Left" Margin="155,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="#00000000" BorderBrush="{x:Null}"/>
+        <Button x:Name="btn_add" hc:IconElement.Geometry="{StaticResource AddGeometry}"  HorizontalAlignment="Left" Margin="204,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="#00000000" BorderBrush="{x:Null}">
             <Button.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="btn_add_playall" Header="Play all" IsEnabled="False" >
@@ -41,8 +41,13 @@
                         <MenuItem.Icon>
                             <Image Source="/Res/add-songg.png"/>
                         </MenuItem.Icon>
-                    </MenuItem>                             
+                    </MenuItem>
                     <MenuItem x:Name="btn_add_queuelast" Header="Queue last">
+                        <MenuItem.Icon>
+                            <Image Source="/Res/add-songg.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="btn_add_playsinglenow" Header="Play Single Now">
                         <MenuItem.Icon>
                             <Image Source="/Res/add-songg.png"/>
                         </MenuItem.Icon>
@@ -50,6 +55,6 @@
                 </ContextMenu>
             </Button.ContextMenu>
         </Button>
-        <Button x:Name="btn_close" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"  HorizontalAlignment="Left" Margin="247,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Button x:Name="btn_close" hc:IconElement.Geometry="{StaticResource DeleteGeometry}"  HorizontalAlignment="Left" Margin="247,10,0,0" VerticalAlignment="Top" Foreground="#FF0064FF" Background="#00000000" BorderBrush="{x:Null}"/>
     </Grid>
 </UserControl>

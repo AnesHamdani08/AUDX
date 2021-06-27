@@ -10,24 +10,24 @@ Public Class Settings
     End Sub
     Private Sub Settings_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Lib_Loc_Cbox.Items.Clear()
-        For Each Locations In My.Settings.LibrariesPath
+        For Each Locations In My.Settings.LIBRARIESPATH
             Lib_Loc_Cbox.Items.Add(Locations)
         Next
         'Setting
-        set_discordrpc.IsChecked = My.Settings.UseDiscordRPC
-        set_animations.IsChecked = My.Settings.UseAnimations
-        Select Case My.Settings.BackgroundType
+        set_discordrpc.IsChecked = My.Settings.USEDISCORDRPC
+        set_animations.IsChecked = My.Settings.USEANIMATIONS
+        Select Case My.Settings.BACKGROUNDTYPE
             Case 0
                 set_background_cover.IsChecked = True
             Case 1
                 set_background_fancy.IsChecked = True
         End Select
-        set_mediabaranimationtype.SelectedIndex = My.Settings.MediaBar_AnimType
-        set_home_visualiser.IsChecked = My.Settings.Home_ShowVisualiser
-        set_onmediachange_fadeaudio.IsChecked = My.Settings.OnMediaChange_FadeAudio
-        set_ttsspeaknotification.IsChecked = My.Settings.Notificationtts
-        set_suppresserrors.IsChecked = My.Settings.SuppressErrors
-        set_onerror.SelectedIndex = My.Settings.OnErrorShow
+        set_mediabaranimationtype.SelectedIndex = My.Settings.MEDIABAR_ANIMTYPE
+        set_home_visualiser.IsChecked = My.Settings.HOME_SHOWVISUALISER
+        set_onmediachange_fadeaudio.IsChecked = My.Settings.ONMEDIACHANGE_FADEAUDIO
+        set_ttsspeaknotification.IsChecked = My.Settings.NOTIFICATIONTTS
+        set_suppresserrors.IsChecked = My.Settings.SUPRESSERRORS
+        set_onerror.SelectedIndex = My.Settings.ONERRORSHOW
         set_output.Items.Clear()
         Dim n = 0
         For Each device In TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.GetOutputDevices
@@ -42,28 +42,35 @@ Public Class Settings
             get_libcount.Text = "N/A"
             get_libdate.Text = "N/A"
         End If
-        set_cachelibrarydata.IsChecked = My.Settings.CacheLibraryData
-        Set_UpdatesServer.Text = My.Settings.UpdatesServer
-        set_skipsilences.IsChecked = My.Settings.SkipSilences
-        Select Case My.Settings.FBD_QuickAcess_SubFolders
+        set_cachelibrarydata.IsChecked = My.Settings.CACHELIBRARYDATA
+        Set_UpdatesServer.Text = My.Settings.UPDATESSERVER
+        set_skipsilences.IsChecked = My.Settings.SKIPSILENCES
+        Select Case My.Settings.FBD_QUICKACESS_SUBFOLDERS
             Case IO.SearchOption.AllDirectories
                 set_fbd_subfolder.IsChecked = False
             Case IO.SearchOption.TopDirectoryOnly
                 set_fbd_subfolder.IsChecked = True
         End Select
-        set_player_autoplay.IsChecked = My.Settings.Player_AutoPlay
-        set_dragdropbehaviour.SelectedIndex = My.Settings.PlaylistDragDropAction
+        set_player_autoplay.IsChecked = My.Settings.PLAYER_AUTOPLAY
+        set_dragdropbehaviour.SelectedIndex = My.Settings.PLAYLISTDRAGDROPACTION
         set_api.IsChecked = My.Settings.API
         set_api_gcalls.IsChecked = My.Settings.API_ALLOWGET
         set_api_log.IsChecked = My.Settings.API_LOG
         set_api_recalls.IsChecked = My.Settings.API_ALLOWEVENTS
         set_api_scalls.IsChecked = My.Settings.API_ALLOWSET
+        set_resumeaction.SelectedIndex = My.Settings.DEFAULTRESUMEACTION
+        set_MultipleInstances.IsChecked = My.Settings.ALLOW_MULTIPLEINSTANCES
+        If My.Settings.TABSELECTORTYPE = 0 Then
+            set_TabSelectorType.IsChecked = True
+        ElseIf My.Settings.TABSELECTORTYPE = 1 Then
+            set_TabSelectorType.IsChecked = False
+        End If
     End Sub
     Private Sub Lib_Loc_Remove_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Loc_Remove.Click
         If Lib_Loc_Cbox.SelectedIndex <> -1 Then
             Try
                 Dim Index = Lib_Loc_Cbox.SelectedIndex
-                My.Settings.LibrariesPath.RemoveAt(Index)
+                My.Settings.LIBRARIESPATH.RemoveAt(Index)
                 My.Settings.Save()
                 Lib_Loc_Cbox.Items.RemoveAt(Index)
             Catch ex As Exception
@@ -75,33 +82,33 @@ Public Class Settings
     Private Sub Lib_Loc_Add_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Loc_Add.Click
         Dim FBD As New Ookii.Dialogs.Wpf.VistaFolderBrowserDialog With {.Description = "Choose a music folder."}
         If FBD.ShowDialog = True Then
-            My.Settings.LibrariesPath.Add(FBD.SelectedPath)
+            My.Settings.LIBRARIESPATH.Add(FBD.SelectedPath)
             My.Settings.Save()
             Lib_Loc_Cbox.Items.Add(FBD.SelectedPath)
         End If
     End Sub
 
     Private Sub set_discordrpc_Checked(sender As Object, e As RoutedEventArgs) Handles set_discordrpc.Checked
-        My.Settings.UseDiscordRPC = set_discordrpc.IsChecked
+        My.Settings.USEDISCORDRPC = set_discordrpc.IsChecked
         My.Settings.Save()
     End Sub
 
     Private Sub set_discordrpc_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_discordrpc.Unchecked
-        My.Settings.UseDiscordRPC = set_discordrpc.IsChecked
+        My.Settings.USEDISCORDRPC = set_discordrpc.IsChecked
         My.Settings.Save()
     End Sub
     Private Sub set_animations_Checked(sender As Object, e As RoutedEventArgs) Handles set_animations.Checked
-        My.Settings.UseAnimations = set_animations.IsChecked
+        My.Settings.USEANIMATIONS = set_animations.IsChecked
         My.Settings.Save()
     End Sub
 
     Private Sub set_animations_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_animations.Unchecked
-        My.Settings.UseAnimations = set_animations.IsChecked
+        My.Settings.USEANIMATIONS = set_animations.IsChecked
         My.Settings.Save()
     End Sub
 
     Private Sub set_background_cover_Checked(sender As Object, e As RoutedEventArgs) Handles set_background_cover.Checked
-        My.Settings.BackgroundType = 0
+        My.Settings.BACKGROUNDTYPE = 0
         My.Settings.Save()
         set_background_fancy.IsChecked = False
         With TryCast(Application.Current.MainWindow, MainWindow)
@@ -113,7 +120,7 @@ Public Class Settings
     End Sub
 
     Private Sub set_background_fancy_Checked(sender As Object, e As RoutedEventArgs) Handles set_background_fancy.Checked
-        My.Settings.BackgroundType = 1
+        My.Settings.BACKGROUNDTYPE = 1
         My.Settings.Save()
         set_background_cover.IsChecked = False
         With TryCast(Application.Current.MainWindow, MainWindow)
@@ -128,18 +135,18 @@ Public Class Settings
     End Sub
 
     Private Async Sub set_mediabaranimationtype_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_mediabaranimationtype.SelectionChanged
-        Select Case CType(set_mediabaranimationtype.SelectedIndex, Mediabar.AnimType)
-            Case Mediabar.AnimType.Bottom
-                My.Settings.MediaBar_AnimType = Mediabar.AnimType.Bottom
+        Select Case CType(set_mediabaranimationtype.SelectedIndex, mediabar.AnimType)
+            Case mediabar.AnimType.Bottom
+                My.Settings.MEDIABAR_ANIMTYPE = mediabar.AnimType.Bottom
                 My.Settings.Save()
-            Case Mediabar.AnimType.BottomRight
-                My.Settings.MediaBar_AnimType = Mediabar.AnimType.BottomRight
+            Case mediabar.AnimType.BottomRight
+                My.Settings.MEDIABAR_ANIMTYPE = mediabar.AnimType.BottomRight
                 My.Settings.Save()
-            Case Mediabar.AnimType.Top
-                My.Settings.MediaBar_AnimType = Mediabar.AnimType.Top
+            Case mediabar.AnimType.Top
+                My.Settings.MEDIABAR_ANIMTYPE = mediabar.AnimType.Top
                 My.Settings.Save()
-            Case Mediabar.AnimType.TopRight
-                My.Settings.MediaBar_AnimType = Mediabar.AnimType.TopRight
+            Case mediabar.AnimType.TopRight
+                My.Settings.MEDIABAR_ANIMTYPE = mediabar.AnimType.TopRight
                 My.Settings.Save()
         End Select
         'IDK why but blinking the eye would be awesome !
@@ -157,63 +164,63 @@ Public Class Settings
     End Sub
 
     Private Sub test_mediabaranimationtype_Click(sender As Object, e As RoutedEventArgs) Handles test_mediabaranimationtype.Click
-        CType(Application.Current.MainWindow, MainWindow).MediaBar.ShowAnim(My.Settings.MediaBar_AnimType)
+        CType(Application.Current.MainWindow, MainWindow).MediaBar.ShowAnim(My.Settings.MEDIABAR_ANIMTYPE)
     End Sub
 
     Private Sub set_home_visualiser_Checked(sender As Object, e As RoutedEventArgs) Handles set_home_visualiser.Checked
-        My.Settings.Home_ShowVisualiser = True
+        My.Settings.HOME_SHOWVISUALISER = True
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainUIVisualizerUpdator.Start()
     End Sub
 
     Private Sub set_home_visualiser_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_home_visualiser.Unchecked
-        My.Settings.Home_ShowVisualiser = False
+        My.Settings.HOME_SHOWVISUALISER = False
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainUIVisualizerUpdator.Stop()
         TryCast(Application.Current.MainWindow, MainWindow).Home_Visualizer.Source = Nothing
     End Sub
 
     Private Sub set_onmediachange_fadeaudio_Checked(sender As Object, e As RoutedEventArgs) Handles set_onmediachange_fadeaudio.Checked
-        My.Settings.OnMediaChange_FadeAudio = True
+        My.Settings.ONMEDIACHANGE_FADEAUDIO = True
         My.Settings.Save()
     End Sub
 
     Private Sub set_onmediachange_fadeaudio_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_onmediachange_fadeaudio.Unchecked
         TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.FadeAudio = False
-        My.Settings.OnMediaChange_FadeAudio = False
+        My.Settings.ONMEDIACHANGE_FADEAUDIO = False
         My.Settings.Save()
     End Sub
 
     Private Sub set_ttsspeaknotification_Checked(sender As Object, e As RoutedEventArgs) Handles set_ttsspeaknotification.Checked
-        My.Settings.Notificationtts = True
+        My.Settings.NOTIFICATIONTTS = True
         My.Settings.Save()
     End Sub
 
     Private Sub set_ttsspeaknotification_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_ttsspeaknotification.Unchecked
-        My.Settings.Notificationtts = False
+        My.Settings.NOTIFICATIONTTS = False
         My.Settings.Save()
     End Sub
 
     Private Sub set_suppresserrors_Checked(sender As Object, e As RoutedEventArgs) Handles set_suppresserrors.Checked
-        My.Settings.SuppressErrors = True
+        My.Settings.SUPRESSERRORS = True
         My.Settings.Save()
     End Sub
 
     Private Sub set_suppresserrors_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_suppresserrors.Unchecked
-        My.Settings.SuppressErrors = False
+        My.Settings.SUPRESSERRORS = False
         My.Settings.Save()
     End Sub
 
     Private Sub set_onerror_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_onerror.SelectionChanged
         Select Case set_onerror.SelectedIndex
             Case 0 'msg
-                My.Settings.OnErrorShow = 0
+                My.Settings.ONERRORSHOW = 0
             Case 1 'inner msg            
-                My.Settings.OnErrorShow = 1
+                My.Settings.ONERRORSHOW = 1
             Case 2 'stack trace
-                My.Settings.OnErrorShow = 2
+                My.Settings.ONERRORSHOW = 2
             Case 3 'auto
-                My.Settings.OnErrorShow = 3
+                My.Settings.ONERRORSHOW = 3
         End Select
         My.Settings.Save()
     End Sub
@@ -277,10 +284,12 @@ Public Class Settings
         'Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
         'Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
         'Overlay.Visibility = Visibility.Hidden
+        overlay_state.Text = "Scanning..."
+        Overlay.Visibility = Visibility.Visible
         Dim Gtracks = Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.GroupTracksAsync
         Dim files As New List(Of String)
-        For Each path In My.Settings.LibrariesPath
-            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
+        For Each path In My.Settings.LIBRARIESPATH
+            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QUICKACESS_SUBFOLDERS)).ToArray()
                 files.Add(song)
             Next
         Next
@@ -296,6 +305,7 @@ Public Class Settings
         End If
         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheArtists(Utils.AppDataPath)
         Await TryCast(Application.Current.MainWindow, MainWindow).MainLibrary.CacheYears(Utils.AppDataPath)
+        Overlay.Visibility = Visibility.Hidden
     End Sub
 
     Private Async Sub Lib_Refresh_btn_Click(sender As Object, e As RoutedEventArgs) Handles Lib_Refresh_btn.Click
@@ -306,22 +316,22 @@ Public Class Settings
     End Sub
 
     Private Sub set_miniplayersmartcolors_Checked(sender As Object, e As RoutedEventArgs) Handles set_miniplayersmartcolors.Checked
-        My.Settings.MiniPlayer_SmartColors = True
+        My.Settings.MINIPLAYER_SMARTCOLORS = True
         My.Settings.Save()
     End Sub
 
     Private Sub set_miniplayersmartcolors_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_miniplayersmartcolors.Unchecked
-        My.Settings.MiniPlayer_SmartColors = False
+        My.Settings.MINIPLAYER_SMARTCOLORS = False
         My.Settings.Save()
     End Sub
 
     Private Sub set_cachelibrarydata_Checked(sender As Object, e As RoutedEventArgs) Handles set_cachelibrarydata.Checked
-        My.Settings.CacheLibraryData = True
+        My.Settings.CACHELIBRARYDATA = True
         My.Settings.Save()
     End Sub
 
     Private Sub set_cachelibrarydata_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_cachelibrarydata.Unchecked
-        My.Settings.CacheLibraryData = False
+        My.Settings.CACHELIBRARYDATA = False
         My.Settings.Save()
     End Sub
 
@@ -331,24 +341,24 @@ Public Class Settings
 
     Private Sub Settings_Activated(sender As Object, e As EventArgs) Handles Me.Activated
         Lib_Loc_Cbox.Items.Clear()
-        For Each Locations In My.Settings.LibrariesPath
+        For Each Locations In My.Settings.LIBRARIESPATH
             Lib_Loc_Cbox.Items.Add(Locations)
         Next
         'Setting
-        set_discordrpc.IsChecked = My.Settings.UseDiscordRPC
-        set_animations.IsChecked = My.Settings.UseAnimations
-        Select Case My.Settings.BackgroundType
+        set_discordrpc.IsChecked = My.Settings.USEDISCORDRPC
+        set_animations.IsChecked = My.Settings.USEANIMATIONS
+        Select Case My.Settings.BACKGROUNDTYPE
             Case 0
                 set_background_cover.IsChecked = True
             Case 1
                 set_background_fancy.IsChecked = True
         End Select
-        set_mediabaranimationtype.SelectedIndex = My.Settings.MediaBar_AnimType
-        set_home_visualiser.IsChecked = My.Settings.Home_ShowVisualiser
-        set_onmediachange_fadeaudio.IsChecked = My.Settings.OnMediaChange_FadeAudio
-        set_ttsspeaknotification.IsChecked = My.Settings.Notificationtts
-        set_suppresserrors.IsChecked = My.Settings.SuppressErrors
-        set_onerror.SelectedIndex = My.Settings.OnErrorShow
+        set_mediabaranimationtype.SelectedIndex = My.Settings.MEDIABAR_ANIMTYPE
+        set_home_visualiser.IsChecked = My.Settings.HOME_SHOWVISUALISER
+        set_onmediachange_fadeaudio.IsChecked = My.Settings.ONMEDIACHANGE_FADEAUDIO
+        set_ttsspeaknotification.IsChecked = My.Settings.NOTIFICATIONTTS
+        set_suppresserrors.IsChecked = My.Settings.SUPRESSERRORS
+        set_onerror.SelectedIndex = My.Settings.ONERRORSHOW
         set_output.Items.Clear()
         Dim n = 0
         For Each device In TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.GetOutputDevices
@@ -363,8 +373,8 @@ Public Class Settings
             get_libcount.Text = "N/A"
             get_libdate.Text = "N/A"
         End If
-        set_cachelibrarydata.IsChecked = My.Settings.CacheLibraryData
-        Set_UpdatesServer.Text = My.Settings.UpdatesServer
+        set_cachelibrarydata.IsChecked = My.Settings.CACHELIBRARYDATA
+        Set_UpdatesServer.Text = My.Settings.UPDATESSERVER
     End Sub
     Private Sub CheckForUpdates_btn_Click(sender As Object, e As RoutedEventArgs) Handles CheckForUpdates_btn.Click
         'Dim Updator As New Updator(My.Settings.UpdatesServer)
@@ -372,52 +382,54 @@ Public Class Settings
         My.Windows.WUpdator.Show()
     End Sub
     Private Sub Set_UpdatesServer_btn_Click(sender As Object, e As RoutedEventArgs) Handles Set_UpdatesServer_btn.Click
-        My.Settings.UpdatesServer = Set_UpdatesServer.Text
+        My.Settings.UPDATESSERVER = Set_UpdatesServer.Text
         My.Settings.Save()
     End Sub
     Private Sub set_skipsilences_Checked(sender As Object, e As RoutedEventArgs) Handles set_skipsilences.Checked
-        My.Settings.SkipSilences = True
+        My.Settings.SKIPSILENCES = True
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.SkipSilences = True
     End Sub
 
     Private Sub set_skipsilences_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_skipsilences.Unchecked
-        My.Settings.SkipSilences = False
+        My.Settings.SKIPSILENCES = False
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.SkipSilences = False
     End Sub
 
     Private Sub set_fbd_subfolder_Checked(sender As Object, e As RoutedEventArgs) Handles set_fbd_subfolder.Checked
-        My.Settings.FBD_QuickAcess_SubFolders = IO.SearchOption.TopDirectoryOnly
+        My.Settings.FBD_QUICKACESS_SUBFOLDERS = IO.SearchOption.TopDirectoryOnly
         My.Settings.Save()
     End Sub
 
     Private Sub set_fbd_subfolder_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_fbd_subfolder.Unchecked
-        My.Settings.FBD_QuickAcess_SubFolders = IO.SearchOption.AllDirectories
+        My.Settings.FBD_QUICKACESS_SUBFOLDERS = IO.SearchOption.AllDirectories
         My.Settings.Save()
     End Sub
 
     Private Sub set_player_autoplay_Checked(sender As Object, e As RoutedEventArgs) Handles set_player_autoplay.Checked
-        My.Settings.Player_AutoPlay = True
+        My.Settings.PLAYER_AUTOPLAY = True
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.AutoPlay = True
     End Sub
 
     Private Sub set_player_autoplay_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_player_autoplay.Unchecked
-        My.Settings.Player_AutoPlay = False
+        My.Settings.PLAYER_AUTOPLAY = False
         My.Settings.Save()
         TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.AutoPlay = False
     End Sub
 
     Private Sub set_dragdropbehaviour_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_dragdropbehaviour.SelectionChanged
-        My.Settings.PlaylistDragDropAction = set_dragdropbehaviour.SelectedIndex
+        My.Settings.PLAYLISTDRAGDROPACTION = set_dragdropbehaviour.SelectedIndex
         My.Settings.Save()
     End Sub
 
     Private Sub set_api_Checked(sender As Object, e As RoutedEventArgs) Handles set_api.Checked
         My.Settings.API = True
         My.Settings.Save()
-        TryCast(Application.Current.MainWindow, MainWindow).PIPO = New API
+        If TryCast(Application.Current.MainWindow, MainWindow).PIPO Is Nothing Then
+            TryCast(Application.Current.MainWindow, MainWindow).PIPO = New API
+        End If
     End Sub
 
     Private Sub set_api_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_api.Unchecked
@@ -456,7 +468,7 @@ Public Class Settings
         My.Settings.Save()
         If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
             TryCast(Application.Current.MainWindow, MainWindow).PIPO.Log = False
-            End If
+        End If
     End Sub
 
     Private Sub set_api_recalls_Checked(sender As Object, e As RoutedEventArgs) Handles set_api_recalls.Checked
@@ -488,6 +500,41 @@ Public Class Settings
         My.Settings.Save()
         If TryCast(Application.Current.MainWindow, MainWindow).PIPO IsNot Nothing Then
             TryCast(Application.Current.MainWindow, MainWindow).PIPO.AllowSetCalls = False
-            End If
+        End If
+    End Sub
+
+    Private Sub set_resumeaction_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles set_resumeaction.SelectionChanged
+        My.Settings.DEFAULTRESUMEACTION = set_resumeaction.SelectedIndex
+        My.Settings.Save()
+    End Sub
+
+    Private Sub set_MultipleInstances_Checked(sender As Object, e As RoutedEventArgs) Handles set_MultipleInstances.Checked
+        My.Settings.ALLOW_MULTIPLEINSTANCES = True
+        My.Settings.Save()
+    End Sub
+
+    Private Sub set_MultipleInstances_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_MultipleInstances.Unchecked
+        My.Settings.ALLOW_MULTIPLEINSTANCES = False
+        My.Settings.Save()
+    End Sub
+
+    Private Sub set_TabSelectorType_Checked(sender As Object, e As RoutedEventArgs) Handles set_TabSelectorType.Checked
+        My.Settings.TABSELECTORTYPE = 0
+        My.Settings.Save()
+        With TryCast(Application.Current.MainWindow, MainWindow)
+            .MainTabCtrl.ClearValue(Controls.TabControl.ItemContainerStyleProperty)
+            .media_sidebar.Visibility = Visibility.Hidden
+        End With
+    End Sub
+
+    Private Sub set_TabSelectorType_Unchecked(sender As Object, e As RoutedEventArgs) Handles set_TabSelectorType.Unchecked
+        My.Settings.TABSELECTORTYPE = 1
+        My.Settings.Save()
+        With TryCast(Application.Current.MainWindow, MainWindow)
+            Dim s As Style = New Style()
+            s.Setters.Add(New Setter(UIElement.VisibilityProperty, Visibility.Collapsed))
+            .MainTabCtrl.ItemContainerStyle = s
+            .media_sidebar.Visibility = Visibility.Visible
+        End With
     End Sub
 End Class

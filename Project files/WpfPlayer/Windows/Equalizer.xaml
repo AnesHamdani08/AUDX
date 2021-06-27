@@ -39,17 +39,23 @@
                 <ImageBrush ImageSource="/WpfPlayer;component/Res/checkmark-yes.png"/>
             </Button.Background>
         </Button>
+        <Button x:Name="SaveBtn" HorizontalAlignment="Left" Margin="376,185,0,0" hc:IconElement.Geometry="{StaticResource SaveGeometry}" VerticalAlignment="Top" BorderBrush="{x:Null}" Background="Transparent">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" Direction="0" Color="White" BlurRadius="20"/>
+            </Button.Effect>
+        </Button>
         <CheckBox x:Name="fx_state" Content="" HorizontalAlignment="Left" Margin="386,10,0,0" VerticalAlignment="Top" Width="18"/>
         <ComboBox x:Name="Presets_CB" HorizontalAlignment="Left" Margin="53,10,0,0" VerticalAlignment="Top" Width="271">
-            <ComboBoxItem Content="Heavy Bass Boost"/>
-            <ComboBoxItem Content="Bass Boost "/>
+            <ComboBoxItem Content="Ultra Bass Boost"/>
+            <ComboBoxItem Content="Super Bass Boost"/>
+            <ComboBoxItem Content="Bass Boost Pro"/>
             <ComboBoxItem Content="Bass Boost +"/>
+            <ComboBoxItem Content="Bass Boost Lite"/>
             <ComboBoxItem Content="Acoustic"/>
             <ComboBoxItem Content="Electronic"/>
             <ComboBoxItem Content="Piano"/>
             <ComboBoxItem Content="Pop"/>
             <ComboBoxItem Content="Rock"/>
-            <ComboBoxItem Content="Bass Booster"/>
         </ComboBox>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,19,0,0" TextWrapping="Wrap" Text="Presets" VerticalAlignment="Top"/>
     </Grid>

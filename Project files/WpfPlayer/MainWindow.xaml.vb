@@ -16,7 +16,7 @@ Class MainWindow
     Private WithEvents MainUIManager As New System.Windows.Threading.DispatcherTimer With {.IsEnabled = False, .Interval = New TimeSpan(0, 0, 0, 0, 100)}
     'Public WithEvents MainUIVisualizerUpdator As New System.Windows.Threading.DispatcherTimer With {.IsEnabled = False, .Interval = New TimeSpan(0, 0, 0, 0, 33)}
     Public WithEvents MainUIVisualizerUpdator As New Forms.Timer With {.Enabled = False, .Interval = 33}
-    Public WithEvents MainPlayer As New Player(Me, AddressOf MainPlayer_MediaEnded) With {.SkipSilences = My.Settings.SkipSilences, .FadeAudio = My.Settings.OnMediaChange_FadeAudio, .AutoPlay = My.Settings.Player_AutoPlay}
+    Public WithEvents MainPlayer As New Player(Me, AddressOf MainPlayer_MediaEnded) With {.SkipSilences = My.Settings.SKIPSILENCES, .FadeAudio = My.Settings.ONMEDIACHANGE_FADEAUDIO, .AutoPlay = My.Settings.PLAYER_AUTOPLAY}
     Private PreviewPlayer As New Player(Me, Nothing) With {.FadeAudio = False, .AutoPlay = True}
     Public WithEvents MainPlaylist As New Playlist
     Public WithEvents MainLibrary As Library = Nothing
@@ -28,7 +28,7 @@ Class MainWindow
     Public libraryItems As New ObjectModel.ObservableCollection(Of PlaylistItem)
     Public libraryArtistsItems As New ObjectModel.ObservableCollection(Of ArtistItem)
     Private libraryArtistsLVItems As New ObjectModel.ObservableCollection(Of PlaylistItem)
-    Public libraryYearsItems As New ObjectModel.ObservableCollection(Of ArtistItem)
+    Public libraryYearsItems As New ObjectModel.ObservableCollection(Of YearItem)
     Private libraryYearsLVItems As New ObjectModel.ObservableCollection(Of PlaylistItem)
     Private libraryFavouritesItems As New ObjectModel.ObservableCollection(Of PlaylistItem)
     Public WithEvents RPCClient As DiscordRPC.DiscordRpcClient
@@ -48,7 +48,7 @@ Class MainWindow
     Public HotkeyState As Boolean() = {False, False, False, False, False, False, False, False, False}
     Public Gtracks As List(Of String)
     Public GArtists As List(Of Library.ArtistElement)
-    Public GYears As List(Of Library.ArtistElement)
+    Public GYears As List(Of Library.YearElement)
     'Windows 10 10240 Only------------------------------------------------------------------------------------------
 #Const WIN1010240 = True
 #If WIN1010240 Then
@@ -56,6 +56,7 @@ Class MainWindow
     Dim IsUWPPlayerAvailable As Boolean = False
     Dim WithEvents SMTCPlayer As Windows.Media.SystemMediaTransportControls = UWPPlayer.SystemMediaTransportControls
 #End If
+    '-----------------------------------------------------------------------------------------------------------------
     Public Property UpdatePlaylist As Boolean
         Get
             Return _UpdatePlaylist
@@ -74,11 +75,13 @@ Class MainWindow
     Dim Visualiser_Target As New Forms.PictureBox With {.Dock = Forms.DockStyle.Fill, .SizeMode = Forms.PictureBoxSizeMode.StretchImage}
     Dim PosDurSwitch As Boolean = False
     'Dim WithEvents BS As New BuildString
-    Public TaskbarThumbnailManager As CustomTaskBarThumb
     Dim PipeManager As NamedPipeManager = New NamedPipeManager("MuPlayPipe")
     Public PIPO As API 'Yep PIPO seems a good name
+    Public MixerPlayers As New List(Of Player)
+    Public Property WhyAreWeHere = "ToPlayMusic"
+    Private CoverBinding As Integer = 0
 #Region "Utils"
-    Public Sub Overlay(IsVisible As Boolean, isLoading As Boolean)
+    Public Sub Overlay(IsVisible As Boolean, isLoading As Boolean, showstate As Boolean)
         If IsVisible = True Then
             QuickAccess_Overlay.Visibility = Visibility.Visible
             Dim BlurFx As New System.Windows.Media.Effects.BlurEffect With {.KernelType = System.Windows.Media.Effects.KernelType.Gaussian, .Radius = 5, .RenderingBias = System.Windows.Media.Effects.RenderingBias.Performance}
@@ -93,6 +96,13 @@ Class MainWindow
             BlurFx = Nothing
             If isLoading Then
                 overlay_loadingline.Visibility = Visibility.Visible
+            Else
+                overlay_loadingline.Visibility = Visibility.Hidden
+            End If
+            If showstate Then
+                Home_Overlay_State.Visibility = Visibility.Visible
+            Else
+                Home_Overlay_State.Visibility = Visibility.Hidden
             End If
         Else
             QuickAccess_Overlay.Visibility = Visibility.Collapsed
@@ -107,9 +117,11 @@ Class MainWindow
             Home_TopBarCanvas.Effect = Nothing
             BlurFx = Nothing
             overlay_loadingline.Visibility = Visibility.Hidden
+            Home_Overlay_State.Visibility = Visibility.Hidden
         End If
     End Sub
     Public Sub UpdateSkin(ByVal skin As HandyControl.Themes.ApplicationTheme)
+        Log("Theme Changed: " & skin.ToString)
         ThemeManager.Current.ApplicationTheme = skin
         Try
             Select Case skin
@@ -124,6 +136,7 @@ Class MainWindow
         End Try
     End Sub
     Private Sub SystemThemeChanged(sender As Object, e As FunctionEventArgs(Of ThemeManager.SystemTheme))
+        Log("System Theme Changed: " & e.Info.CurrentTheme.ToString)
         Select Case e.Info.CurrentTheme
             Case ApplicationTheme.Dark
                 Home_FancyBackground.Background = Brushes.Black
@@ -132,13 +145,14 @@ Class MainWindow
         End Select
     End Sub
     Public Async Sub ShowNotification(Title As String, Message As String, Icon As HandyControl.Data.NotifyIconInfoType)
+        Log("Invoked ShowNotification with parameters: " & Title & "//" & Message & "//" & Icon.ToString)
         MEDIA_TITLE.Visibility = Visibility.Collapsed
         MEDIA_ARTIST.Visibility = Visibility.Collapsed
         NotifyBlock.Content = Message
         NotifyBlock.Visibility = Visibility.Visible
         NotifyIconMain.ShowBalloonTip(Title, Message, Icon)
         NotifyIconMain.BlinkInterval = TimeSpan.FromMilliseconds(500)
-        If My.Settings.Notificationtts Then
+        If My.Settings.NOTIFICATIONTTS Then
             Dim oldvol = MainPlayer.Volume
             Await MainPlayer.FadeVol(0.1, 1)
             Await Task.Run(Sub()
@@ -159,7 +173,8 @@ Class MainWindow
         NotifyBlock.Visibility = Visibility.Collapsed
     End Sub
     Public Sub RefreshRecommended()
-        If My.Settings.LibrariesPath.Count <> 0 Then
+        Log("Invoked RefreshRecommended")
+        If My.Settings.LIBRARIESPATH.Count <> 0 Then
             ''Dim files As New List(Of String)
             ''For Each path In My.Settings.LibrariesPath
             ''    For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
@@ -261,6 +276,7 @@ Class MainWindow
         End If
     End Sub
     Private Sub RefreshPlaylistNums()
+        Log("Invoked RefreshPlaylistNums")
         For i As Integer = 0 To Playlist_Main.Items.Count - 1
             playlistItems(i).Num = i + 1
         Next
@@ -270,17 +286,14 @@ Class MainWindow
         UpdatePlaylist = True
     End Sub
     Public Sub AddToJlist(path As String)
-        Try
-            JumpList.AddToRecent(path)
-        Catch ex As Exception
-            MsgBox(ex.ToString)
-        End Try
+        Log("Invoked AddToJlist with parameter:" & path)
+        JumpList.AddToRecent(path)
     End Sub
     Protected Function WndProc(hwnd As IntPtr, msg As Integer, wParam As IntPtr, lParam As IntPtr, ByRef handled As Boolean) As IntPtr
         Select Case msg
             Case Constants.WM_HOTKEY_MSG_ID
                 HandleHotkey(wParam.ToString)
-                My.Windows.Console.Log(wParam.ToString & "-" & lParam.ToString)
+                Log("WndProc:" & WM_HOTKEY_MSG_ID & "//" & wParam.ToString & "//" & lParam.ToString)
                 'Case &H400 '                
                 '    BS.BuildString(lParam)
                 '    My.Windows.Console.Log(wParam.ToString & "-" & lParam.ToString)
@@ -313,16 +326,23 @@ Class MainWindow
     '        MainPlayer.StreamPlay()
     '    End If
     'End Sub
+    Private Async Sub Log(Message As String)
+        Await Application.Current.Dispatcher.BeginInvoke(Sub()
+                                                             My.Windows.Console.Log_Debug(Message)
+                                                         End Sub, System.Windows.Threading.DispatcherPriority.Background)
+    End Sub
 #End Region
     Private Sub RPCClient_OnConnectionFailed() Handles RPCClient.OnConnectionFailed
-        'Me.Dispatcher.BeginInvoke(New System.Threading.ThreadStart(Sub()
-        '                                                               ShowNotification("MuPlay", "Discord Rich Presence failed to connect.", HandyControl.Data.NotifyIconInfoType.Error)
-        '                                                           End Sub))
+        Log("RPCClient_OnConnectionFailed")
+        'Me.Dispatcher.BeginInvoke(Sub()
+        '                              ShowNotification("MuPlay", "Discord Rich Presence failed to connect.", HandyControl.Data.NotifyIconInfoType.Error)
+        '                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
     End Sub
     Private Sub RPCClient_OnConnectionEstablished() Handles RPCClient.OnConnectionEstablished
-        Me.Dispatcher.BeginInvoke(New System.Threading.ThreadStart(Sub()
-                                                                       ShowNotification("MuPlay", "Discord Rich Presence connected successfully.", HandyControl.Data.NotifyIconInfoType.Info)
-                                                                   End Sub))
+        Log("RPCClient_OnConnectionEstablished")
+        Me.Dispatcher.BeginInvoke(Sub()
+                                      ShowNotification("MuPlay", "Discord Rich Presence connected successfully.", HandyControl.Data.NotifyIconInfoType.Info)
+                                  End Sub, System.Windows.Threading.DispatcherPriority.Background)
     End Sub
 
     Private Sub MainUIManager_Tick() Handles MainUIManager.Tick
@@ -354,8 +374,11 @@ Class MainWindow
     Private Sub MainUIVisualizerUpdator_Tick() Handles MainUIVisualizerUpdator.Tick
         Try
             If MainTabCtrl.SelectedIndex = 0 Then
-                Home_Visualizer.Source = Utils.ImageSourceFromBitmap(MainPlayer.CreateVisualizer(Player.Visualizers.SpectumLine, 225, 115, System.Drawing.Color.Black, System.Drawing.Color.Black, System.Drawing.Color.DarkGray, System.Drawing.Color.Empty, 5, 2, 1, 25, False, False, False))
-                'media_cover.Source = Utils.ImageSourceFromBitmap(MainPlayer.CreateVisualizer(Player.Visualizers.SpectrumPeak, media_cover.Width, media_cover.Height, System.Drawing.Color.Black, System.Drawing.Color.Red, Nothing, System.Drawing.Color.Empty, 5, 1, 1, 200, False, False, False))
+                Home_Visualizer.Source = Utils.ImageSourceFromBitmap(MainPlayer.CreateVisualizer(My.Settings.HOMEVISUALISERTYPE, 225, 115, System.Drawing.Color.Black, System.Drawing.Color.Black, System.Drawing.Color.DarkGray, System.Drawing.Color.Empty, 5, 2, 1, 10, False, False, False))
+                'media_cover.Source = Utils.ImageSourceFromBitmap(MainPlayer.CreateVisualizer(Player.Visualizers.SpectrumPeak, media_cover.Width, media_cover.Height, System.Drawing.Color.Black, System.Drawing.Color.Red, Nothing, System.Drawing.Color.Empty, 5, 1, 1, 200, False, False, False))            
+            End If
+            If CoverBinding = 1 Then
+                media_cover.Source = Utils.ImageSourceFromBitmap(MainPlayer.CreateVisualizer(My.Settings.HOMEVISUALISERTYPE, media_cover.Width, media_cover.Height, System.Drawing.Color.Black, System.Drawing.Color.Red, Nothing, System.Drawing.Color.Empty, 5, 1, 1, 10, False, False, False))
             End If
         Catch ex As Exception
 
@@ -365,22 +388,53 @@ Class MainWindow
         DrawerLeft.IsOpen = False
     End Sub
     Private Async Sub HandleNamedPipe_OpenRequest(filesToOpen As String)
-        'Dim Rargs As New List(Of String)
         Dim Args = filesToOpen.Split(">")
-        'For Each arg In Args
-        '    If Not String.IsNullOrEmpty(arg) AndAlso Not String.IsNullOrWhiteSpace(arg) Then
-        '        Rargs.Add(arg)
-        '    End If
-        'Next
-        Await Dispatcher.BeginInvoke(Sub()
-                                         For Each song In Args
-                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
-                                         Next
-                                         MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.Count - 1), MainPlaylist, False)
-                                         MainPlayer.StreamPlay()
-                                     End Sub)
+        Log("Recieved Args:" & String.Join(Environment.NewLine, Args))
+        Try
+            If Args(0) = "-j" Then
+                Select Case Args(1)
+                    Case "-pp"  'PlayPause
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         media_play_btn_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                    Case "-p"   'Previous
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         media_prev_btn_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                    Case "-n"   'Next
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         media_next_btn_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                    Case "-pa"  'Play All
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         TitleBar_Playlist_All_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                    Case "-pas" 'Play All Shuffled
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         TitleBar_Playlist_ShuffleAll_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                    Case "-prt" 'Play Random 10
+                        Await Dispatcher.BeginInvoke(Sub()
+                                                         TitleBar_Playlist_Random10_Click(Nothing, New RoutedEventArgs)
+                                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+                End Select
+            Else
+                Await Dispatcher.BeginInvoke(Sub()
+                                                 For Each song In Args
+                                                     If IO.File.Exists(song) Then
+                                                         MainPlaylist.Add(song, Player.StreamTypes.Local)
+                                                     End If
+                                                 Next
+                                                 MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.Count - 1), MainPlaylist, False)
+                                                 MainPlayer.StreamPlay()
+                                             End Sub, System.Windows.Threading.DispatcherPriority.Background)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
     Private Sub Window_Initialized(sender As Object, e As EventArgs)
+        If WhyAreWeHere = "JustToSuffer" Then Close()
         If My.Settings.API Then
             PIPO = New API
         End If
@@ -399,12 +453,18 @@ Class MainWindow
                 End If
             End If
         End If
-        Dim s As Style = New Style()
-        s.Setters.Add(New Setter(UIElement.VisibilityProperty, Visibility.Collapsed))
-        MainTabCtrl.ItemContainerStyle = s
+        If My.Settings.TABSELECTORTYPE = 0 Then
+            MainTabCtrl.ClearValue(Controls.TabControl.ItemContainerStyleProperty)
+            media_sidebar.Visibility = Visibility.Hidden
+        ElseIf My.Settings.TABSELECTORTYPE = 1 Then
+            Dim s As Style = New Style()
+            s.Setters.Add(New Setter(UIElement.VisibilityProperty, Visibility.Collapsed))
+            MainTabCtrl.ItemContainerStyle = s
+            media_sidebar.Visibility = Visibility.Visible
+        End If
         media_loading.Visibility = Visibility.Visible
         media_play_btn.Visibility = Visibility.Hidden
-        If My.Settings.UseDiscordRPC Then
+        If My.Settings.USEDISCORDRPC Then
             RPCClient = New DiscordRPC.DiscordRpcClient("779393129366683719")
         End If
         Try
@@ -414,25 +474,11 @@ Class MainWindow
         Catch ex As Exception
             isSFXLoaded = False
         End Try
-        For Each dsp In My.Settings.DSP_Plugins
+        For Each dsp In My.Settings.DSP_PLUGINS
             MainPlayer.ToBeLoadedDSP.Add(dsp)
         Next
         '' Deezerapi = Deezer.DeezerSession.CreateNew
         System.Net.ServicePointManager.SecurityProtocol = Net.SecurityProtocolType.Tls12
-    End Sub
-    Private Sub MainWindow_ContentRendered(sender As Object, e As EventArgs) Handles Me.ContentRendered
-        ''Jlist
-        'Dim Tlist = Microsoft.WindowsAPICodePack.Taskbar.JumpList.CreateJumpList
-        'Tlist.KnownCategoryToDisplay = JumpListKnownCategoryType.Recent
-        'Dim TlistCat As New JumpListCustomCategory("Playlists")
-        'Dim PS_ALL As New JumpListLink(Utils.AppPath, "All songs") With {.IconReference = New IconReference(Utils.AppPath, 0), .Arguments = "-p -a"}
-        'Dim PS_FAV As New JumpListLink(Utils.AppPath, "All favourites") With {.IconReference = New IconReference(Utils.AppPath, 0), .Arguments = "-p -f"}
-        'Dim PS_SFL As New JumpListLink(Utils.AppPath, "All songs shuffled") With {.IconReference = New IconReference(Utils.AppPath, 0), .Arguments = "-p -s"}
-        'Dim PS_RND As New JumpListLink(Utils.AppPath, "10 random songs") With {.IconReference = New IconReference(Utils.AppPath, 0), .Arguments = "-p -r"}
-        'TlistCat.AddJumpListItems({PS_ALL, PS_FAV, PS_SFL, PS_RND})
-        'Tlist.AddCustomCategories(TlistCat)
-        'Tlist.Refresh()
-        ''Done Jlist
     End Sub
     Private Sub PrimWindow_Closed(sender As Object, e As EventArgs) Handles PrimWindow.Closed
         PipeManager.StopServer()
@@ -444,26 +490,24 @@ Class MainWindow
     End Sub
     Public FancyBackgroundManager As ParticleManager
     Private Async Function Load() As Task
-        Dim wasitfirststart As Boolean = My.Settings.IsFirstStart
+        Dim wasitfirststart As Boolean = My.Settings.ISFIRSTSTART
         Await Dispatcher.BeginInvoke(Async Function()
-                                         If My.Settings.IsFirstStart Then
+                                         TaskbarJumpListManager.Prepare()
+                                         If My.Settings.ISFIRSTSTART Then
                                              My.Windows.InitSetup.Owner = Me
                                              My.Windows.InitSetup.ShowDialog()
-                                             My.Settings.IsFirstStart = False
+                                             My.Settings.ISFIRSTSTART = False
                                              My.Settings.Save()
                                          End If
-                                         Dim ghostwindow As New Window With {.WindowState = WindowState.Minimized}
-                                         ghostwindow.Show()
-                                         TaskbarThumbnailManager = New CustomTaskBarThumb(ghostwindow)
-                                         If Not String.IsNullOrEmpty(My.Settings.Library_Path) Then
-                                             MainLibrary = New Library(My.Settings.Library_Path)
+                                         If Not String.IsNullOrEmpty(My.Settings.LIBRARY_PATH) Then
+                                             MainLibrary = New Library(My.Settings.LIBRARY_PATH)
                                              If MainLibrary.IsLoaded = False Then
                                                  If MessageBox.Show(Me, "Something is wrong with the library configuration." & vbCrLf & "Yes: manually locate library file" & vbCrLf & "No: recreate the library files", "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Error) = MessageBoxResult.Yes Then
                                                      Dim OFD As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .InitialDirectory = Utils.AppDataPath}
                                                      Do
                                                          If OFD.ShowDialog Then
                                                              If Not String.IsNullOrEmpty(MainLibrary.LoadLibrary(OFD.FileName)) Then
-                                                                 My.Settings.Library_Path = OFD.FileName
+                                                                 My.Settings.LIBRARY_PATH = OFD.FileName
                                                                  My.Settings.Save()
                                                                  Exit Do
                                                              End If
@@ -471,15 +515,15 @@ Class MainWindow
                                                      Loop
                                                  Else
                                                      Dim Temp_List As New List(Of String)
-                                                     For Each path In My.Settings.LibrariesPath
+                                                     For Each path In My.Settings.LIBRARIESPATH
                                                          Temp_List.Add(path)
                                                      Next
                                                      If MainLibrary.LoadLibrary(Await Library.MakeLibrary(Utils.AppDataPath, Temp_List)) Then
-                                                         My.Settings.Library_Path = MainLibrary.LibraryPath
+                                                         My.Settings.LIBRARY_PATH = MainLibrary.LibraryPath
                                                          My.Settings.Save()
                                                          Temp_List = Nothing
                                                          Dim files As New List(Of String)
-                                                         For Each path In My.Settings.LibrariesPath
+                                                         For Each path In My.Settings.LIBRARIESPATH
                                                              For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
                                                                  files.Add(song)
                                                              Next
@@ -494,19 +538,19 @@ Class MainWindow
                                              Select Case MessageBox.Show(Me, "MuPlay didn't find any library object to load data from." & vbCrLf & "In order to use the library explorer you have to make a library first." & vbCrLf & "Do you want to make one now or locate a previous library ?" & vbCrLf & "Yes: Make one" & vbCrLf & "No: Locate one" & vbCrLf & "Cancel: Continue anyway", "MuPlay", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning)
                                                  Case MessageBoxResult.Yes
                                                      Dim Temp_List As New List(Of String)
-                                                     For Each path In My.Settings.LibrariesPath
+                                                     For Each path In My.Settings.LIBRARIESPATH
                                                          Temp_List.Add(path)
                                                      Next
                                                      Dim libpath = Await Library.MakeLibrary(Utils.AppDataPath, Temp_List)
-                                                     My.Settings.Library_Path = libpath
+                                                     My.Settings.LIBRARY_PATH = libpath
                                                      My.Settings.Save()
                                                      Temp_List = Nothing
                                                      If String.IsNullOrEmpty(libpath) Then
                                                          MessageBox.Show(Me, "MuPlay couldn't make a library, try again later.", "MuPlay", MessageBoxButton.OK, MessageBoxImage.Error)
                                                      Else
-                                                         MainLibrary = New Library(My.Settings.Library_Path)
+                                                         MainLibrary = New Library(My.Settings.LIBRARY_PATH)
                                                          Dim files As New List(Of String)
-                                                         For Each path In My.Settings.LibrariesPath
+                                                         For Each path In My.Settings.LIBRARIESPATH
                                                              For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
                                                                  files.Add(song)
                                                              Next
@@ -519,7 +563,7 @@ Class MainWindow
                                                          If OFD.ShowDialog Then
                                                              MainLibrary = New Library(OFD.FileName)
                                                              If MainLibrary IsNot Nothing Then
-                                                                 My.Settings.Library_Path = OFD.FileName
+                                                                 My.Settings.LIBRARY_PATH = OFD.FileName
                                                                  My.Settings.Save()
                                                                  Exit Do
                                                              End If
@@ -534,77 +578,253 @@ Class MainWindow
                                          Library_ArtistsLV.ItemsSource = libraryArtistsLVItems
                                          Library_YearsLV.ItemsSource = libraryYearsLVItems
                                          Library_Favourites_Lview.ItemsSource = libraryFavouritesItems
-                                         If Not String.IsNullOrEmpty(My.Settings.LastMedia) Then
-                                             Dim Dialog As New Ookii.Dialogs.Wpf.TaskDialog With {.AllowDialogCancellation = False, .CenterParent = True}
-                                             If My.Settings.LastPlaylist.Count <= 1 Then
-                                                 Dialog.MainInstruction = "Do you want continue your last session ?"
-                                             Else
-                                                 Dialog.MainInstruction = "Do you want continue your last session " & My.Settings.LastPlaylist.Count & " Song were played last time."
-                                             End If
-                                             Dialog.WindowTitle = "MuPlayer"
-                                             Dim GoToMedia As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Yes", .CommandLinkNote = My.Settings.LastMediaTitle & " By: " & My.Settings.LastMediaArtist & " > " & Utils.SecsToMins(My.Settings.LastMediaSeek) & "/" & Utils.SecsToMins(My.Settings.LastMediaDuration) & "[" & System.Enum.GetName(GetType(Player.StreamTypes), My.Settings.LastMediaType) & "]"}
-                                             Dim GoToHome As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "No"}
-                                             Dialog.ButtonStyle = Ookii.Dialogs.Wpf.TaskDialogButtonStyle.CommandLinks
-                                             Dialog.Buttons.Add(GoToMedia)
-                                             Dialog.Buttons.Add(GoToHome)
-                                             If Dialog.ShowDialog(Application.Current.MainWindow) Is GoToMedia Then
-                                                 If My.Settings.LastPlaylist.Count >= 1 Then
-                                                     For Each song In My.Settings.LastPlaylist
-                                                         UpdatePlaylist = False
-                                                         Dim sSong = song.Substring(0, song.IndexOf(">>"))
-                                                         Dim sType = song.Substring(song.IndexOf(">>") + 2, 1)
-                                                         Select Case sType
-                                                             Case 0 'URL
-                                                                 'And after many tests we conclude :
-                                                                 Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
-                                                                 Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
-                                                                 TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
-                                                                 Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
-                                                                 TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
-                                                                 Dim OCMYear As Integer = TrimmedSong
-                                                                 MainPlaylist.Add(Nothing, Player.StreamTypes.URL, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
-                                                             Case 1 'YouTube
-                                                                 'No retries here just copy/paste
-                                                                 Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
-                                                                 Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
-                                                                 TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
-                                                                 Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
-                                                                 TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
-                                                                 Dim OCMYear As Integer = TrimmedSong
-                                                                 MainPlaylist.Add(Nothing, Player.StreamTypes.Youtube, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
-                                                             Case 3 'Local
-                                                                 MainPlaylist.Add(sSong, sType)
-                                                         End Select
-                                                         sSong = Nothing
-                                                         sType = Nothing
-                                                     Next
-                                                     MainPlaylist.SetIndex(My.Settings.LastMediaIndex)
+                                         If Environment.GetCommandLineArgs.Count > 1 Then
+                                             UpdatePlaylist = False
+                                             For i As Integer = 1 To Environment.GetCommandLineArgs.Count - 1
+                                                 If IO.File.Exists(Environment.GetCommandLineArgs(i)) Then
+                                                     MainPlayer.LoadSong(Environment.GetCommandLineArgs(i), MainPlaylist)
                                                  End If
-                                                 Select Case My.Settings.LastMediaType
-                                                     Case 0 'URL                        
-                                                         MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, My.Settings.LastMedia, True, "Not Available", "Not Available", Nothing, 0)
-                                                     Case 1 'YouTube
-                                                         Overlay(True, True)
-                                                         Await MainPlayer.LoadStreamAsync(My.Settings.LastMedia, Player.StreamTypes.Youtube, MainPlaylist, Nothing, True)
-                                                         Overlay(False, False)
-                                                     Case 3 'Local
-                                                         MainPlayer.LoadSong(My.Settings.LastMedia, MainPlaylist, False)
-                                                         MainPlayer.SetPosition(My.Settings.LastMediaSeek)
-                                                 End Select
+                                             Next
+                                             If Not String.IsNullOrEmpty(My.Settings.LASTMEDIA) Then
+                                                 If My.Settings.DEFAULTRESUMEACTION = 0 Then
+                                                     Dim Dialog As New Ookii.Dialogs.Wpf.TaskDialog With {.AllowDialogCancellation = False, .CenterParent = True}
+                                                     If My.Settings.LASTPLAYLIST.Count = 1 Then
+                                                         Dialog.MainInstruction = "Do you want continue your last session ?"
+                                                     ElseIf My.Settings.LASTPLAYLIST.Count > 1 Then
+                                                         Dialog.MainInstruction = "Do you want continue your last session " & My.Settings.LASTPLAYLIST.Count & " Song were played last time."
+                                                     End If
+                                                     Dialog.WindowTitle = "MuPlay"
+                                                     Dim GoToMedia As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Yes", .CommandLinkNote = My.Settings.LASTMEDIATITLE & " By: " & My.Settings.LASTMEDIAARTIST & " > " & Utils.SecsToMins(My.Settings.LASTMEDIASEEK) & "/" & Utils.SecsToMins(My.Settings.LASTMEDIADURATION) & "[" & System.Enum.GetName(GetType(Player.StreamTypes), My.Settings.LASTMEDIATYPE) & "]"}
+                                                     Dim GoToHome As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "No"}
+                                                     Dialog.ButtonStyle = Ookii.Dialogs.Wpf.TaskDialogButtonStyle.CommandLinks
+                                                     Dialog.Buttons.Add(GoToMedia)
+                                                     Dialog.Buttons.Add(GoToHome)
+                                                     If Dialog.ShowDialog(Application.Current.MainWindow) Is GoToMedia Then
+                                                         If My.Settings.LASTPLAYLIST.Count >= 1 Then
+                                                             For Each song In My.Settings.LASTPLAYLIST
+                                                                 UpdatePlaylist = False
+                                                                 Dim sSong = song.Substring(0, song.IndexOf(">>"))
+                                                                 Dim sType = song.Substring(song.IndexOf(">>") + 2, 1)
+                                                                 Select Case sType
+                                                                     Case 0 'URL
+                                                                         'And after many tests we conclude :
+                                                                         Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                         Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMYear As Integer = TrimmedSong
+                                                                         MainPlaylist.Add(Nothing, Player.StreamTypes.URL, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                     Case 1 'YouTube
+                                                                         'No retries here just copy/paste
+                                                                         Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                         Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMYear As Integer = TrimmedSong
+                                                                         MainPlaylist.Add(Nothing, Player.StreamTypes.Youtube, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                     Case 3 'Local
+                                                                         MainPlaylist.Add(sSong, sType)
+                                                                 End Select
+                                                                 sSong = Nothing
+                                                                 sType = Nothing
+                                                             Next
+                                                         End If
+                                                     End If
+                                                     Dialog.Dispose()
+                                                 ElseIf My.Settings.DEFAULTRESUMEACTION = 1 Then
+                                                     If My.Settings.LASTPLAYLIST.Count >= 1 Then
+                                                         For Each song In My.Settings.LASTPLAYLIST
+                                                             UpdatePlaylist = False
+                                                             Dim sSong = song.Substring(0, song.IndexOf(">>"))
+                                                             Dim sType = song.Substring(song.IndexOf(">>") + 2, 1)
+                                                             Select Case sType
+                                                                 Case 0 'URL
+                                                                     'And after many tests we conclude :
+                                                                     Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                     Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMYear As Integer = TrimmedSong
+                                                                     MainPlaylist.Add(Nothing, Player.StreamTypes.URL, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                 Case 1 'YouTube
+                                                                     'No retries here just copy/paste
+                                                                     Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                     Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMYear As Integer = TrimmedSong
+                                                                     MainPlaylist.Add(Nothing, Player.StreamTypes.Youtube, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                 Case 3 'Local
+                                                                     MainPlaylist.Add(sSong, sType)
+                                                             End Select
+                                                             sSong = Nothing
+                                                             sType = Nothing
+                                                         Next
+                                                     End If
+                                                 End If
                                              End If
-                                             Dialog.Dispose()
+                                         Else
+                                             If Not String.IsNullOrEmpty(My.Settings.LASTMEDIA) Then
+                                                 If My.Settings.DEFAULTRESUMEACTION = 0 Then
+                                                     Dim Dialog As New Ookii.Dialogs.Wpf.TaskDialog With {.AllowDialogCancellation = False, .CenterParent = True}
+                                                     If My.Settings.LASTPLAYLIST.Count <= 1 Then
+                                                         Dialog.MainInstruction = "Do you want continue your last session ?"
+                                                     Else
+                                                         Dialog.MainInstruction = "Do you want continue your last session " & My.Settings.LASTPLAYLIST.Count & " Song were played last time."
+                                                     End If
+                                                     Dialog.WindowTitle = "MuPlayer"
+                                                     Dim GoToMedia As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "Yes", .CommandLinkNote = My.Settings.LASTMEDIATITLE & " By: " & My.Settings.LASTMEDIAARTIST & " > " & Utils.SecsToMins(My.Settings.LASTMEDIASEEK) & "/" & Utils.SecsToMins(My.Settings.LASTMEDIADURATION) & "[" & System.Enum.GetName(GetType(Player.StreamTypes), My.Settings.LASTMEDIATYPE) & "]"}
+                                                     Dim GoToHome As New Ookii.Dialogs.Wpf.TaskDialogButton With {.Text = "No"}
+                                                     Dialog.ButtonStyle = Ookii.Dialogs.Wpf.TaskDialogButtonStyle.CommandLinks
+                                                     Dialog.Buttons.Add(GoToMedia)
+                                                     Dialog.Buttons.Add(GoToHome)
+                                                     If Dialog.ShowDialog(Application.Current.MainWindow) Is GoToMedia Then
+                                                         If My.Settings.LASTPLAYLIST.Count >= 1 Then
+                                                             For Each song In My.Settings.LASTPLAYLIST
+                                                                 UpdatePlaylist = False
+                                                                 Dim sSong = song.Substring(0, song.IndexOf(">>"))
+                                                                 Dim sType = song.Substring(song.IndexOf(">>") + 2, 1)
+                                                                 Select Case sType
+                                                                     Case 0 'URL
+                                                                         'And after many tests we conclude :
+                                                                         Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                         Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMYear As Integer = TrimmedSong
+                                                                         MainPlaylist.Add(Nothing, Player.StreamTypes.URL, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                     Case 1 'YouTube
+                                                                         'No retries here just copy/paste
+                                                                         Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                         Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                         TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                         Dim OCMYear As Integer = TrimmedSong
+                                                                         MainPlaylist.Add(Nothing, Player.StreamTypes.Youtube, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                     Case 3 'Local
+                                                                         MainPlaylist.Add(sSong, sType)
+                                                                 End Select
+                                                                 sSong = Nothing
+                                                                 sType = Nothing
+                                                             Next
+                                                             MainPlaylist.SetIndex(My.Settings.LASTMEDIAINDEX)
+                                                         End If
+                                                         Select Case My.Settings.LASTMEDIATYPE
+                                                             Case 0 'URL                        
+                                                                 MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, My.Settings.LASTMEDIA, True, "Not Available", "Not Available", Nothing, 0)
+                                                             Case 1 'YouTube
+                                                                 Overlay(True, True, False)
+                                                                 If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                     Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                     Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                     Overlay(True, True, False)
+                                                                     Await Task.Run(Async Function()
+                                                                                        Video = Await Client.RequestAndDumpInfo(My.Settings.LASTMEDIA)
+                                                                                    End Function)
+                                                                     If Video IsNot Nothing Then
+                                                                         Using WC As New Net.WebClient
+                                                                             Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                             Dim Cover As System.Drawing.Image = Nothing
+                                                                             Try
+                                                                                 Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                             Catch ex As Exception
+                                                                             End Try
+                                                                             MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                         End Using
+                                                                     End If
+                                                                     Overlay(False, False, False)
+                                                                 End If
+                                                                 Overlay(False, False, False)
+                                                             Case 3 'Local
+                                                                 MainPlayer.LoadSong(My.Settings.LASTMEDIA, MainPlaylist, False)
+                                                                 MainPlayer.SetPosition(My.Settings.LASTMEDIASEEK)
+                                                         End Select
+                                                     End If
+                                                     Dialog.Dispose()
+                                                 ElseIf My.Settings.DEFAULTRESUMEACTION = 1 Then
+                                                     If My.Settings.LASTPLAYLIST.Count >= 1 Then
+                                                         For Each song In My.Settings.LASTPLAYLIST
+                                                             UpdatePlaylist = False
+                                                             Dim sSong = song.Substring(0, song.IndexOf(">>"))
+                                                             Dim sType = song.Substring(song.IndexOf(">>") + 2, 1)
+                                                             Select Case sType
+                                                                 Case 0 'URL
+                                                                     'And after many tests we conclude :
+                                                                     Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                     Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMYear As Integer = TrimmedSong
+                                                                     MainPlaylist.Add(Nothing, Player.StreamTypes.URL, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                 Case 1 'YouTube
+                                                                     'No retries here just copy/paste
+                                                                     Dim TrimmedSong As String = song.Substring(song.IndexOf(">>") + 5)
+                                                                     Dim OCMTitle As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMArtist As String = TrimmedSong.Substring(0, TrimmedSong.IndexOf(">>"))
+                                                                     TrimmedSong = TrimmedSong.Substring(TrimmedSong.IndexOf(">>") + 2)
+                                                                     Dim OCMYear As Integer = TrimmedSong
+                                                                     MainPlaylist.Add(Nothing, Player.StreamTypes.Youtube, True, True, sSong, True, OCMTitle, OCMArtist, OCMYear)
+                                                                 Case 3 'Local
+                                                                     MainPlaylist.Add(sSong, sType)
+                                                             End Select
+                                                             sSong = Nothing
+                                                             sType = Nothing
+                                                         Next
+                                                         MainPlaylist.SetIndex(My.Settings.LASTMEDIAINDEX)
+                                                     End If
+                                                     Select Case My.Settings.LASTMEDIATYPE
+                                                         Case 0 'URL                        
+                                                             MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, My.Settings.LASTMEDIA, True, "Not Available", "Not Available", Nothing, 0)
+                                                         Case 1 'YouTube
+                                                             Overlay(True, True, False)
+                                                             If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                 Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                 Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                 Overlay(True, True, False)
+                                                                 Await Task.Run(Async Function()
+                                                                                    Video = Await Client.RequestAndDumpInfo(My.Settings.LASTMEDIA)
+                                                                                End Function)
+                                                                 If Video IsNot Nothing Then
+                                                                     Using WC As New Net.WebClient
+                                                                         Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                         Dim Cover As System.Drawing.Image = Nothing
+                                                                         Try
+                                                                             Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                         Catch ex As Exception
+                                                                         End Try
+                                                                         MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                     End Using
+
+                                                                 End If
+                                                             End If
+                                                             Overlay(False, False, False)
+                                                             Overlay(False, False, False)
+                                                         Case 3 'Local
+                                                             MainPlayer.LoadSong(My.Settings.LASTMEDIA, MainPlaylist, False)
+                                                             MainPlayer.SetPosition(My.Settings.LASTMEDIASEEK)
+                                                     End Select
+                                                 End If
+                                             End If
                                          End If
-                                         If Not My.Settings.UseAnimations Then
+                                         If Not My.Settings.USEANIMATIONS Then
                                              Switches_TopBarCanvasVisChanger.IsChecked = True
                                              Switches_RecChanger.IsChecked = True
                                          End If
-                                         If My.Settings.UseDiscordRPC Then
+                                         If My.Settings.USEDISCORDRPC Then
                                              RPCClient.Initialize()
                                          End If
-                                         If My.Settings.DefaultTheme <> 2 Then
+                                         If My.Settings.DEFAULTTHEME <> 2 Then
                                              Try
-                                                 UpdateSkin(My.Settings.DefaultTheme)
-                                             Catch ex As Exception
+                                                 UpdateSkin(My.Settings.DEFAULTTHEME)
+                                             Catch
                                              End Try
                                          Else
                                              ThemeManager.Current.UsingSystemTheme = True
@@ -613,7 +833,7 @@ Class MainWindow
                                              AddHandler ThemeManager.Current.SystemThemeChanged, AddressOf SystemThemeChanged
                                          End If
                                          Visualiser_Host.Child = Visualiser_Target
-                                         If My.Settings.BackgroundType = 1 Then
+                                         If My.Settings.BACKGROUNDTYPE = 1 Then
                                              Home_Background.Visibility = Visibility.Hidden
                                              Home_FancyBackground.Visibility = Visibility.Visible
                                              'DoAnim(1)
@@ -643,24 +863,26 @@ Class MainWindow
                                          Loadingiconstream.Dispose()
                                          _source = HwndSource.FromHwnd(helper.Handle)
                                          _source.AddHook(AddressOf WndProc)
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_PlayPause_MOD), My.Settings.GlobalHotkey_PlayPause, helper.Handle, 0)
-                                         HotkeyState(0) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_Next_MOD), My.Settings.GlobalHotkey_Next, helper.Handle, 1)
-                                         HotkeyState(1) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_Previous_MOD), My.Settings.GlobalHotkey_Previous, helper.Handle, 2)
-                                         HotkeyState(2) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_Skip10_MOD), My.Settings.GlobalHotkey_Skip10, helper.Handle, 3)
-                                         HotkeyState(3) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_Back10_MOD), My.Settings.GlobalHotkey_Back10, helper.Handle, 4)
-                                         HotkeyState(4) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_VolumeUp_MOD), My.Settings.GlobalHotkey_VolumeUp, helper.Handle, 5)
-                                         HotkeyState(5) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_VolumeDown_MOD), My.Settings.GlobalHotkey_VolumeDown, helper.Handle, 6)
-                                         HotkeyState(6) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_VolumeMute_MOD), My.Settings.GlobalHotkey_VolumeMute, helper.Handle, 7)
-                                         HotkeyState(7) = Hotkey.Register()
-                                         Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GlobalHotkey_NowPlaying_MOD), My.Settings.GlobalHotkey_NowPlaying, helper.Handle, 8)
-                                         HotkeyState(8) = Hotkey.Register()
+                                         If My.Settings.ALLOWGLOBALHOTKEYS Then
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_PLAYPAUSE_MOD), My.Settings.GLOBALHOTKEY_PLAYPAUSE, helper.Handle, 0)
+                                             HotkeyState(0) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_NEXT_MOD), My.Settings.GLOBALHOTKEY_NEXT, helper.Handle, 1)
+                                             HotkeyState(1) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_PREVIOUS_MOD), My.Settings.GLOBALHOTKEY_PREVIOUS, helper.Handle, 2)
+                                             HotkeyState(2) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_SKIP10_MOD), My.Settings.GLOBALHOTKEY_SKIP10, helper.Handle, 3)
+                                             HotkeyState(3) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_BACK10_MOD), My.Settings.GLOBALHOTKEY_BACK10, helper.Handle, 4)
+                                             HotkeyState(4) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_VOLUMEUP_MOD), My.Settings.GLOBALHOTKEY_VOLUMEUP, helper.Handle, 5)
+                                             HotkeyState(5) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_VOLUMEDOWN_MOD), My.Settings.GLOBALHOTKEY_VOLUMEDOWN, helper.Handle, 6)
+                                             HotkeyState(6) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_VOLUMEMUTE_MOD), My.Settings.GLOBALHOTKEY_VOLUMEMUTE, helper.Handle, 7)
+                                             HotkeyState(7) = Hotkey.Register()
+                                             Hotkey = New GlobalHotkey(Utils.IntToMod(My.Settings.GLOBALHOTKEY_NOWPLAYING_MOD), My.Settings.GLOBALHOTKEY_NOWPLAYING, helper.Handle, 8)
+                                             HotkeyState(8) = Hotkey.Register()
+                                         End If
                                          If MainLibrary IsNot Nothing Then
                                              Gtracks = Await MainLibrary.GroupTracksAsync
                                              For i As Integer = 0 To Gtracks.Count - 1
@@ -671,7 +893,7 @@ Class MainWindow
                                                      libraryItems.Add(New PlaylistItem(i + 1, IO.Path.GetFileNameWithoutExtension(Gtracks(i)), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, Gtracks(i), Nothing))
                                                  End Try
                                              Next
-                                             If My.Settings.CacheLibraryData Then
+                                             If My.Settings.CACHELIBRARYDATA Then
                                                  GArtists = Await MainLibrary.ReadArtistsCache(Utils.AppDataPath)
                                              Else
                                                  GArtists = Await MainLibrary.GroupArtistsAsync
@@ -682,46 +904,46 @@ Class MainWindow
                                                  Catch ex As Exception
                                                  End Try
                                              Next
-                                             If My.Settings.CacheLibraryData Then
+                                             If My.Settings.CACHELIBRARYDATA Then
                                                  GYears = Await MainLibrary.ReadYearsCache(Utils.AppDataPath)
                                              Else
                                                  GYears = Await MainLibrary.GroupYearsAsync
                                              End If
                                              For i As Integer = 0 To GYears.Count - 1
                                                  Try
-                                                     libraryYearsItems.Add(New ArtistItem(i + 1, GYears(i)))
+                                                     libraryYearsItems.Add(New YearItem(i + 1, GYears(i)))
                                                  Catch ex As Exception
                                                  End Try
                                              Next
-                                             For i As Integer = 0 To My.Settings.FavouriteTracks.Count - 1
+                                             For i As Integer = 0 To My.Settings.FAVOURITETRACKS.Count - 1
                                                  Try
-                                                     Dim Tag = TagLib.File.Create(My.Settings.FavouriteTracks(i)).Tag
-                                                     libraryFavouritesItems.Add(New PlaylistItem(i + 1, Tag.Title, Tag.JoinedPerformers, Tag.Album, Tag.Year, Tag.Track, Player.StreamTypes.Local, My.Settings.FavouriteTracks(i), Nothing))
+                                                     Dim Tag = TagLib.File.Create(My.Settings.FAVOURITETRACKS(i)).Tag
+                                                     libraryFavouritesItems.Add(New PlaylistItem(i + 1, Tag.Title, Tag.JoinedPerformers, Tag.Album, Tag.Year, Tag.Track, Player.StreamTypes.Local, My.Settings.FAVOURITETRACKS(i), Nothing))
                                                  Catch ex As Exception
-                                                     libraryFavouritesItems.Add(New PlaylistItem(i + 1, IO.Path.GetFileNameWithoutExtension(My.Settings.FavouriteTracks(i)), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, My.Settings.FavouriteTracks(i), Nothing))
+                                                     libraryFavouritesItems.Add(New PlaylistItem(i + 1, IO.Path.GetFileNameWithoutExtension(My.Settings.FAVOURITETRACKS(i)), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, My.Settings.FAVOURITETRACKS(i), Nothing))
                                                  End Try
                                              Next
                                          End If
-                                     End Function)
-        If My.Settings.UseAnimations Then
-            Home_Loading.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(1000))))
-            Await Task.Delay(1000)
-        End If
-        Home_Loading.Visibility = Visibility.Hidden
-        If My.Settings.UseAnimations Then
-            Switches_RecChanger.IsChecked = False
-        End If
-        RefreshRecommended()
-        If My.Settings.UseAnimations Then
-            Switches_RecChanger.IsChecked = True
-        End If
-        If wasitfirststart Then
-            Overlay(True, False)
-            My.Windows.Changelog.Owner = Me
-            My.Windows.Changelog.ShowDialog()
-            Overlay(False, False)
-        End If
-    End Function
+                                     End Function, System.Windows.Threading.DispatcherPriority.Background)
+                                         If My.Settings.USEANIMATIONS Then
+                                             Home_Loading.BeginAnimation(OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(1000))))
+                                             Await Task.Delay(1000)
+                                         End If
+                                         Home_Loading.Visibility = Visibility.Hidden
+                                         If My.Settings.USEANIMATIONS Then
+                                             Switches_RecChanger.IsChecked = False
+                                         End If
+                                         RefreshRecommended()
+                                         If My.Settings.USEANIMATIONS Then
+                                             Switches_RecChanger.IsChecked = True
+                                         End If
+                                         If wasitfirststart Then
+                                             Overlay(True, False, False)
+                                             My.Windows.Changelog.Owner = Me
+                                             My.Windows.Changelog.ShowDialog()
+                                             Overlay(False, False, False)
+                                         End If
+                                     End Function
     Private Async Sub HandleHotkey(id As IntPtr)
         Select Case id
             Case 0 'PlayPause
@@ -757,21 +979,21 @@ Class MainWindow
                 PIPO.Dispose()
             End If
             If MainPlayer.SourceURL IsNot Nothing Then
-                My.Settings.LastMediaType = MainPlayer.CurrentMediaType
-                My.Settings.LastMediaTitle = MainPlayer.CurrentMediaTitle
-                My.Settings.LastMediaArtist = MainPlayer.CurrentMediaArtist
-                My.Settings.LastMedia = MainPlayer.SourceURL
-                My.Settings.LastMediaSeek = MainPlayer.GetPosition
-                My.Settings.LastMediaDuration = MainPlayer.GetLength
-                My.Settings.LastMediaIndex = MainPlaylist.Index
-                My.Settings.LastPlaylist.Clear()
+                My.Settings.LASTMEDIATYPE = MainPlayer.CurrentMediaType
+                My.Settings.LASTMEDIATITLE = MainPlayer.CurrentMediaTitle
+                My.Settings.LASTMEDIAARTIST = MainPlayer.CurrentMediaArtist
+                My.Settings.LASTMEDIA = MainPlayer.SourceURL
+                My.Settings.LASTMEDIASEEK = MainPlayer.GetPosition
+                My.Settings.LASTMEDIADURATION = MainPlayer.GetLength
+                My.Settings.LASTMEDIAINDEX = MainPlaylist.Index
+                My.Settings.LASTPLAYLIST.Clear()
                 For Each song In MainPlaylist.Playlist
-                    My.Settings.LastPlaylist.Add(song)
+                    My.Settings.LASTPLAYLIST.Add(song)
                 Next
                 My.Settings.Save()
                 MainPlayer.Dispose()
                 visualiser_off_Click(Nothing, New RoutedEventArgs)
-                If My.Settings.UseDiscordRPC Then
+                If My.Settings.USEDISCORDRPC Then
                     RPCClient.Dispose()
                 End If
             End If
@@ -818,9 +1040,9 @@ Class MainWindow
             Dim TempFile = IO.Path.GetTempFileName
             Cover.Save(TempFile)
             Dim CoverBrower As New HandyControl.Controls.ImageBrowser(TempFile)
-            Overlay(True, False)
+            Overlay(True, False, False)
             CoverBrower.ShowDialog()
-            Overlay(False, False)
+            Overlay(False, False, False)
             Exit Sub
             If media_cover.Source IsNot Nothing Then
                 Dim Viewer As New CoverViewer
@@ -870,18 +1092,38 @@ Class MainWindow
                         MsgBox(ex.ToString)
                     End Try
                 Case Player.StreamTypes.URL
-                    Overlay(True, True)
+                    Overlay(True, True, False)
                     'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                     Dim _pitem = playlistItems(MainPlaylist.GetNextSongIndex)
                     MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                     _pitem = Nothing
                     MainPlayer.StreamPlay()
-                    Overlay(False, False)
+                    Overlay(False, False, False)
                 Case Player.StreamTypes.Youtube
-                    Overlay(True, True)
-                    Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
-                    MainPlayer.StreamPlay()
-                    Overlay(False, False)
+                    Overlay(True, True, False)
+                    'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                    If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                        Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                        Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                        Overlay(True, True, False)
+                        Await Task.Run(Async Function()
+                                           Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex))
+                                       End Function)
+                        If Video IsNot Nothing Then
+                            Using WC As New Net.WebClient
+                                Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                Dim Cover As System.Drawing.Image = Nothing
+                                Try
+                                    Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                Catch ex As Exception
+                                End Try
+                                MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                            End Using
+                        End If
+                        Overlay(False, False, False)
+                        End If
+                        MainPlayer.StreamPlay()
+                    Overlay(False, False, False)
             End Select
         Catch ex As Exception
             Return
@@ -889,7 +1131,7 @@ Class MainWindow
     End Sub
     Private Sub media_next_btn_MouseEnter(sender As Object, e As MouseEventArgs) Handles media_next_btn.MouseEnter
         Media_Next_Border.Visibility = Visibility.Visible
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Media_Next_Border.BeginAnimation(Border.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromMilliseconds(250))))
         Else
             Media_Next_Border.Opacity = 1
@@ -897,7 +1139,7 @@ Class MainWindow
     End Sub
 
     Private Async Sub media_next_btn_MouseLeave(sender As Object, e As MouseEventArgs) Handles media_next_btn.MouseLeave
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Media_Next_Border.BeginAnimation(Border.OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(250))))
             Await Task.Delay(250)
         Else
@@ -921,16 +1163,36 @@ Class MainWindow
                 Case Player.StreamTypes.Local
                     MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex), MainPlaylist, False)
                 Case Player.StreamTypes.URL
-                    Overlay(True, True)
+                    Overlay(True, True, False)
                     'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                     Dim _pitem = playlistItems(MainPlaylist.GetPreviousSongIndex)
                     MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                     _pitem = Nothing
-                    Overlay(False, False)
+                    Overlay(False, False, False)
                 Case Player.StreamTypes.Youtube
-                    Overlay(True, True)
-                    Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
-                    Overlay(False, False)
+                    Overlay(True, True, False)
+                    'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                    If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                        Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                        Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                        Overlay(True, True, False)
+                        Await Task.Run(Async Function()
+                                           Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(MainPlaylist.GetPreviousSongIndex))
+                                       End Function)
+                        If Video IsNot Nothing Then
+                            Using WC As New Net.WebClient
+                                Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                Dim Cover As System.Drawing.Image = Nothing
+                                Try
+                                    Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                Catch ex As Exception
+                                End Try
+                                MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                            End Using
+                        End If
+                        Overlay(False, False, False)
+                        End If
+                        Overlay(False, False, False)
             End Select
         Catch ex As Exception
             Return
@@ -938,7 +1200,7 @@ Class MainWindow
     End Sub
     Private Sub media_prev_btn_MouseEnter(sender As Object, e As MouseEventArgs) Handles media_prev_btn.MouseEnter
         Media_Previous_Border.Visibility = Visibility.Visible
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Media_Previous_Border.BeginAnimation(Border.OpacityProperty, New Animation.DoubleAnimation(1, New Duration(TimeSpan.FromMilliseconds(250))))
         Else
             Media_Previous_Border.Opacity = 1
@@ -946,7 +1208,7 @@ Class MainWindow
     End Sub
 
     Private Async Sub media_prev_btn_MouseLeave(sender As Object, e As MouseEventArgs) Handles media_prev_btn.MouseLeave
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Media_Previous_Border.BeginAnimation(Border.OpacityProperty, New Animation.DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(250))))
             Await Task.Delay(250)
         Else
@@ -959,6 +1221,7 @@ Class MainWindow
     End Sub
 #Region "MainPlayer Events"
     Private Async Sub MainPlayer_PlayerStateChanged(State As Player.State) Handles MainPlayer.PlayerStateChanged
+        Log("Mainplayer_PlayerStateChanged: " & State.ToString)
         Try
             Select Case State
                 Case Player.State.MediaLoaded
@@ -969,7 +1232,7 @@ Class MainWindow
                     SMTCPlayer.PlaybackStatus = MediaPlaybackStatus.Changing
                     SMTCPlayer.DisplayUpdater.Update()
 #End If
-                    If My.Settings.UseAnimations Then
+                    If My.Settings.USEANIMATIONS Then
                         Await Task.Delay(1000)
                         Switches_TopBarCanvasVisChanger.IsChecked = True
                     End If
@@ -978,7 +1241,7 @@ Class MainWindow
                     media_loading.Visibility = Visibility.Hidden
                     media_play_btn.Visibility = Visibility.Visible
                     Try
-                        If My.Settings.UseAnimations Then
+                        If My.Settings.USEANIMATIONS Then
                             Dim Danim As New Animation.DoubleAnimation
                             Danim.From = 1
                             Danim.To = 0
@@ -1001,7 +1264,7 @@ Class MainWindow
                     CType(NotifyIcon_Play.Icon, Image).Source = CType(media_play_btn.Background, ImageBrush).ImageSource
                     TaskbarManager.Instance.SetOverlayIcon(Pauseicon, "Paused")
                     Try
-                        If My.Settings.UseAnimations Then
+                        If My.Settings.USEANIMATIONS Then
                             Dim Danim As New Animation.DoubleAnimation
                             Danim.From = 0
                             Danim.To = 1
@@ -1032,7 +1295,7 @@ Class MainWindow
                     media_loading.Visibility = Visibility.Hidden
                     media_play_btn.Visibility = Visibility.Visible
                     Try
-                        If My.Settings.UseAnimations Then
+                        If My.Settings.USEANIMATIONS Then
                             Dim Danim As New Animation.DoubleAnimation
                             Danim.From = 1
                             Danim.To = 0
@@ -1054,7 +1317,7 @@ Class MainWindow
                     CType(NotifyIcon_Play.Icon, Image).Source = CType(media_play_btn.Background, ImageBrush).ImageSource
                     TaskbarManager.Instance.SetOverlayIcon(Playicon, "Playing")
                     Try
-                        If My.Settings.UseAnimations Then
+                        If My.Settings.USEANIMATIONS Then
                             Dim Danim As New Animation.DoubleAnimation
                             Danim.From = 0
                             Danim.To = 1
@@ -1118,7 +1381,7 @@ Class MainWindow
 #End If
             End Select
             If State <> Player.State.Undefined AndAlso MainUIVisualizerUpdator.Enabled = False Then
-                If My.Settings.Home_ShowVisualiser Then
+                If My.Settings.HOME_SHOWVISUALISER Then
                     MainUIVisualizerUpdator.Start()
                 End If
             End If
@@ -1127,6 +1390,7 @@ Class MainWindow
         End Try
     End Sub
     Private Sub MainPlayer_VolumeChanged(NewVal As Single, IsMuted As Boolean) Handles MainPlayer.VolumeChanged
+        Log("MainPlayer_VolumeChanged: " & NewVal & "//" & IsMuted)
         PreviewPlayer.Volume = NewVal
         media_vol_track.Value = NewVal * 100
         Resources("Vol_Tip") = Math.Round(NewVal * 100)
@@ -1145,12 +1409,13 @@ Class MainWindow
         End If
     End Sub
     Private Async Sub MainPlayer_MediaLoaded(Title As String, Artist As String, Cover As System.Windows.Interop.InteropBitmap, Thumb As System.Windows.Interop.InteropBitmap, LyricsAvailable As Boolean, Lyrics As String) Handles MainPlayer.MediaLoaded
+        Log("MainPlayer_MediaLoaded: " & Title & "//" & Artist & "//" & Cover?.ToString & "//" & Thumb?.ToString & "//" & LyricsAvailable)
         If MainPlayer.RepeateType <> Player.RepeateBehaviour.Shuffle Then
             media_prev_btn.IsEnabled = True
         End If
         media_next_btn.IsEnabled = True
         AddToJlist(MainPlayer.SourceURL)
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_TopBarCanvasVisChanger.IsChecked = False
             Await Task.Delay(200)
         End If
@@ -1174,7 +1439,7 @@ Class MainWindow
             Home_Background.Source = Thumb
             Dim changeColor As New Animation.ColorAnimation
             Try
-                If My.Settings.UseAnimations Then
+                If My.Settings.USEANIMATIONS Then
                     Dim avgcolor = Utils.GetAverageColor(Thumb)
                     changeColor.From = CType(BottomCanvas.Background, SolidColorBrush).Color
                     changeColor.To = avgcolor
@@ -1182,7 +1447,7 @@ Class MainWindow
                     Animation.Storyboard.SetTarget(changeColor, BottomCanvas)
                     Animation.Storyboard.SetTargetProperty(changeColor, New PropertyPath("Background.Color"))
                     Dim sb As New Animation.Storyboard
-                    If My.Settings.BackgroundType = 1 Then
+                    If My.Settings.BACKGROUNDTYPE = 1 Then
                         FancyBackgroundManager.Color = New SolidColorBrush(avgcolor)
                         FancyBackgroundManager.ApplyColor()
                         'Dim c As New ColorAnimation
@@ -1221,10 +1486,15 @@ Class MainWindow
             MEDIA_TITLE.Content = Title
             Home_Media_Title.Content = Title
         Else
-            MEDIA_TITLE.Content = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
-            Home_Media_Title.Content = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
+            If MainPlayer.CurrentMediaType = Player.StreamTypes.Local Then
+                MEDIA_TITLE.Content = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
+                Home_Media_Title.Content = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
+            Else
+                MEDIA_TITLE.Content = "Not Available"
+                Home_Media_Title.Content = "Not Available"
+            End If
         End If
-        If Not String.IsNullOrEmpty(Artist) Then
+            If Not String.IsNullOrEmpty(Artist) Then
             MEDIA_ARTIST.Content = Artist
             Home_Media_Artist.Content = Artist
         Else
@@ -1233,7 +1503,7 @@ Class MainWindow
         End If
         Try
             If RPCClient.IsInitialized = True Then
-                RPCClient.SetPresence(New DiscordRPC.RichPresence With {.Details = Title & " By: " & Artist, .State = "Listening", .Timestamps = New DiscordRPC.Timestamps(New Date(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute, 00), New Date(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute + Utils.GetMins(MainPlayer.GetLength), Utils.GetRestSecs(MainPlayer.GetLength))), .Assets = New DiscordRPC.Assets With {.LargeImageKey = "muplayerl", .LargeImageText = "MuPlay", .SmallImageKey = "stateplaying", .SmallImageText = "Listening"}})
+                RPCClient.SetPresence(New DiscordRPC.RichPresence With {.Details = MEDIA_TITLE.Content & " By: " & MEDIA_TITLE.ToString, .State = "Listening", .Timestamps = New DiscordRPC.Timestamps(New Date(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute, 00), New Date(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute + Utils.GetMins(MainPlayer.GetLength), Utils.GetRestSecs(MainPlayer.GetLength))), .Assets = New DiscordRPC.Assets With {.LargeImageKey = "muplayerl", .LargeImageText = "MuPlay", .SmallImageKey = "stateplaying", .SmallImageText = "Listening"}})
             End If
         Catch ex As Exception
 
@@ -1267,7 +1537,7 @@ Class MainWindow
             End If
         End If
         PreviousItemInfo = Nothing
-        If My.Settings.FavouriteTracks.Contains(MainPlayer.SourceURL) Then
+        If My.Settings.FAVOURITETRACKS.Contains(MainPlayer.SourceURL) Then
             media_like_btn.Foreground = Brushes.Yellow
             Resources("fav_Tip") = "I hate it"
         Else
@@ -1291,12 +1561,12 @@ Class MainWindow
         SMTCPlayer.PlaybackRate = 1
         SMTCPlayer.ShuffleEnabled = True
         SMTCPlayer.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music
-        If String.IsNullOrEmpty(Title) Then
-            SMTCPlayer.DisplayUpdater.MusicProperties.Title = IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL)
-        Else
-            SMTCPlayer.DisplayUpdater.MusicProperties.Title = Title
-        End If        
-            SMTCPlayer.DisplayUpdater.MusicProperties.Artist = Artist
+        'If String.IsNullOrEmpty(Title) Then
+        SMTCPlayer.DisplayUpdater.MusicProperties.Title = If(Title, IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL))
+        'Else
+        'SMTCPlayer.DisplayUpdater.MusicProperties.Title = Title
+        'End If
+        SMTCPlayer.DisplayUpdater.MusicProperties.Artist = If(Artist, "Not Available")
         SMTCPlayer.PlaybackStatus = MediaPlaybackStatus.Playing
         If Cover IsNot Nothing Then
             Dim Ccover = Utils.BitmapFromImageSource(Cover)
@@ -1308,9 +1578,20 @@ Class MainWindow
         End If
         SMTCPlayer.DisplayUpdater.Update()
 #End If
+        If SRTCancellationToken IsNot Nothing Then SRTCancellationToken.Cancel()
+        If SRT_Timer IsNot Nothing Then SRT_Timer.Stop()
+        Subtitles_Text_Current.Text = MainPlayer.CurrentMediaTitle & " By " & MainPlayer.CurrentMediaArtist
+        Subtitles_Text_Current.Visibility = Visibility.Visible
+        Subtitles_Text_Current.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+        Subtitles_Text_Previous.Visibility = Visibility.Visible
+        Subtitles_Text_Previous.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+        Subtitles_Text_Next.Visibility = Visibility.Visible
+        Subtitles_Text_Next.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+        Overlay(False, False, False)
     End Sub
 #If WIN1010240 Then
     Private Sub SMTCPlayer_ButtonPressed(sender As SystemMediaTransportControls, args As SystemMediaTransportControlsButtonPressedEventArgs) Handles SMTCPlayer.ButtonPressed
+        Log("SMTCPlayer_ButtonPressed: " & args.Button.ToString)
         Try
             Me.Dispatcher.Invoke(Sub()
                                      Select Case args.Button
@@ -1332,7 +1613,8 @@ Class MainWindow
         End Try
     End Sub
 #End If
-    Private Async Sub MainPlayer_MediaEnded() 'Handles MainPlayer.MediaEnded        
+    Private Async Sub MainPlayer_MediaEnded() 'Handles MainPlayer.MediaEnded      
+        Log("MainPlayer_MediaEnded")
         Select Case MainPlayer.RepeateType
             Case Player.RepeateBehaviour.RepeatOne
             Case Player.RepeateBehaviour.NoRepeat
@@ -1346,20 +1628,40 @@ Class MainWindow
                                                                      MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), MainPlaylist, False)
                                                                  End Sub)
                                 Case Player.StreamTypes.URL
-                                    Overlay(True, True)
+                                    Overlay(True, True, False)
                                     'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                                     Dim _pitem = playlistItems(MainPlaylist.GetNextSongIndex)
                                     Await Dispatcher.InvokeAsync(Sub()
                                                                      MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                                                                  End Sub)
                                     _pitem = Nothing
-                                    Overlay(False, False)
+                                    Overlay(False, False, False)
                                 Case Player.StreamTypes.Youtube
-                                    Overlay(True, True)
+                                    Overlay(True, True, False)
                                     Await Dispatcher.InvokeAsync(Async Function()
-                                                                     Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                     'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                     If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                         Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                         Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                         Overlay(True, True, False)
+                                                                         Await Task.Run(Async Function()
+                                                                                            Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex))
+                                                                                        End Function)
+                                                                         If Video IsNot Nothing Then
+                                                                             Using WC As New Net.WebClient
+                                                                                 Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                                 Dim Cover As System.Drawing.Image = Nothing
+                                                                                 Try
+                                                                                     Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                                 Catch ex As Exception
+                                                                                 End Try
+                                                                                 MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                             End Using
+                                                                         End If
+                                                                         Overlay(False, False, False)
+                                                                         End If
                                                                  End Function)
-                                    Overlay(False, False)
+                                    Overlay(False, False, False)
                             End Select
                         Catch ex As Exception
                             Return
@@ -1376,20 +1678,40 @@ Class MainWindow
                                                                  MainPlayer.LoadSong(MainPlaylist.JumpTo(RndSong), MainPlaylist, False)
                                                              End Sub)
                             Case Player.StreamTypes.URL
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                                 Dim _pitem = playlistItems(RndSong)
                                 Await Dispatcher.InvokeAsync(Sub()
                                                                  MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(RndSong), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                                                              End Sub)
                                 _pitem = Nothing
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                             Case Player.StreamTypes.Youtube
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 Await Dispatcher.InvokeAsync(Async Function()
-                                                                 Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                     Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                     Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                     Overlay(True, True, False)
+                                                                     Await Task.Run(Async Function()
+                                                                                        Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(RndSong))
+                                                                                    End Function)
+                                                                     If Video IsNot Nothing Then
+                                                                         Using WC As New Net.WebClient
+                                                                             Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                             Dim Cover As System.Drawing.Image = Nothing
+                                                                             Try
+                                                                                 Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                             Catch ex As Exception
+                                                                             End Try
+                                                                             MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                         End Using
+                                                                     End If
+                                                                     Overlay(False, False, False)
+                                                                     End If
                                                              End Function)
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                         End Select
                         Rnd = Nothing
                     Catch ex As Exception
@@ -1406,20 +1728,40 @@ Class MainWindow
                                                                  MainPlayer.LoadSong(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), MainPlaylist, False)
                                                              End Sub)
                             Case Player.StreamTypes.URL
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                                 Dim _pitem = playlistItems(MainPlaylist.GetNextSongIndex)
                                 Await Dispatcher.InvokeAsync(Sub()
                                                                  MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                                                              End Sub)
                                 _pitem = Nothing
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                             Case Player.StreamTypes.Youtube
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 Await Dispatcher.InvokeAsync(Async Function()
-                                                                 Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                     Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                     Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                     Overlay(True, True, False)
+                                                                     Await Task.Run(Async Function()
+                                                                                        Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(MainPlaylist.GetNextSongIndex))
+                                                                                    End Function)
+                                                                     If Video IsNot Nothing Then
+                                                                         Using WC As New Net.WebClient
+                                                                             Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                             Dim Cover As System.Drawing.Image = Nothing
+                                                                             Try
+                                                                                 Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                             Catch ex As Exception
+                                                                             End Try
+                                                                             MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                         End Using
+                                                                     End If
+                                                                     Overlay(False, False, False)
+                                                                     End If
                                                              End Function)
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                         End Select
                     Catch ex As Exception
                         Return
@@ -1435,28 +1777,52 @@ Class MainWindow
                                                                  MainPlayer.LoadSong(MainPlaylist.JumpTo(RndSong), MainPlaylist, False)
                                                              End Sub)
                             Case Player.StreamTypes.URL
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                                 Dim _pitem = playlistItems(RndSong)
                                 Await Dispatcher.InvokeAsync(Sub()
                                                                  MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(RndSong), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                                                              End Sub)
                                 _pitem = Nothing
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                             Case Player.StreamTypes.Youtube
-                                Overlay(True, True)
+                                Overlay(True, True, False)
                                 Await Dispatcher.InvokeAsync(Async Function()
-                                                                 Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(RndSong), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                                                                 If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                                                     Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                                                     Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                                                     Overlay(True, True, False)
+                                                                     Await Task.Run(Async Function()
+                                                                                        Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(RndSong))
+                                                                                    End Function)
+                                                                     If Video IsNot Nothing Then
+                                                                         Using WC As New Net.WebClient
+                                                                             Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                                                             Dim Cover As System.Drawing.Image = Nothing
+                                                                             Try
+                                                                                 Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                                                             Catch ex As Exception
+                                                                             End Try
+                                                                             MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                                                         End Using
+                                                                     End If
+                                                                     Overlay(False, False, False)
+                                                                     End If
                                                              End Function)
-                                Overlay(False, False)
+                                Overlay(False, False, False)
                         End Select
                     Catch ex As Exception
                         Return
                     End Try
                 End If
         End Select
+        Application.Current.Dispatcher.BeginInvoke(Sub()
+                                                       My.Windows.FullScreenPlayer.LinkPlayer_MediaEnded()
+                                                   End Sub, System.Windows.Threading.DispatcherPriority.Background)
     End Sub
     Private Sub MainPlayer_OnFxChanged(FX As Player.LinkHandles, State As Boolean) Handles MainPlayer.OnFxChanged
+        Log("MainPlayer_OnFxChanged: " & FX.ToString & "//" & State)
         Select Case FX
             Case Player.LinkHandles.EQ
                 If State = True Then
@@ -1534,6 +1900,7 @@ Class MainWindow
         End Select
     End Sub
     Private Async Sub MainPlayer_OnMediaError(ErrorCode As Un4seen.Bass.BASSError) Handles MainPlayer.OnMediaError
+        Log("MainPlayer_OnMediaError:" & ErrorCode.ToString & "[" & ErrorCode & "]")
         If MainPlaylist.Count > 1 Then
             ShowNotification("MuPlay", "An error occured with code " & ErrorCode.ToString & "." & vbCrLf & "Switching to next song in 5 seconds", HandyControl.Data.NotifyIconInfoType.Error)
             Await Task.Delay(5000)
@@ -1543,6 +1910,7 @@ Class MainWindow
         End If
     End Sub
     Private Sub MainPlayer_OnRepeatChanged(NewType As Player.RepeateBehaviour) Handles MainPlayer.OnRepeatChanged
+        Log("MainPlayer_OnRepeatChanged: " & NewType.ToString)
         Select Case NewType
             Case Player.RepeateBehaviour.NoRepeat
                 media_loop.Background = New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/no-loop.png")))
@@ -1554,6 +1922,7 @@ Class MainWindow
     End Sub
 
     Private Sub MainPlayer_OnShuffleChanged(NewType As Player.RepeateBehaviour) Handles MainPlayer.OnShuffleChanged
+        Log("MainPlayer_OnShuffleChanged: " & NewType.ToString)
         Select Case NewType
             Case Player.RepeateBehaviour.NoShuffle
                 media_prev_btn.IsEnabled = True
@@ -1562,6 +1931,13 @@ Class MainWindow
                 media_prev_btn.IsEnabled = False
                 media_shuffle.Background = New ImageBrush(New BitmapImage(New Uri("pack://application:,,,/WpfPlayer;component/Res/shuffle.png")))
         End Select
+    End Sub
+    Private Sub MainPlayer_OnABLoopChanged(Item As Player.ABLoopItem) Handles MainPlayer.OnABLoopChanged
+        If Item Is Nothing Then
+            TitleBar_ABLoop.IsChecked = False
+        Else
+            TitleBar_ABLoop.IsChecked = True
+        End If
     End Sub
 #End Region
     Private Sub media_vol_track_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double)) Handles media_vol_track.ValueChanged
@@ -1598,7 +1974,7 @@ Class MainWindow
                 MainPlayer.StreamPause(False)
             End If
             PreviewPlayer.StreamPlay()
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec1.Margin
                 PAnim.To = New Thickness(35, 230, 0, 0)
@@ -1647,7 +2023,7 @@ Class MainWindow
                 MainPlayer.StreamPause(False)
             End If
             Dim PAnim As New Animation.ThicknessAnimation
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 PAnim.From = Home_Rec2.Margin
                 PAnim.To = New Thickness(200, 230, 0, 0)
                 PAnim.Duration = TimeSpan.FromMilliseconds(200)
@@ -1674,7 +2050,7 @@ Class MainWindow
             If MainPlayer.PlayerState = Player.State.Playing Then
                 MainPlayer.StreamPause(False)
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec3.Margin
                 PAnim.To = New Thickness(365, 230, 0, 0)
@@ -1702,7 +2078,7 @@ Class MainWindow
             If MainPlayer.PlayerState = Player.State.Playing Then
                 MainPlayer.StreamPause(False)
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec4.Margin
                 PAnim.To = New Thickness(530, 230, 0, 0)
@@ -1730,7 +2106,7 @@ Class MainWindow
             If MainPlayer.PlayerState = Player.State.Playing Then
                 MainPlayer.StreamPause(False)
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec5.Margin
                 PAnim.To = New Thickness(695, 230, 0, 0)
@@ -1758,7 +2134,7 @@ Class MainWindow
             If MainPlayer.PlayerState = Player.State.Playing Then
                 MainPlayer.StreamPause(False)
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec6.Margin
                 PAnim.To = New Thickness(860, 230, 0, 0)
@@ -1786,7 +2162,7 @@ Class MainWindow
             If MainPlayer.PlayerState = Player.State.Playing Then
                 MainPlayer.StreamPause(False)
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim PAnim As New Animation.ThicknessAnimation
                 PAnim.From = Home_Rec7.Margin
                 PAnim.To = New Thickness(1025, 230, 0, 0)
@@ -1805,21 +2181,32 @@ Class MainWindow
     End Sub
 #Region "Playlist Related"
     Private Sub MainPlaylist_OnSongAdd(Value As String, Type As Player.StreamTypes, IndexUpdated As Boolean, UseURL As Boolean, URL As String, OverrideCurrentMedia As Boolean, OCMTitle As String, OCMArtist As String, OCMYear As Integer, OCMCover As System.Drawing.Bitmap) Handles MainPlaylist.OnSongAdd
+        Log("MainPlaylist_OnSongAdd: " & Value & "//" & Type.ToString & "//" & IndexUpdated & "//" & UseURL & "//" & URL)
         If UseURL = False Then
             Dim Info = Utils.GetSongInfo(Value)
+            Dim Cover = Utils.GetAlbumArt(Value)
             Try
-                playlistItems.Add(New PlaylistItem(Playlist_Main.Items.Count + 1, Info(1), Info(0), Info(2), Info(3), Info(4), Type, Value, Nothing))
-            Catch ex As Exception
+                If My.Settings.USECOVERCACHING = False Then
+                    If Type = Player.StreamTypes.Local Then
+                        playlistItems.Add(New PlaylistItem(Playlist_Main.Items.Count + 1, If(Info(1), IO.Path.GetFileNameWithoutExtension(Value)), If(Info(0), "Not Available"), If(Info(2), "Not Aviable"), If(Info(3), 0), If(Info(4), 0), Type, Value, Nothing))
+                    Else
+                        playlistItems.Add(New PlaylistItem(Playlist_Main.Items.Count + 1, Info(1), Info(0), Info(2), Info(3), Info(4), Type, Value, Nothing))
+                    End If
+                Else
+                        playlistItems.Add(New PlaylistItem(Playlist_Main.Items.Count + 1, Info(1), Info(0), Info(2), Info(3), Info(4), Type, Value, Cover))
+                End If
+            Catch
             End Try
             If IndexUpdated = True Then
                 UpdatePlaylist = False
                 Playlist_Main.SelectedIndex = Playlist_Main.Items.Count - 1
             End If
+            Cover.Dispose()
             Info = Nothing
         Else
             Try
                 playlistItems.Add(New PlaylistItem(Playlist_Main.Items.Count + 1, OCMTitle, OCMArtist, "Not Available", OCMYear, 1, Type, URL, OCMCover))
-            Catch ex As Exception
+            Catch
             End Try
             If IndexUpdated = True Then
                 UpdatePlaylist = False
@@ -1828,6 +2215,7 @@ Class MainWindow
         End If
     End Sub
     Private Sub MainPlaylist_OnSongInsert(Value As String, Type As Player.StreamTypes, IndexUpdated As Boolean, UseURL As Boolean, URL As String, OverrideCurrentMedia As Boolean, OCMTitle As String, OCMArtist As String, OCMYear As Integer, OCMCover As System.Drawing.Bitmap, Index As Integer) Handles MainPlaylist.OnSongInsert
+        Log("MainPlaylist_OnSongInsert: " & Value & "//" & Type.ToString & "//" & Index)
         If UseURL = False Then
             Dim Info = Utils.GetSongInfo(Value)
             Try
@@ -1852,6 +2240,7 @@ Class MainWindow
         RefreshPlaylistNums()
     End Sub
     Private Sub MainPlaylist_OnSongRemove(Value As String, Index As Integer) Handles MainPlaylist.OnSongRemove
+        Log("MainPlaylist_OnSongRemove: " & Value & "//" & Index)
         Try
             playlistItems.RemoveAt(Index)
         Catch ex As Exception
@@ -1860,12 +2249,14 @@ Class MainWindow
     End Sub
 
     Private Sub MainPlaylist_OnPlaylistClear() Handles MainPlaylist.OnPlaylistClear
+        Log("MainPlaylist_OnPlaylistClear")
         Try
             playlistItems.Clear()
         Catch ex As Exception
         End Try
     End Sub
     Private Sub MainPlaylist_OnSongNext() Handles MainPlaylist.OnSongNext
+        Log("MainPlaylist_OnSongNext")
         Try
             UpdatePlaylist = False
             Playlist_Main.SelectedIndex = MainPlaylist.Index
@@ -1875,6 +2266,7 @@ Class MainWindow
     End Sub
 
     Private Sub MainPlaylist_OnSongPrevious() Handles MainPlaylist.OnSongPrevious
+        Log("MainPlaylist_OnSongPrevious")
         Try
             UpdatePlaylist = False
             Playlist_Main.SelectedIndex = MainPlaylist.Index
@@ -1883,6 +2275,7 @@ Class MainWindow
         End Try
     End Sub
     Private Sub MainPlaylist_OnIndexChanged(Index As Integer) Handles MainPlaylist.OnIndexChanged
+        Log("MainPlaylist_OnIndexChanged: " & "//" & Index)
         Try
             UpdatePlaylist = False
             Playlist_Main.SelectedIndex = Index
@@ -1890,6 +2283,7 @@ Class MainWindow
         End Try
     End Sub
     Private Sub MainPlaylist_OnItemChanged(IndexFrom As Integer, IndexTo As Integer) Handles MainPlaylist.OnItemChanged
+        Log("MainPlaylist_OnItemChanged: " & IndexFrom & "//" & IndexTo)
         Try
             Dim item = playlistItems.Item(IndexFrom)
             item.Num = IndexTo + 1
@@ -1908,18 +2302,40 @@ Class MainWindow
                         Case Player.StreamTypes.Local
                             MainPlayer.LoadSong(MainPlaylist.JumpTo(Playlist_Main.SelectedIndex), MainPlaylist, False)
                         Case Player.StreamTypes.URL
-                            Overlay(True, True)
+                            Overlay(True, True, False)
                             'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(MainPlaylist.Playlist_Main.SelectedIndex), Player.StreamTypes.URL, MainPlaylist, Nothing, False)
                             Dim _pitem = playlistItems(Playlist_Main.SelectedIndex)
                             MainPlayer.LoadSong(Nothing, MainPlaylist, False, True, True, MainPlaylist.JumpTo(Playlist_Main.SelectedIndex), True, _pitem.Title, _pitem.Artist, _pitem.Cover, _pitem.Year, Nothing)
                             _pitem = Nothing
-                            Overlay(False, False)
+                            Overlay(False, False, False)
                         Case Player.StreamTypes.Youtube
-                            Overlay(True, True)
                             Playlist_Main.IsEnabled = False
-                            Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(Playlist_Main.SelectedIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                            'Await MainPlayer.LoadStreamAsync(MainPlaylist.JumpTo(Playlist_Main.SelectedIndex), Player.StreamTypes.Youtube, MainPlaylist, Nothing, False)
+                            If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+                                Try
+                                    Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+                                    Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                                    Overlay(True, True, False)
+                                    Await Task.Run(Async Function()
+                                                       Video = Await Client.RequestAndDumpInfo(MainPlaylist.JumpTo(Playlist_Main.SelectedIndex))
+                                                   End Function)
+                                    If Video IsNot Nothing Then
+                                        Using WC As New Net.WebClient
+                                            Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                                            Dim Cover As System.Drawing.Image = Nothing
+                                            Try
+                                                Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                                            Catch ex As Exception
+                                            End Try
+                                            MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                                        End Using
+                                    End If
+                                Catch ex As Exception
+                                    Playlist_Main.IsEnabled = True
+                                    Overlay(False, False, False)
+                                End Try
+                            End If
                             Playlist_Main.IsEnabled = True
-                            Overlay(False, False)
                     End Select
                 End If
                 UpdatePlaylist = True
@@ -1935,7 +2351,7 @@ Class MainWindow
         PlaylistDrawerLeft.IsOpen = True
     End Sub
     Private Sub Playlistadd_Click(sender As Object, e As RoutedEventArgs) Handles Playlistadd.Click
-        Dim OFD As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .Filter = Utils.OFDFileFilters, .Multiselect = True, .Title = "Select one or more files"}
+        Dim OFD As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .Filter = Utils.OFDFileFilters, .Multiselect = True, .Title = "Select one Or more files"}
         If OFD.ShowDialog Then
             Dispatcher.InvokeAsync(Sub()
                                        Switches_Playlist_Overlay_Changer.IsChecked = True
@@ -2012,19 +2428,6 @@ Class MainWindow
     End Sub
 #End Region
     Private Sub Quick_Access_AddSong_Click(sender As Object, e As RoutedEventArgs) Handles Quick_Access_AddSong.Click
-        'Dim Opf As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.Title = "MuPlayer - Add Song", .Filter = Utils.OFDFileFilters}
-        'If Opf.ShowDialog() Then
-        '    MainPlayer.LoadSong(Opf.FileName, MainPlaylist)
-        '    MainPlayer.StreamPlay()
-        '    MainUIManager.IsEnabled = True
-        '    If My.Settings.UseAnimations Then
-        '        Switches_OverlayChanger.IsChecked = False
-        '    Else
-        '        QuickAccess_MainCanvas.Visibility = Visibility.Hidden
-        '    End If
-        '    Overlay(False, False)
-        'End If
-        'Opf = Nothing
         Dim Opf As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.Multiselect = True, .Title = "MuPlayer - Add songs", .Filter = Utils.OFDFileFilters}
         If Opf.ShowDialog() Then
             For Each song In Opf.FileNames
@@ -2032,102 +2435,34 @@ Class MainWindow
             Next
             MainPlayer.LoadSong(Opf.FileNames(Opf.FileNames.Length - 1), MainPlaylist, False)
             MainUIManager.IsEnabled = True
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_OverlayChanger.IsChecked = False
             Else
                 QuickAccess_MainCanvas.Visibility = Visibility.Hidden
             End If
-            Overlay(False, False)
+            Overlay(False, False, False)
         End If
         Opf = Nothing
     End Sub
 
     Private Sub Quick_Access_AddAlbum_Click(sender As Object, e As RoutedEventArgs) Handles Quick_Access_AddAlbum.Click
-        'Dim Opf As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.Multiselect = True, .Title = "MuPlayer - Add Album", .Filter = Utils.OFDFileFilters}
-        'If Opf.ShowDialog() Then
-        '    For Each song In Opf.FileNames
-        '        MainPlaylist.Add(song, Player.StreamTypes.Local)
-        '    Next
-        '    MainPlayer.LoadSong(Opf.FileNames(Opf.FileNames.Length - 1), MainPlaylist, False)
-        '    MainPlayer.StreamPlay()
-        '    MainUIManager.IsEnabled = True
-        '    If My.Settings.UseAnimations Then
-        '        Switches_OverlayChanger.IsChecked = False
-        '    Else
-        '        QuickAccess_MainCanvas.Visibility = Visibility.Hidden
-        '    End If
-        '    Overlay(False, False)
-        'End If
-        'Opf = Nothing
-        Dim Fbd As New Ookii.Dialogs.Wpf.VistaFolderBrowserDialog With {.Description = "Sub folders scaning is currently set to """ & My.Settings.FBD_QuickAcess_SubFolders & """"}
+        Dim Fbd As New Ookii.Dialogs.Wpf.VistaFolderBrowserDialog With {.Description = "Sub folders scaning is currently set to """ & My.Settings.FBD_QUICKACESS_SUBFOLDERS.ToString & """"}
         If Fbd.ShowDialog Then
             If IO.Directory.Exists(Fbd.SelectedPath) Then
-                For Each song As String In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(Fbd.SelectedPath, filter, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
+                For Each song As String In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(Fbd.SelectedPath, filter, My.Settings.FBD_QUICKACESS_SUBFOLDERS)).ToArray()
                     MainPlaylist.Add(song, Player.StreamTypes.Local)
                 Next
                 MainPlayer.LoadSong(MainPlaylist.GetItem(MainPlaylist.Count - 1), MainPlaylist, False)
                 MainUIManager.IsEnabled = True
-                If My.Settings.UseAnimations Then
+                If My.Settings.USEANIMATIONS Then
                     Switches_OverlayChanger.IsChecked = False
                 Else
                     QuickAccess_MainCanvas.Visibility = Visibility.Hidden
                 End If
-                Overlay(False, False)
+                Overlay(False, False, False)
             End If
         End If
         Fbd = Nothing
-    End Sub
-
-    Private Sub TitleBar_Menu_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Menu.Click
-        Switches_OverlayChanger.IsChecked = Not Switches_OverlayChanger.IsChecked
-        If Switches_OverlayChanger.IsChecked Then
-            Overlay(True, False)
-        Else
-            Overlay(False, False)
-        End If
-    End Sub
-
-    Private Sub TitleBar_Theme_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Theme.Click
-        If My.Settings.DefaultTheme < 2 Then
-            My.Settings.DefaultTheme += 1
-        Else
-            My.Settings.DefaultTheme = 0
-        End If
-        My.Settings.Save()
-        If My.Settings.DefaultTheme <> 2 Then
-            ThemeManager.Current.UsingSystemTheme = False
-            UpdateSkin(My.Settings.DefaultTheme)
-            Dim CurrentTheme = System.Enum.GetName(GetType(HandyControl.Themes.ApplicationTheme), My.Settings.DefaultTheme)
-            ShowNotification("MuPlay", "Current theme: " & CurrentTheme, HandyControl.Data.NotifyIconInfoType.Info)
-            CurrentTheme = Nothing
-        Else
-            ThemeManager.Current.UsingSystemTheme = True
-            ShowNotification("MuPlay", "Now using system theme", HandyControl.Data.NotifyIconInfoType.Info)
-        End If
-    End Sub
-
-    Private Sub TitleBar_Theme_MouseRightButtonUp(sender As Object, e As MouseButtonEventArgs) Handles TitleBar_Theme.MouseRightButtonUp
-        Select Case My.Settings.DefaultTheme
-            Case 0 'Light
-                ShowNotification("MuPlay", "Using light theme", HandyControl.Data.NotifyIconInfoType.Info)
-            Case 1 'Dark
-                ShowNotification("MuPlay", "Using dark theme", HandyControl.Data.NotifyIconInfoType.Info)
-            Case 2 'System Theme
-                ShowNotification("MuPlay", "Using system theme", HandyControl.Data.NotifyIconInfoType.Info)
-        End Select
-    End Sub
-
-    Private Sub TitleBar_Settings_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Settings.Click
-        Overlay(True, False)
-        My.Windows.Settings.Owner = Me
-        My.Windows.Settings.ShowDialog()
-        Overlay(False, False)
-    End Sub
-    Private Sub TitleBar_Search_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Search.Click
-        Overlay(True, False)
-        My.Windows.Search.Owner = Me
-        My.Windows.Search.ShowDialog()
-        Overlay(False, False)
     End Sub
     Private Sub MainWindow_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
         If e.Key = Key.C AndAlso My.Computer.Keyboard.ShiftKeyDown = True Then
@@ -2150,23 +2485,65 @@ Class MainWindow
         End If
     End Sub
 #Region "TitleBar Buttons"
+    Private Sub TitleBar_Menu_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Menu.Click
+        Switches_OverlayChanger.IsChecked = Not Switches_OverlayChanger.IsChecked
+        If Switches_OverlayChanger.IsChecked Then
+            Overlay(True, False, False)
+        Else
+            Overlay(False, False, False)
+        End If
+    End Sub
+
+    Private Sub TitleBar_Theme_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Theme.Click
+        If My.Settings.DEFAULTTHEME < 2 Then
+            My.Settings.DEFAULTTHEME += 1
+        Else
+            My.Settings.DEFAULTTHEME = 0
+        End If
+        My.Settings.Save()
+        If My.Settings.DEFAULTTHEME <> 2 Then
+            ThemeManager.Current.UsingSystemTheme = False
+            UpdateSkin(My.Settings.DEFAULTTHEME)
+            Dim CurrentTheme = System.Enum.GetName(GetType(HandyControl.Themes.ApplicationTheme), My.Settings.DEFAULTTHEME)
+            ShowNotification("MuPlay", "Current theme: " & CurrentTheme, HandyControl.Data.NotifyIconInfoType.Info)
+            CurrentTheme = Nothing
+        Else
+            ThemeManager.Current.UsingSystemTheme = True
+            ShowNotification("MuPlay", "Now using system theme", HandyControl.Data.NotifyIconInfoType.Info)
+        End If
+    End Sub
+
+    Private Sub TitleBar_Theme_MouseRightButtonUp(sender As Object, e As MouseButtonEventArgs) Handles TitleBar_Theme.MouseRightButtonUp
+        Select Case My.Settings.DEFAULTTHEME
+            Case 0 'Light
+                ShowNotification("MuPlay", "Using light theme", HandyControl.Data.NotifyIconInfoType.Info)
+            Case 1 'Dark
+                ShowNotification("MuPlay", "Using dark theme", HandyControl.Data.NotifyIconInfoType.Info)
+            Case 2 'System Theme
+                ShowNotification("MuPlay", "Using system theme", HandyControl.Data.NotifyIconInfoType.Info)
+        End Select
+    End Sub
+
+    Private Sub TitleBar_Settings_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Settings.Click
+        Overlay(True, False, False)
+        My.Windows.Settings.Owner = Me
+        My.Windows.Settings.ShowDialog()
+        Overlay(False, False, False)
+    End Sub
+    Private Sub TitleBar_Search_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Search.Click
+        Overlay(True, False, False)
+        My.Windows.Search.Owner = Me
+        My.Windows.Search.ShowDialog()
+        Overlay(False, False, False)
+    End Sub
     Private Sub TitleBar_Eq_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Eq.Click
-        Overlay(True, False)
+        Overlay(True, False, False)
         My.Windows.Equalizer.Owner = Me
         My.Windows.Equalizer.ShowDialog()
-        Overlay(False, False)
+        Overlay(False, False, False)
     End Sub
     Private Sub MainPlayer_OnEqChanged(EQgains As Integer()) Handles MainPlayer.OnEqChanged
-        'My.Windows.Equalizer.Eq1.Value = EQgains(0)
-        'My.Windows.Equalizer.Eq2.Value = EQgains(1)
-        'My.Windows.Equalizer.Eq3.Value = EQgains(2)
-        'My.Windows.Equalizer.Eq4.Value = EQgains(3)
-        'My.Windows.Equalizer.Eq5.Value = EQgains(4)
-        'My.Windows.Equalizer.Eq6.Value = EQgains(5)
-        'My.Windows.Equalizer.Eq7.Value = EQgains(6)
-        'My.Windows.Equalizer.Eq8.Value = EQgains(7)
-        'My.Windows.Equalizer.Eq9.Value = EQgains(8)
-        'My.Windows.Equalizer.Eq10.Value = EQgains(9)
+        Log("MainPlayer_OnEqChanged: " & String.Join(";", EQgains))
         My.Windows.Equalizer.SetPreset(EQgains(0), EQgains(1), EQgains(2), EQgains(3), EQgains(4), EQgains(5), EQgains(6), EQgains(7), EQgains(8), EQgains(9))
     End Sub
     Private Sub TitleBar_Sleep_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Sleep.Click
@@ -2199,12 +2576,13 @@ Class MainWindow
     Private Sub TitleBar_Exit_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Exit.Click
         Me.Close()
     End Sub
-    Private Async Sub TitleBar_SyncScan_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SyncScan.Click
-        Overlay(True, True)
+#Region "Library"
+    Private Async Sub TitleBar_Library_Scan_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_Scan.Click
+        Overlay(True, True, False)
         Dim Gtracks = Await MainLibrary.GroupTracksAsync
         Dim files As New List(Of String)
-        For Each path In My.Settings.LibrariesPath
-            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QuickAcess_SubFolders)).ToArray()
+        For Each path In My.Settings.LIBRARIESPATH
+            For Each song In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, My.Settings.FBD_QUICKACESS_SUBFOLDERS)).ToArray()
                 files.Add(song)
             Next
         Next
@@ -2220,28 +2598,86 @@ Class MainWindow
         End If
         Await MainLibrary.CacheArtists(Utils.AppDataPath)
         Await MainLibrary.CacheYears(Utils.AppDataPath)
-        Overlay(False, False)
+        Overlay(False, False, False)
     End Sub
+
+    Private Async Sub TitleBar_Library_AddCurrentSong_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_AddCurrentSong.Click
+        If MainPlayer.CurrentMediaType = Player.StreamTypes.Local Then If Not Await MainLibrary.IsSongExists(MainPlayer.SourceURL) Then Await MainLibrary.AddTracksToLibraryAsync({MainPlayer.SourceURL})
+    End Sub
+    Private Async Sub TitleBar_Library_AddSong_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_AddSong.Click
+        Dim OFD As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .AddExtension = True, .Filter = Utils.OFDFileFilters}
+        If OFD.ShowDialog Then
+            If Not Await MainLibrary.IsSongExists(OFD.FileName) Then Await MainLibrary.AddTracksToLibraryAsync({OFD.FileName})
+        End If
+    End Sub
+
+    Private Async Sub TitleBar_Library_Caching_CacheAll_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_Caching_CacheAll.Click
+        Overlay(True, True, False)
+        Await MainLibrary.CacheArtists(Utils.AppDataPath)
+        Await MainLibrary.CacheYears(Utils.AppDataPath)
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Library_Caching_CacheArtists_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_Caching_CacheArtists.Click
+        Overlay(True, True, False)
+        Await MainLibrary.CacheArtists(Utils.AppDataPath)
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Library_Caching_CacheYears_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_Caching_CacheYears.Click
+        Overlay(True, True, False)
+        Await MainLibrary.CacheYears(Utils.AppDataPath)
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Library_Rebuild_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_Rebuild.Click
+        Overlay(True, True, True)
+        Home_Overlay_State.Text = "Rebuilding library..."
+        Dim Temp_List As New List(Of String)
+        For Each path In My.Settings.LIBRARIESPATH
+            Temp_List.Add(path)
+        Next
+        MainLibrary.LoadLibrary(Await Library.MakeLibrary(Utils.AppDataPath, Temp_List))
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Library_RefreshStats_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_RefreshStats.Click
+        Overlay(True, True, False)
+        Await MainLibrary.RefreshStats
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Library_RemoveCurrentSong_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_RemoveCurrentSong.Click
+        If MainPlayer.CurrentMediaType = Player.StreamTypes.Local Then If Await MainLibrary.IsSongExists(MainPlayer.SourceURL) Then Await MainLibrary.RemoveTracksFromLibraryAsync({MainPlayer.SourceURL})
+    End Sub
+
+    Private Async Sub TitleBar_Library_RemoveSong_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Library_RemoveSong.Click
+        Dim OFD As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .AddExtension = True, .Filter = Utils.OFDFileFilters}
+        If OFD.ShowDialog Then
+            If Await MainLibrary.IsSongExists(OFD.FileName) Then Await MainLibrary.RemoveTracksFromLibraryAsync({OFD.FileName})
+        End If
+    End Sub
+#End Region
     Private Sub TitleBar_Tags_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Tags.Click
         Try
             Dim Tags As New Tags(MainPlayer.SourceURL, MainPlayer) With {.Owner = Me}
-            Overlay(True, False)
+            Overlay(True, False, False)
             Tags.ShowDialog()
-            Overlay(False, False)
+            Overlay(False, False, False)
             Tags = Nothing
         Catch ex As Exception
-            Overlay(False, False)
+            Overlay(False, False, False)
         End Try
     End Sub
     Private Sub TitleBar_Reverb_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Reverb.Click
-        Overlay(True, False)
+        Overlay(True, False, False)
         Try
             My.Windows.Reverb.Owner = Me
             My.Windows.Reverb.Update()
             My.Windows.Reverb.ShowDialog()
         Catch ex As Exception
         End Try
-        Overlay(False, False)
+        Overlay(False, False, False)
     End Sub
     Private Sub TitleBar_SoundBooster_OnOff_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SoundBooster_OnOff.Click
         If MainPlayer.IsLoudness Then
@@ -2291,50 +2727,68 @@ Class MainWindow
         TitleBar_8DRotateChannel_Rate_Fast.IsChecked = False
     End Sub
     Private Async Sub TitleBar_UnsyncURL_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_UnsyncURL.Click
-        Dim IB As New InputDialog("URL here ...") With {.Owner = Me}
-        If IB.ShowDialog Then
-            Overlay(True, True)
-            Await MainPlayer.LoadStreamAsync(IB.Input, Player.StreamTypes.URL, MainPlaylist)
-            Overlay(False, False)
-        End If
-        IB = Nothing
+        If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+            Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+            Dim IB As New InputDialog("Youtube Video URL...")
+            If IB.ShowDialog Then
+                Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                Overlay(True, True, False)
+                Await Task.Run(Async Function()
+                                   Video = Await Client.RequestAndDumpInfo(IB.Input)
+                               End Function)
+                If Video IsNot Nothing Then
+                    Using WC As New Net.WebClient
+                        Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                        Dim Cover As System.Drawing.Image = Nothing
+                        Try
+                            Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                        Catch ex As Exception
+                        End Try
+                        MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                    End Using
+                End If
+                Overlay(False, False, False)
+                End If
+            End If
     End Sub
     Private Async Sub TitleBar_UnsyncSC_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_UnsyncSC.Click
         Dim IB As New InputDialog("URL here ...") With {.Owner = Me}
         If IB.ShowDialog Then
-            Overlay(True, True)
+            Overlay(True, True, False)
             Dim Info = Await SoundCloud.GetInfoAsync(IB.Input)
             MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Info.URI.ToString, True, Info.Title, Info.Artist, Info.Avatar)
-            Overlay(False, False)
+            Overlay(False, False, False)
         End If
         IB = Nothing
     End Sub
     Private Async Sub TitleBar_UnsyncYT_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_UnsyncYT.Click
-        Dim IB As New InputDialog("Youtube search query or video URL...") With {.Owner = Me, .Title = "MuPlay"}
-        If IB.ShowDialog Then
-            Overlay(True, True)
-            Try
-                Dim urlQueryStrPos As Integer
-                'Lets find the index of the query string ?v=
-                'right after the equal sign would be the youtube video id which is
-                'an 11-character string generated by youtube when a user uploads a video.
-                urlQueryStrPos = IB.Input.IndexOf("?v=")
-                If urlQueryStrPos < 0 Then
-                    Await MainPlayer.LoadStreamAsync(Nothing, Player.StreamTypes.Youtube, MainPlaylist, IB.Input)
-                Else
-                    Dim youTubeVideoIdStartPos As Integer
-                    youTubeVideoIdStartPos = urlQueryStrPos + 3         'locate the start position of the video ID
-                    Dim youtubeVideoId As String
-                    youtubeVideoId = IB.Input.Substring(youTubeVideoIdStartPos, 11) 'extract the video id from the url string
-                    Await MainPlayer.LoadStreamAsync(youtubeVideoId, Player.StreamTypes.Youtube, MainPlaylist)
+        If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+            Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+            Dim IB As New InputDialog("Youtube Video URL...") With {.Owner = Me}
+            If IB.ShowDialog Then
+                Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                Overlay(True, True, False)
+                Await Task.Run(Async Function()
+                                   Video = Await Client.RequestAndDumpInfo(IB.Input)
+                               End Function)
+                If Video IsNot Nothing Then
+                    If Video IsNot Nothing Then
+                        Using WC As New Net.WebClient
+                            Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                            Dim Cover As System.Drawing.Image = Nothing
+                            Try
+                                Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                            Catch ex As Exception
+                            End Try
+                            MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                        End Using
+                    End If
                 End If
-            Catch ex As Exception
-                media_next_btn_Click(Nothing, New RoutedEventArgs)
-                Throw New Exception("An error occured while trying to contact Youtube, try again later or use youtube video id instead of a search query.", ex)
-            End Try
-            Overlay(False, False)
+                    Overlay(False, False, False)
+                End If
+            Else
+            ShowNotification("Youtube-DL", "Couldn't find Youtube-DL in MuPlay's directory.", NotifyIconInfoType.Error)
         End If
-        IB = Nothing
     End Sub
     Private Sub TitleBar_15FPS_Click(ByVal sender As Object, ByVal e As RoutedEventArgs) Handles TitleBar_15FPS.Click
         SFXVisualRenderer.Interval = 62 'TimeSpan.FromMilliseconds(62)
@@ -2409,12 +2863,13 @@ Class MainWindow
         TitleBar_MB_SearchCurrent.IsEnabled = True
     End Sub
     Private Sub MusicBrainz_OnStateChanged(State As MusicBrainz.States) Handles MusicBrainz.OnStateChanged
+        Log("MusicBrainz_OnStateChanged: " & State.ToString)
         ShowNotification("Music Brainz", State.ToString, HandyControl.Data.NotifyIconInfoType.Info)
     End Sub
     Private Async Sub TitleBar_Lyrics_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Lyrics.Click
         If Not String.IsNullOrEmpty(home_lyrics_block.Text) Or Not String.IsNullOrWhiteSpace(home_lyrics_block.Text) Then Exit Sub
         TitleBar_Lyrics.IsEnabled = False
-        Overlay(True, True)
+        Overlay(True, True, False)
         Dim Lrcs As String = Await Lyrics.Beginsearch(TryCast(MEDIA_ARTIST.Content, String).Replace(" ", ""), TryCast(MEDIA_TITLE.Content, String).Replace(" ", ""), MEDIA_TITLE.Content)
         If Lrcs.Trim = "" Then
             If MessageBox.Show(Me, "No lyrics found." & vbCrLf & "Do you want to retry with your own keywords ?", "Lyrics", MessageBoxButton.YesNo, MessageBoxImage.Error) = MessageBoxResult.Yes Then
@@ -2482,11 +2937,12 @@ Class MainWindow
                     home_lyrics_block.Text = String.Empty
             End Select
         End If
-        Overlay(False, False)
+        Overlay(False, False, False)
         TitleBar_Lyrics.IsEnabled = True
     End Sub
 
     Private Sub Lyrics_OnStateChanged(State As Lyrics.States) Handles Lyrics.OnStateChanged
+        Log("Lyrics_OnStateChanged: " & State.ToString)
         ShowNotification("Lyrics", State.ToString, HandyControl.Data.NotifyIconInfoType.Info)
     End Sub
     Private Sub TitleBar_Upnp_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Upnp.Click
@@ -2514,7 +2970,7 @@ Class MainWindow
             Next
             MainPlayer.LoadSong(Opf.FileNames(Opf.FileNames.Length - 1), MainPlaylist, False)
             MainUIManager.IsEnabled = True
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_OverlayChanger.IsChecked = False
             Else
                 QuickAccess_MainCanvas.Visibility = Visibility.Hidden
@@ -2522,13 +2978,497 @@ Class MainWindow
         End If
         Opf = Nothing
     End Sub
+    Private Sub TitleBar_ABLoop_Set_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_ABLoop_Set.Click
+        Dim A As Double
+        Dim cA = Double.TryParse(TitleBar_ABLoop_A.Items(0).Text, A)
+        Dim B As Double
+        Dim cB = Double.TryParse(TitleBar_ABLoop_B.Items(0).Text, B)
+        If cA AndAlso cB Then
+            MainPlayer.ABLoop = New Player.ABLoopItem(A, B)
+        End If
+    End Sub
+
+    Private Sub TitleBar_ABLoop_Disable_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_ABLoop_Disable.Click
+        MainPlayer.ABLoop = Nothing
+    End Sub
+    Private Sub TitleBar_ABLoop_MouseEnter(sender As Object, e As MouseEventArgs) Handles TitleBar_ABLoop.MouseEnter
+        PosDurSwitch = True
+    End Sub
+
+    Private Sub TitleBar_ABLoop_MouseLeave(sender As Object, e As MouseEventArgs) Handles TitleBar_ABLoop.MouseLeave
+        PosDurSwitch = False
+    End Sub
+
+    Private Sub TitleBar_DSP_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_DSP.Click
+        My.Windows.DSPPlugins.Owner = Me
+        My.Windows.DSPPlugins.Show()
+    End Sub
+
+    Private Sub TitleBar_Playlist_CustomPlaylistManager_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_CustomPlaylistManager.Click
+        My.Windows.PlaylistManager.Show()
+    End Sub
+    Dim WithEvents SRT As SRTParser
+    Dim SRTCancellationToken As Threading.CancellationTokenSource = Nothing
+    Dim WithEvents SRT_Timer As Forms.Timer
+    Private Sub SRT_OnSRTLoaded() Handles SRT.OnSRTLoaded
+        Log("SRT_OnSRTLoaded")
+        TitleBar_SRTLyricsOffset.IsEnabled = True
+        TitleBar_SRTLyricsSyncPlayer.IsEnabled = True
+        TitleBar_SRTLyricsSyncSubs.IsEnabled = True
+    End Sub
+    Private Sub SRT_OnSRTDisposed() Handles SRT.OnSRTDisposed
+        Log("SRT_OnSRTDisposed")
+        TitleBar_SRTLyricsOffset.IsEnabled = False
+        TitleBar_SRTLyricsSyncPlayer.IsEnabled = False
+        TitleBar_SRTLyricsSyncSubs.IsEnabled = False
+    End Sub
+    Private Async Sub TitleBar_SRTLyricsWTMR_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyricsWTMR.Click
+        Dim Ofd As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .Filter = "Supported Files|*.srt"}
+        If Ofd.ShowDialog Then
+            Overlay(True, False, False)
+            Subtitles_Text_Current.Text = MainPlayer.CurrentMediaTitle & " By " & MainPlayer.CurrentMediaArtist
+            Subtitles_Text_Current.Visibility = Visibility.Visible
+            Subtitles_Text_Current.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromMilliseconds(500))))
+            Subtitles_Text_Previous.Visibility = Visibility.Visible
+            Subtitles_Text_Previous.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromMilliseconds(500))))
+            Subtitles_Text_Next.Visibility = Visibility.Visible
+            Subtitles_Text_Next.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromMilliseconds(500))))
+            Await Task.Delay(500)
+            SRT_Timer = New Forms.Timer With {.Interval = 100}
+            If SRT Is Nothing Then
+                SRT = New SRTParser
+                SRT.Load(Ofd.FileName)
+                SRTCancellationToken = New Threading.CancellationTokenSource()
+                SRT_Timer.Start()
+            Else
+                SRT.PushSrtCancellationToken = True
+                SRT.DisposeSRT()
+                SRT = Nothing
+                SRT = New SRTParser
+                SRT.Load(Ofd.FileName)
+                If SRTCancellationToken IsNot Nothing Then
+                    SRTCancellationToken.Cancel()
+                    SRTCancellationToken = New Threading.CancellationTokenSource()
+                Else
+                    SRTCancellationToken = New Threading.CancellationTokenSource()
+                End If
+                SRT_Timer.Start()
+            End If
+        End If
+    End Sub
+    Private Sub SRT_Timer_Tick() Handles SRT_Timer.Tick
+        If SRT.Subtitles.Count <> 0 Then
+            Dim CSub = SRT.GetSubAt(TimeSpan.FromSeconds(MainPlayer.GetPosition))
+            Try
+                Subtitles_Text_Current.Text = CSub.Text
+            Catch ex As Exception
+                'Subtitles_Text_Current.Text = String.Empty
+            End Try
+            Try
+                Subtitles_Text_Previous.Text = SRT.Subtitles(CSub.Num - 1).Text
+            Catch ex As Exception
+                'Subtitles_Text_Previous.Text = String.Empty
+            End Try
+            Try
+                Subtitles_Text_Next.Text = SRT.Subtitles(CSub.Num + 1).Text
+            Catch ex As Exception
+                'Subtitles_Text_Previous.Text = String.Empty
+            End Try
+        Else
+            SRT_Timer.Stop()
+            Subtitles_Text_Current.Text = MainPlayer.CurrentMediaTitle & " By " & MainPlayer.CurrentMediaArtist
+            Subtitles_Text_Current.Visibility = Visibility.Visible
+            Subtitles_Text_Current.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+            Subtitles_Text_Previous.Visibility = Visibility.Visible
+            Subtitles_Text_Previous.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+            Subtitles_Text_Next.Visibility = Visibility.Visible
+            Subtitles_Text_Next.BeginAnimation(OpacityProperty, New DoubleAnimation(0, New Duration(TimeSpan.FromMilliseconds(200))))
+            Overlay(False, False, False)
+        End If
+    End Sub
+    Private Sub TitleBar_SRTLyrics_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyrics.Click
+        Dim Ofd As New Ookii.Dialogs.Wpf.VistaOpenFileDialog With {.CheckFileExists = True, .Filter = "Supported Files|*.srt"}
+        If Ofd.ShowDialog Then
+            SRT_Timer.Stop()
+            If SRT Is Nothing Then
+                SRT = New SRTParser
+                SRT.Load(Ofd.FileName)
+                SRTCancellationToken = New Threading.CancellationTokenSource()
+                SRT.PushSubtitles(Sub(Subtitle)
+                                      Dispatcher.Invoke(Sub()
+                                                            If QuickAccess_Overlay.Visibility = Visibility.Hidden Then QuickAccess_Overlay.Visibility = Visibility.Visible
+                                                            Overlay(True, False, False)
+                                                            Try
+                                                                Subtitles_Text_Previous.Text = SRT.Subtitles(Subtitle.Num - 1).Text
+                                                            Catch ex As Exception
+                                                                Subtitles_Text_Previous.Text = String.Empty
+                                                            End Try
+                                                            Subtitles_Text_Current.Text = Subtitle.Text
+                                                            Try
+                                                                Subtitles_Text_Next.Text = SRT.Subtitles(Subtitle.Num + 1).Text
+                                                            Catch ex As Exception
+                                                                Subtitles_Text_Next.Text = String.Empty
+                                                            End Try
+                                                        End Sub)
+                                  End Sub, SRTCancellationToken.Token, TimeSpan.Zero)
+                MainPlayer.SetPosition(0)
+                Overlay(True, False, False)
+                Subtitles_Text_Current.Text = MainPlayer.CurrentMediaTitle & " By " & MainPlayer.CurrentMediaArtist
+                Subtitles_Text_Current.Visibility = Visibility.Visible
+                Subtitles_Text_Current.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+                Subtitles_Text_Previous.Visibility = Visibility.Visible
+                Subtitles_Text_Previous.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+                Subtitles_Text_Next.Visibility = Visibility.Visible
+                Subtitles_Text_Next.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+            Else
+                SRT.PushSrtCancellationToken = True
+                SRT.DisposeSRT()
+                SRT = Nothing
+                SRT = New SRTParser
+                SRT.Load(Ofd.FileName)
+                If SRTCancellationToken IsNot Nothing Then
+                    SRTCancellationToken.Cancel()
+                    SRTCancellationToken = New Threading.CancellationTokenSource()
+                Else
+                    SRTCancellationToken = New Threading.CancellationTokenSource()
+                End If
+                SRT.PushSubtitles(Sub(Subtitle)
+                                      Dispatcher.Invoke(Sub()
+                                                            If QuickAccess_Overlay.Visibility = Visibility.Hidden Then QuickAccess_Overlay.Visibility = Visibility.Visible
+                                                            Overlay(True, False, False)
+                                                            Try
+                                                                Subtitles_Text_Previous.Text = SRT.Subtitles(Subtitle.Num - 1).Text
+                                                            Catch ex As Exception
+                                                                Subtitles_Text_Previous.Text = String.Empty
+                                                            End Try
+                                                            Subtitles_Text_Current.Text = Subtitle.Text
+                                                            Try
+                                                                Subtitles_Text_Next.Text = SRT.Subtitles(Subtitle.Num + 1).Text
+                                                            Catch ex As Exception
+                                                                Subtitles_Text_Next.Text = String.Empty
+                                                            End Try
+                                                        End Sub)
+                                  End Sub, SRTCancellationToken.Token, TimeSpan.Zero)
+                MainPlayer.SetPosition(0)
+                Overlay(True, False, False)
+                Subtitles_Text_Current.Text = MainPlayer.CurrentMediaTitle & " By " & MainPlayer.CurrentMediaArtist
+                Subtitles_Text_Current.Visibility = Visibility.Visible
+                Subtitles_Text_Current.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+                Subtitles_Text_Previous.Visibility = Visibility.Visible
+                Subtitles_Text_Previous.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+                Subtitles_Text_Next.Visibility = Visibility.Visible
+                Subtitles_Text_Next.BeginAnimation(OpacityProperty, New DoubleAnimation(1, New Duration(TimeSpan.FromSeconds(1))))
+            End If
+        End If
+    End Sub
+    Private Sub TitleBar_SRTLyricsOffset_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyricsOffset.Click
+        Dim IB As New InputDialog("Subtitles Offset in ms")
+        If IB.ShowDialog Then
+            If Not String.IsNullOrEmpty(IB.Input.Trim) Then
+                If IB.Input > 0 Then
+                    SRT.Offset(TimeSpan.FromMilliseconds(IB.Input), True)
+                ElseIf IB.Input < 0 Then
+                    SRT.Offset(TimeSpan.FromMilliseconds(IB.Input), False)
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub TitleBar_SRTLyricsSyncPlayer_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyricsSyncPlayer.Click
+        Dim Time = SRT.GetSyncTime
+        If Time <> TimeSpan.Zero Then MainPlayer.SetPosition(SRT.GetSyncTime.Seconds)
+    End Sub
+    Private Sub TitleBar_SRTLyricsSyncSubs_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyricsSyncSubs.Click
+        If SRTCancellationToken IsNot Nothing Then
+            SRTCancellationToken.Cancel()
+            SRT.PushSubtitles(Sub(Subtitle)
+                                  Dispatcher.Invoke(Sub()
+                                                        If QuickAccess_Overlay.Visibility = Visibility.Hidden Then QuickAccess_Overlay.Visibility = Visibility.Visible
+                                                        Overlay(True, False, False)
+                                                        Try
+                                                            Subtitles_Text_Previous.Text = SRT.Subtitles(Subtitle.Num - 1).Text
+                                                        Catch ex As Exception
+                                                            Subtitles_Text_Previous.Text = String.Empty
+                                                        End Try
+                                                        Subtitles_Text_Current.Text = Subtitle.Text
+                                                        Try
+                                                            Subtitles_Text_Next.Text = SRT.Subtitles(Subtitle.Num + 1).Text
+                                                        Catch ex As Exception
+                                                            Subtitles_Text_Next.Text = String.Empty
+                                                        End Try
+                                                    End Sub)
+                              End Sub, SRTCancellationToken.Token, TimeSpan.FromSeconds(MainPlayer.GetPosition))
+        End If
+    End Sub
+    Private Sub TitleBar_SRTLyricsTMR_Interval_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SRTLyricsTMR_Interval.Click
+        Dim IB As New InputDialog("Timer interval in ms")
+        If IB.ShowDialog Then
+            If SRT_Timer IsNot Nothing Then SRT_Timer.Interval = IB.Input
+        End If
+    End Sub
+    Private Sub TitleBar_DoubleOuput_Toggle_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_DoubleOuput_Toggle.Click
+        MainPlayer.DoubleOutput = Not MainPlayer.DoubleOutput
+        Un4seen.Bass.Bass.BASS_ChannelSetPosition(MainPlayer.DOStream, MainPlayer.GetPosition)
+    End Sub
+    Private Sub TitleBar_DoubleOuput_Ouput_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles TitleBar_DoubleOuput_Ouput.SelectionChanged
+        MainPlayer.SetDoubleOutputDevice(TitleBar_DoubleOuput_Ouput.SelectedIndex)
+    End Sub
+    Private Sub TitleBar_DoubleOuput_Devices_Sync_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_DoubleOuput_Devices_Sync.Click
+        TitleBar_DoubleOuput_Ouput.Items.Clear()
+        For Each device In MainPlayer.GetOutputDevices
+            TitleBar_DoubleOuput_Ouput.Items.Add(device)
+        Next
+    End Sub
+    Private Async Sub TitleBar_Playlist_All_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_All.Click
+        Overlay(True, True, False)
+        Home_Overlay_State.Text = "Adding songs..."
+        Await Task.Run(Async Function()
+                           MainPlaylist.Clear()
+                           For i As Integer = 0 To My.Settings.LIBRARIESPATH.Count - 1
+                               Dim idx = i
+                               Dim files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(My.Settings.LIBRARIESPATH(idx), filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
+                               For _i As Integer = 0 To files.Count - 1
+                                   Dim ix = _i
+                                   Await Dispatcher.BeginInvoke(Sub()
+                                                                    Home_Overlay_State.Text = "From library " & i & " " & ix + 1 & "/" & files.Count & " song added."
+                                                                    MainPlaylist.Add(files(_i), Player.StreamTypes.Local)
+                                                                End Sub)
+                               Next
+                           Next
+                       End Function)
+        Overlay(False, False, False)
+                           MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
+                       End Sub
+
+    Private Async Sub TitleBar_Playlist_Random10_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_Random10.Click
+        Overlay(True, True, False)
+        Await Dispatcher.InvokeAsync(Sub()
+                                         Dim Rnd As New Random
+                                         Dim RndSongs As New List(Of String)
+                                         Dim files As New List(Of String)
+                                         Dim _files As String()
+                                         For Each path In My.Settings.LIBRARIESPATH
+                                             _files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
+                                             For Each song In _files
+                                                 files.Add(song)
+                                             Next
+                                         Next
+                                         For i As Integer = 0 To 9
+                                             RndSongs.Add(files(Rnd.Next(0, files.Count - 1)))
+                                         Next
+                                         MainPlaylist.Clear()
+                                         For Each song In RndSongs
+                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
+                                         Next
+                                         MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
+                                         Rnd = Nothing
+                                         RndSongs = Nothing
+                                         files = Nothing
+                                         _files = Nothing
+                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+        Overlay(False, False, False)
+    End Sub
+
+    Private Async Sub TitleBar_Playlist_ShuffleAll_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_ShuffleAll.Click
+        Overlay(True, True, True)
+        Home_Overlay_State.Text = "Adding And shuffling songs..."
+        Await Dispatcher.InvokeAsync(Sub()
+                                         Dim Songs As New List(Of String)
+                                         For i As Integer = 0 To My.Settings.LIBRARIESPATH.Count - 1
+                                             Dim files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(My.Settings.LIBRARIESPATH(i), filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
+                                             For _i As Integer = 0 To files.Count - 1
+                                                 Home_Overlay_State.Text = "From library " & i & " " & _i + 1 & "/" & files.Count & " song added."
+                                                 Songs.Add(files(_i))
+                                             Next
+                                         Next
+                                         Songs = Utils.Shuffle(Songs)
+                                         MainPlaylist.Clear()
+                                         For Each song In Songs
+                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
+                                         Next
+                                         Songs = Nothing
+                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+        Overlay(False, False, False)
+        MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
+    End Sub
+
+    Private Sub TitleBar_BalanceLeft_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceLeft.Click
+        MainPlayer.SetBalance(-1)
+        TitleBar_BalanceLeft.IsChecked = True
+        TitleBar_BalanceCenter.IsChecked = False
+        TitleBar_BalanceRight.IsChecked = False
+    End Sub
+
+    Private Sub TitleBar_BalanceCenter_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceCenter.Click
+        MainPlayer.SetBalance(0)
+        TitleBar_BalanceLeft.IsChecked = False
+        TitleBar_BalanceCenter.IsChecked = True
+        TitleBar_BalanceRight.IsChecked = False
+    End Sub
+
+    Private Sub TitleBar_BalanceRight_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceRight.Click
+        MainPlayer.SetBalance(1)
+        TitleBar_BalanceLeft.IsChecked = False
+        TitleBar_BalanceCenter.IsChecked = False
+        TitleBar_BalanceRight.IsChecked = True
+    End Sub
+    Private Sub TitleBar_Balance_Slider_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double))
+        MainPlayer.SetBalance(e.NewValue / 100)
+        If e.NewValue = 0 Then
+            TitleBar_BalanceCenter.IsChecked = True
+            TitleBar_BalanceLeft.IsChecked = False
+            TitleBar_BalanceRight.IsChecked = False
+        ElseIf e.NewValue = 100 Then
+            TitleBar_BalanceCenter.IsChecked = False
+            TitleBar_BalanceLeft.IsChecked = False
+            TitleBar_BalanceRight.IsChecked = True
+        ElseIf e.NewValue = -100 Then
+            TitleBar_BalanceCenter.IsChecked = False
+            TitleBar_BalanceLeft.IsChecked = True
+            TitleBar_BalanceRight.IsChecked = False
+        Else
+            TitleBar_BalanceCenter.IsChecked = False
+            TitleBar_BalanceLeft.IsChecked = False
+            TitleBar_BalanceRight.IsChecked = False
+        End If
+    End Sub
+
+    Private Sub TitleBar_Mono_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Mono.Click
+        MainPlayer.Mono = Not MainPlayer.Mono
+        If MainPlayer.Mono Then
+            TitleBar_Mono.IsChecked = True
+        Else
+            TitleBar_Mono.IsChecked = False
+        End If
+    End Sub
+
+    Private Sub TitleBar_SampleRate_Reset_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SampleRate_Reset.Click
+        MainPlayer.SetSampleRate(0)
+    End Sub
+
+    Private Sub TitleBar_SampleRate_Slider_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double))
+        MainPlayer.SetSampleRate(Int(e.NewValue))
+    End Sub
+
+    Private Sub TitleBar_StreamDownloader_DownloadCurrent_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_StreamDownloader_DownloadCurrent.Click
+        StreamDownloader.DownloadCurrent()
+    End Sub
+    Private Sub TitleBar_SteroMix_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SteroMix.Click
+        If MainPlayer.IsStereoMix Then
+            MainPlayer.SetStereoMix(False)
+        Else
+            MainPlayer.SetStereoMix(True)
+        End If
+    End Sub
+
+    Private Sub StreamDownloader_OnStateChanged(State As StreamDownloader.States) Handles StreamDownloader.OnStateChanged
+        Dispatcher.Invoke(Sub()
+                              If My.Settings.STREAMDOWNLOADERNOTIFY Then
+                                  Select Case State
+                                      Case StreamDownloader.States.Downloading
+                                          ShowNotification("Stream downloader", "Downloading...", HandyControl.Data.NotifyIconInfoType.Info)
+                                      Case StreamDownloader.States.DownloadCompleted
+                                          ShowNotification("Stream downloader", "Download completed.", HandyControl.Data.NotifyIconInfoType.Info)
+                                      Case StreamDownloader.States.FatalError
+                                          ShowNotification("Stream downloader", "An Error occued While downloading the file.", HandyControl.Data.NotifyIconInfoType.Error)
+                                      Case StreamDownloader.States.Local
+                                          ShowNotification("Stream downloader", "The file you are trying To download Is a local file.", HandyControl.Data.NotifyIconInfoType.Error)
+                                  End Select
+                              End If
+                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
+    End Sub
+
+    Private Sub TitleBar_StreamDownloader_State_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_StreamDownloader_State.Click
+        Dispatcher.Invoke(Sub()
+                              If StreamDownloader.State = StreamDownloader.States.Downloading Then
+                                  ShowNotification("Stream downloader", "Downloading... " & StreamDownloader.Progress & "%", HandyControl.Data.NotifyIconInfoType.Info)
+                              Else
+                                  ShowNotification("Stream downloader", "State: " & StreamDownloader.State.ToString, HandyControl.Data.NotifyIconInfoType.Info)
+                              End If
+                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
+    End Sub
+
+    Private Sub SoundCloud_OnStateChanged(State As SoundCloud.State) Handles SoundCloud.OnStateChanged
+        Dispatcher.Invoke(Sub()
+                              If My.Settings.SOUNDCLOUD_NOTIFY Then
+                                  Select Case State
+                                      Case SoundCloud.State.Free
+                                          ShowNotification("SoundCloud", "All tasks completed", HandyControl.Data.NotifyIconInfoType.Info)
+                                      Case SoundCloud.State.Connected
+                                          ShowNotification("SoundCloud", "Connected to SoundCloud", HandyControl.Data.NotifyIconInfoType.Info)
+                                      Case SoundCloud.State.FatalError
+                                          ShowNotification("SoundCloud", "Fatal error, try again later.", HandyControl.Data.NotifyIconInfoType.Error)
+                                  End Select
+                              End If
+                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
+    End Sub
+
+    Private Async Sub TitleBar_Playlist_Favourites_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_Favourites.Click
+        If My.Settings.FAVOURITETRACKS.Count > 1 Then
+            MainPlaylist.Clear()
+            Overlay(True, True, True)
+            Await Dispatcher.InvokeAsync(Sub()
+                                             For i As Integer = 0 To My.Settings.FAVOURITETRACKS.Count - 1
+                                                 MainPlaylist.Add(My.Settings.FAVOURITETRACKS(i), Player.StreamTypes.Local, False)
+                                                 Home_Overlay_State.Text = "Adding songs ...(" & i + 1 & "/" & My.Settings.FAVOURITETRACKS.Count & ")"
+                                             Next
+                                         End Sub, System.Windows.Threading.DispatcherPriority.Background)
+            Overlay(False, False, False)
+            MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
+        End If
+    End Sub
+    Private Async Sub TitleBar_Youtube_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Youtube.Click
+        If IO.File.Exists(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe")) Then
+            Dim Client As New Anes08.YoutubeDL.YoutubeDL(IO.Path.Combine(My.Application.Info.DirectoryPath, "youtube-dl.exe"))
+            Dim IB As New InputDialog("Youtube Video URL...")
+            If IB.ShowDialog Then
+                Dim Video As Anes08.YoutubeDL.YoutubeDL.YoutubeVideo = Nothing
+                Overlay(True, True, False)
+                Await Task.Run(Async Function()
+                                   Video = Await Client.RequestAndDumpInfo(IB.Input)
+                               End Function)
+                If Video IsNot Nothing Then
+                    Using WC As New Net.WebClient
+                        Dim CoverBuffer = WC.DownloadData(Video.LQThumbnail.URL)
+                        Dim Cover As System.Drawing.Image = Nothing
+                        Try
+                            Cover = System.Drawing.Image.FromStream(New IO.MemoryStream(CoverBuffer))
+                        Catch ex As Exception
+                        End Try
+                        MainPlayer.LoadSong(Nothing, MainPlaylist, True, True, True, Video.LQMixed.DirectURL, True, Video.Title, String.Join(";", Video.Artists), Cover, Video.UploadDate.Year, Video.URL)
+                    End Using
+                End If
+                Overlay(False, False, False)
+                End If
+            Else
+            ShowNotification("Youtube-DL", "Couldn't find Youtube-DL in MuPlay's directory.", NotifyIconInfoType.Error)
+        End If
+    End Sub
+    Private Async Sub TitleBar_Playlist_ShuffleCurrent_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_ShuffleCurrent.Click
+        Overlay(True, True, False)
+        Await Dispatcher.BeginInvoke(Sub()
+                                         MainPlaylist.Shuffle()
+                                         playlistItems.Clear()
+                                         Dim i = 0
+                                         For Each song In MainPlaylist.Playlist
+                                             Dim Source = song.Substring(0, song.IndexOf(">>"))
+                                             Dim Type = song.Substring(song.IndexOf(">>") + 2)
+                                             Dim Info = Utils.GetSongInfo(Source)
+                                             playlistItems.Add(New PlaylistItem(i + 1, Info(1), Info(0), Info(2), Info(3), Info(4), Type, Source, Nothing))
+                                             i += 1
+                                         Next
+                                         RefreshPlaylistNums()
+                                             MainPlaylist.SetIndex(MainPlaylist.GetIndexByName(MainPlayer.SourceURL))
+                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
+        Overlay(False, False, False)
+    End Sub
 #End Region
 #Region "Visualizer Stuff"
     Dim hSFX3 As Long
     Dim SFXCurrentVisualiserLoc As String
     'Public WithEvents SFXVisualRenderer As New System.Windows.Threading.DispatcherTimer
     Public WithEvents SFXVisualRenderer As New Forms.Timer
-    Dim WithEvents SFXFPSReseter As New Timers.Timer With {.Interval = 1000}
+    Dim WithEvents SFXFPSReseter As New Forms.Timer With {.Interval = 1000}
     Dim FPS As Integer
     Dim WithEvents fftanalyzer As Analyzer
     Private Sub fftanalyzer_DataArrived(Data As List(Of Byte)) Handles fftanalyzer.DataArrived
@@ -2597,7 +3537,7 @@ Class MainWindow
         Visualiser_Monstercat_p63.SetSmoothValue(Data(62))
         Visualiser_Monstercat_p64.SetSmoothValue(Data(63))
     End Sub
-    Public Sub LoadVisualizer(ByVal loc As String, Optional UseDefault As Boolean = False, Optional UseMuPlayDefault As Boolean = False)
+    Public Async Sub LoadVisualizer(ByVal loc As String, Optional UseDefault As Boolean = False, Optional UseMuPlayDefault As Boolean = False)
         If UseMuPlayDefault Then
             Visualiser_Monstercat_Logo.Source = Home_NowPlaying.Source
             Visualiser_Monstercat_Artist.Text = MEDIA_ARTIST.Content
@@ -2615,7 +3555,7 @@ Class MainWindow
         End If
         BassSfx.BASS_SFX_PluginStop(hSFX3)
         If (Not isSFXLoaded) Then
-            ShowNotification("MuPlay", "There was an error while initializing SFX engine.", HandyControl.Data.NotifyIconInfoType.[Error])
+            ShowNotification("MuPlay", "There was an Error While initializing SFX engine.", HandyControl.Data.NotifyIconInfoType.[Error])
         Else
             If fftanalyzer IsNot Nothing Then
                 fftanalyzer.Enable = False
@@ -2641,19 +3581,15 @@ Class MainWindow
     Private Sub SFXVisualRenderer_Tick() Handles SFXVisualRenderer.Tick
         If (hSFX3 <> -1) Then
             Try
-                'Dim g As System.Drawing.Graphics = System.Drawing.Graphics.FromHwnd(Visualiser_Target.Handle)
                 BassSfx.BASS_SFX_PluginRender(hSFX3, MainPlayer.Stream, Visualiser_Target.CreateGraphics.GetHdc)
-                'g.Dispose()
                 FPS += 1
-            Catch ex As Exception
+            Catch
             End Try
         End If
     End Sub
-    Private Sub SFXFPSReseter_Elapsed() Handles SFXFPSReseter.Elapsed
-        Dispatcher.Invoke(Sub()
-                              visualiser_fps.Content = FPS & "FPS"
-                              FPS = 0
-                          End Sub)
+    Private Sub SFXFPSReseter_Elapsed() Handles SFXFPSReseter.Tick
+        visualiser_fps.Content = FPS & "FPS"
+        FPS = 0
     End Sub
     Private Sub visualiser_off_Click(ByVal sender As Object, ByVal e As RoutedEventArgs) Handles visualiser_off.Click
         SFXVisualRenderer.Stop()
@@ -2766,7 +3702,7 @@ Class MainWindow
 #End Region
     Private Sub Home_NowPlaying_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles Home_NowPlaying.MouseDown
         If e.ClickCount = 5 Then
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Dim Wanim As New Animation.DoubleAnimation
                 Wanim.From = 430
                 Wanim.To = 0
@@ -2805,30 +3741,39 @@ Class MainWindow
     End Sub
 
     Private Sub NotifyIconMain_Click(sender As Object, e As RoutedEventArgs) Handles NotifyIconMain.Click
-        MediaBar.ShowAnim(My.Settings.MediaBar_AnimType)
+        MediaBar.ShowAnim(My.Settings.MEDIABAR_ANIMTYPE)
     End Sub
+    Public Sub UpdateFavourite()
+        If My.Settings.FAVOURITETRACKS.Contains(MainPlayer.SourceURL) Then
+            media_like_btn.Foreground = Brushes.Yellow
+            Resources("fav_Tip") = "I hate it"
+        Else
+            media_like_btn.Foreground = Brushes.Black
+            Resources("fav_Tip") = "I love it"
 
+        End If
+    End Sub
     Private Sub media_like_btn_Click(sender As Object, e As RoutedEventArgs) Handles media_like_btn.Click
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Favourite.IsChecked = False
         End If
-        If My.Settings.FavouriteTracks.Contains(MainPlayer.SourceURL) Then
-            My.Settings.FavouriteTracks.Remove(MainPlayer.SourceURL)
+        If My.Settings.FAVOURITETRACKS.Contains(MainPlayer.SourceURL) Then
+            My.Settings.FAVOURITETRACKS.Remove(MainPlayer.SourceURL)
             libraryFavouritesItems.Remove(libraryFavouritesItems.FirstOrDefault(Function(k) k.Source = MainPlayer.SourceURL))
             media_like_btn.Foreground = Brushes.Black
             Resources("fav_Tip") = "I love it"
         Else
-            My.Settings.FavouriteTracks.Add(MainPlayer.SourceURL)
+            My.Settings.FAVOURITETRACKS.Add(MainPlayer.SourceURL)
             Try
                 Dim Tag = TagLib.File.Create(MainPlayer.SourceURL).Tag
-                libraryFavouritesItems.Add(New PlaylistItem(libraryFavouritesItems.Count, Tag.Title, Tag.JoinedPerformers, Tag.Album, Tag.Year, Tag.Track, Player.StreamTypes.Local, MainPlayer.SourceURL, Nothing))
+                libraryFavouritesItems.Add(New PlaylistItem(libraryFavouritesItems.Count + 1, Tag.Title, Tag.JoinedPerformers, Tag.Album, Tag.Year, Tag.Track, Player.StreamTypes.Local, MainPlayer.SourceURL, Nothing))
             Catch ex As Exception
-                libraryFavouritesItems.Add(New PlaylistItem(libraryFavouritesItems.Count, IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, MainPlayer.SourceURL, Nothing))
+                libraryFavouritesItems.Add(New PlaylistItem(libraryFavouritesItems.Count + 1, IO.Path.GetFileNameWithoutExtension(MainPlayer.SourceURL), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, MainPlayer.SourceURL, Nothing))
             End Try
             media_like_btn.Foreground = Brushes.Yellow
             Resources("fav_Tip") = "I hate it"
         End If
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Favourite.IsChecked = True
         End If
     End Sub
@@ -2880,20 +3825,6 @@ Class MainWindow
         MainPlayer.SetVolume(1)
     End Sub
 
-    Private Async Sub TitleBar_Playlist_Favourites_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_Favourites.Click
-        If My.Settings.FavouriteTracks.Count > 1 Then
-            MainPlaylist.Clear()
-            Overlay(True, True)
-            Await Dispatcher.InvokeAsync(Sub()
-                                             For i As Integer = 0 To My.Settings.FavouriteTracks.Count - 1
-                                                 MainPlaylist.Add(My.Settings.FavouriteTracks(i), Player.StreamTypes.Local, False)
-                                                 Home_Overlay_State.Text = "Adding songs ...(" & i + 1 & "/" & My.Settings.FavouriteTracks.Count & ")"
-                                             Next
-                                         End Sub, System.Windows.Threading.DispatcherPriority.Background)
-            Overlay(False, False)
-            MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
-        End If
-    End Sub
 
     Private Sub media_loop_Click(sender As Object, e As RoutedEventArgs) Handles media_loop.Click
         Select Case MainPlayer.RepeateType
@@ -2915,191 +3846,10 @@ Class MainWindow
         End Select
     End Sub
 
-    Private Async Sub TitleBar_Playlist_All_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_All.Click
-        Overlay(True, True)
-        Home_Overlay_State.Text = "Adding songs..."
-        Await Task.Run(Sub()
-                           MainPlaylist.Clear()
-                           For i As Integer = 0 To My.Settings.LibrariesPath.Count - 1
-                               Dim files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(My.Settings.LibrariesPath(i), filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
-                               For _i As Integer = 0 To files.Count - 1
-                                   Dim ix = _i
-                                   Dispatcher.BeginInvoke(Sub()
-                                                              Home_Overlay_State.Text = "From library " & i & " " & ix + 1 & "/" & files.Count & " song added."
-                                                          End Sub)
-                                   MainPlaylist.Add(files(_i), Player.StreamTypes.Local)
-                               Next
-                           Next
-                       End Sub)
-        Overlay(False, False)
-        MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
-    End Sub
 
-    Private Async Sub TitleBar_Playlist_Random10_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_Random10.Click
-        Overlay(True, True)
-        Await Dispatcher.InvokeAsync(Sub()
-                                         Dim Rnd As New Random
-                                         Dim RndSongs As New List(Of String)
-                                         Dim files As New List(Of String)
-                                         Dim _files As String()
-                                         For Each path In My.Settings.LibrariesPath
-                                             _files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(path, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
-                                             For Each song In _files
-                                                 files.Add(song)
-                                             Next
-                                         Next
-                                         For i As Integer = 0 To 9
-                                             RndSongs.Add(files(Rnd.Next(0, files.Count - 1)))
-                                         Next
-                                         MainPlaylist.Clear()
-                                         For Each song In RndSongs
-                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
-                                         Next
-                                         MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
-                                         Rnd = Nothing
-                                         RndSongs = Nothing
-                                         files = Nothing
-                                         _files = Nothing
-                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
-        Overlay(False, False)
-    End Sub
-
-    Private Async Sub TitleBar_Playlist_ShuffleAll_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_ShuffleAll.Click
-        Overlay(True, True)
-        Home_Overlay_State.Text = "Adding and shuffling songs..."
-        Await Dispatcher.InvokeAsync(Sub()
-                                         Dim Songs As New List(Of String)
-                                         For i As Integer = 0 To My.Settings.LibrariesPath.Count - 1
-                                             Dim files = Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(My.Settings.LibrariesPath(i), filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
-                                             For _i As Integer = 0 To files.Count - 1
-                                                 Home_Overlay_State.Text = "From library " & i & " " & _i + 1 & "/" & files.Count & " song added."
-                                                 Songs.Add(files(_i))
-                                             Next
-                                         Next
-                                         Songs = Utils.Shuffle(Songs)
-                                         MainPlaylist.Clear()
-                                         For Each song In Songs
-                                             MainPlaylist.Add(song, Player.StreamTypes.Local)
-                                         Next
-                                         Songs = Nothing
-                                     End Sub, System.Windows.Threading.DispatcherPriority.Background)
-        Overlay(False, False)
-        MainPlayer.LoadSong(MainPlaylist.JumpTo(0), MainPlaylist, False)
-    End Sub
-
-    Private Sub TitleBar_BalanceLeft_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceLeft.Click
-        MainPlayer.SetBalance(-1)
-        TitleBar_BalanceLeft.IsChecked = True
-        TitleBar_BalanceCenter.IsChecked = False
-        TitleBar_BalanceRight.IsChecked = False
-    End Sub
-
-    Private Sub TitleBar_BalanceCenter_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceCenter.Click
-        MainPlayer.SetBalance(0)
-        TitleBar_BalanceLeft.IsChecked = False
-        TitleBar_BalanceCenter.IsChecked = True
-        TitleBar_BalanceRight.IsChecked = False
-    End Sub
-
-    Private Sub TitleBar_BalanceRight_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_BalanceRight.Click
-        MainPlayer.SetBalance(1)
-        TitleBar_BalanceLeft.IsChecked = False
-        TitleBar_BalanceCenter.IsChecked = False
-        TitleBar_BalanceRight.IsChecked = True
-    End Sub
-    Private Sub TitleBar_Balance_Slider_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double))
-        MainPlayer.SetBalance(e.NewValue / 100)
-        If e.NewValue = 0 Then
-            TitleBar_BalanceCenter.IsChecked = True
-            TitleBar_BalanceLeft.IsChecked = False
-            TitleBar_BalanceRight.IsChecked = False
-        ElseIf e.NewValue = 100 Then
-            TitleBar_BalanceCenter.IsChecked = False
-            TitleBar_BalanceLeft.IsChecked = False
-            TitleBar_BalanceRight.IsChecked = True
-        ElseIf e.NewValue = -100 Then
-            TitleBar_BalanceCenter.IsChecked = False
-            TitleBar_BalanceLeft.IsChecked = True
-            TitleBar_BalanceRight.IsChecked = False
-        Else
-            TitleBar_BalanceCenter.IsChecked = False
-            TitleBar_BalanceLeft.IsChecked = False
-            TitleBar_BalanceRight.IsChecked = False
-        End If
-    End Sub
-
-    Private Sub TitleBar_Mono_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Mono.Click
-        MainPlayer.Mono = Not MainPlayer.Mono
-        If MainPlayer.Mono Then
-            TitleBar_Mono.IsChecked = True
-        Else
-            TitleBar_Mono.IsChecked = False
-        End If
-    End Sub
-
-    Private Sub TitleBar_SampleRate_Reset_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SampleRate_Reset.Click
-        MainPlayer.SetSampleRate(0)
-    End Sub
-
-    Private Sub TitleBar_SampleRate_Slider_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double))
-        MainPlayer.SetSampleRate(Int(e.NewValue))
-    End Sub
-
-    Private Sub TitleBar_StreamDownloader_DownloadCurrent_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_StreamDownloader_DownloadCurrent.Click
-        StreamDownloader.DownloadCurrent()
-    End Sub
-    Private Sub TitleBar_SteroMix_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_SteroMix.Click
-        If MainPlayer.IsStereoMix Then
-            MainPlayer.SetStereoMix(False)
-        Else
-            MainPlayer.SetStereoMix(True)
-        End If
-    End Sub
-
-    Private Sub StreamDownloader_OnStateChanged(State As StreamDownloader.States) Handles StreamDownloader.OnStateChanged
-        Dispatcher.Invoke(Sub()
-                              If My.Settings.StreamDownloaderNotify Then
-                                  Select Case State
-                                      Case StreamDownloader.States.Downloading
-                                          ShowNotification("Stream downloader", "Downloading...", HandyControl.Data.NotifyIconInfoType.Info)
-                                      Case StreamDownloader.States.DownloadCompleted
-                                          ShowNotification("Stream downloader", "Download completed.", HandyControl.Data.NotifyIconInfoType.Info)
-                                      Case StreamDownloader.States.FatalError
-                                          ShowNotification("Stream downloader", "An error occued while downloading the file.", HandyControl.Data.NotifyIconInfoType.Error)
-                                      Case StreamDownloader.States.Local
-                                          ShowNotification("Stream downloader", "The file you are trying to download is a local file.", HandyControl.Data.NotifyIconInfoType.Error)
-                                  End Select
-                              End If
-                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
-    End Sub
-
-    Private Sub TitleBar_StreamDownloader_State_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_StreamDownloader_State.Click
-        Dispatcher.Invoke(Sub()
-                              If StreamDownloader.State = StreamDownloader.States.Downloading Then
-                                  ShowNotification("Stream downloader", "Downloading... " & StreamDownloader.Progress & "%", HandyControl.Data.NotifyIconInfoType.Info)
-                              Else
-                                  ShowNotification("Stream downloader", "State: " & StreamDownloader.State.ToString, HandyControl.Data.NotifyIconInfoType.Info)
-                              End If
-                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
-    End Sub
-
-    Private Sub SoundCloud_OnStateChanged(State As SoundCloud.State) Handles SoundCloud.OnStateChanged
-        Dispatcher.Invoke(Sub()
-                              If My.Settings.SoundCloud_Notify Then
-                                  Select Case State
-                                      Case SoundCloud.State.Free
-                                          ShowNotification("SoundCloud", "All tasks completed", HandyControl.Data.NotifyIconInfoType.Info)
-                                      Case SoundCloud.State.Connected
-                                          ShowNotification("SoundCloud", "Connected to SoundCloud", HandyControl.Data.NotifyIconInfoType.Info)
-                                      Case SoundCloud.State.FatalError
-                                          ShowNotification("SoundCloud", "Fatal error, try again later.", HandyControl.Data.NotifyIconInfoType.Error)
-                                  End Select
-                              End If
-                          End Sub, System.Windows.Threading.DispatcherPriority.Background)
-    End Sub
 
     Private Async Sub Library_Tracks_Lview_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_Tracks_Lview.SelectionChanged
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Tracks.IsChecked = True
         Else
             Library_Tracks_Overlay.Visibility = Visibility.Visible
@@ -3113,18 +3863,18 @@ Class MainWindow
         End If
         Library_Track_SPanel.Children.Clear()
         Library_Track_SPanel.Children.Add(Mitem)
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Tracks_Mitem.IsChecked = True
         Else
             Library_Track_SPanel.Visibility = Visibility.Visible
         End If
         Await Mitem.WaitCloseAsync()
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Tracks_Mitem.IsChecked = False
         Else
             Library_Track_SPanel.Visibility = Visibility.Hidden
         End If
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Tracks.IsChecked = False
         Else
             Library_Tracks_Overlay.Visibility = Visibility.Hidden
@@ -3132,7 +3882,7 @@ Class MainWindow
     End Sub
 
     Private Async Sub Library_Artists_Lview_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_Artists_Lview.SelectionChanged
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Library_Artists_SpanelView.Visibility = Visibility.Visible
             Switches_Library_Artists.IsChecked = True
         Else
@@ -3155,21 +3905,23 @@ Class MainWindow
                 libraryArtistsLVItems.Add(New PlaylistItem(i + 1, IO.Path.GetFileNameWithoutExtension(libraryArtistsItems(Library_Artists_Lview.SelectedIndex).Songs(i)), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, libraryArtistsItems(Library_Artists_Lview.SelectedIndex).Songs(i), Nothing))
             End Try
         Next
+        AddHandler Mitem.OnPlaySingle, AddressOf MitemArtist_OnPlaySingle
         Library_Artists_SPanel.Children.Clear()
         Library_Artists_SPanel.Children.Add(Mitem)
         Library_Artists_SPanel.Children.Add(Library_ArtistsLV)
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Artists_Mitem.IsChecked = True
         Else
             Library_Artists_SPanel.Visibility = Visibility.Visible
         End If
         Await Mitem.WaitCloseAsync()
-        If My.Settings.UseAnimations Then
+        RemoveHandler Mitem.OnPlaySingle, AddressOf MitemArtist_OnPlaySingle
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Artists_Mitem.IsChecked = False
         Else
             Library_Artists_SPanel.Visibility = Visibility.Hidden
         End If
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Artists.IsChecked = False
             Library_Artists_SpanelView.Visibility = Visibility.Hidden
         Else
@@ -3177,9 +3929,30 @@ Class MainWindow
             Library_Artists_SpanelView.Visibility = Visibility.Hidden
         End If
     End Sub
+    Private Sub Library_ArtistsLV_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_ArtistsLV.SelectionChanged
+        If Library_ArtistsLV.SelectedIndex <> -1 Then
+            PreviewPlayer.LoadSong(libraryArtistsLVItems(Library_ArtistsLV.SelectedIndex).Source, Nothing, False)
+            PreviewPlayer.SetPosition(PreviewPlayer.GetLength / 4)
+            If MainPlayer.PlayerState = Player.State.Playing Then
+                MainPlayer.StreamPause(False)
+            End If
+            PreviewPlayer.StreamPlay()
+        End If
+    End Sub
 
+    Private Sub Library_ArtistsLV_MouseLeave(sender As Object, e As MouseEventArgs) Handles Library_ArtistsLV.MouseLeave
+        PreviewPlayer.StreamStop()
+        If MainPlayer.PlayerState = Player.State.Playing Then
+            MainPlayer.StreamPlay()
+        End If
+    End Sub
+    Private Sub MitemArtist_OnPlaySingle()
+        If Library_ArtistsLV.SelectedIndex <> -1 Then
+            MainPlayer.LoadSong(libraryArtistsLVItems(Library_ArtistsLV.SelectedIndex).Source, MainPlaylist)
+        End If
+    End Sub
     Private Async Sub Library_Years_Lview_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_Years_Lview.SelectionChanged
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Library_Years_SpanelView.Visibility = Visibility.Visible
             Switches_Library_Years.IsChecked = True
         Else
@@ -3189,9 +3962,9 @@ Class MainWindow
         Dim Mitem As MusicItem = Nothing
         Dim cover = Utils.GetAlbumArt(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs(0))
         If cover Is Nothing Then
-            Mitem = New MusicItem(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs, libraryYearsItems(Library_Years_Lview.SelectedIndex).Name, New Uri("pack://application:,,,/WpfPlayer;component/Res/song.png"), MainPlayer, MainPlaylist) With {.Width = Double.NaN, .HorizontalAlignment = HorizontalAlignment.Center}
+            Mitem = New MusicItem(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs, libraryYearsItems(Library_Years_Lview.SelectedIndex).Year, New Uri("pack://application:,,,/WpfPlayer;component/Res/song.png"), MainPlayer, MainPlaylist) With {.Width = Double.NaN, .HorizontalAlignment = HorizontalAlignment.Center}
         Else
-            Mitem = New MusicItem(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs, libraryYearsItems(Library_Years_Lview.SelectedIndex).Name, cover, MainPlayer, MainPlaylist) With {.Width = Double.NaN, .HorizontalAlignment = HorizontalAlignment.Center}
+            Mitem = New MusicItem(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs, libraryYearsItems(Library_Years_Lview.SelectedIndex).Year, cover, MainPlayer, MainPlaylist) With {.Width = Double.NaN, .HorizontalAlignment = HorizontalAlignment.Center}
         End If
         libraryYearsLVItems.Clear()
         For i As Integer = 0 To libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs.Count - 1
@@ -3202,21 +3975,23 @@ Class MainWindow
                 libraryYearsLVItems.Add(New PlaylistItem(i + 1, IO.Path.GetFileNameWithoutExtension(libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs(i)), "Not available", "Not available", 0, 0, Player.StreamTypes.Local, libraryYearsItems(Library_Years_Lview.SelectedIndex).Songs(i), Nothing))
             End Try
         Next
+        AddHandler Mitem.OnPlaySingle, AddressOf MitemYear_OnPlaySingle
         Library_Years_SPanel.Children.Clear()
         Library_Years_SPanel.Children.Add(Mitem)
         Library_Years_SPanel.Children.Add(Library_YearsLV)
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Years_Mitem.IsChecked = True
         Else
             Library_Years_SPanel.Visibility = Visibility.Visible
         End If
         Await Mitem.WaitCloseAsync()
-        If My.Settings.UseAnimations Then
+        RemoveHandler Mitem.OnPlaySingle, AddressOf MitemYear_OnPlaySingle
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Years_Mitem.IsChecked = False
         Else
             Library_Years_SPanel.Visibility = Visibility.Hidden
         End If
-        If My.Settings.UseAnimations Then
+        If My.Settings.USEANIMATIONS Then
             Switches_Library_Years.IsChecked = False
             Library_Years_SpanelView.Visibility = Visibility.Hidden
         Else
@@ -3224,9 +3999,32 @@ Class MainWindow
             Library_Years_SpanelView.Visibility = Visibility.Hidden
         End If
     End Sub
+    Private Sub Library_YearsLV_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_YearsLV.SelectionChanged
+        If Library_ArtistsLV.SelectedIndex <> -1 Then
+            PreviewPlayer.LoadSong(libraryYearsLVItems(Library_YearsLV.SelectedIndex).Source, Nothing, False)
+            PreviewPlayer.SetPosition(PreviewPlayer.GetLength / 4)
+            If MainPlayer.PlayerState = Player.State.Playing Then
+                MainPlayer.StreamPause(False)
+            End If
+            PreviewPlayer.StreamPlay()
+        End If
+    End Sub
+    Private Sub Library_YearsLV_MouseLeave(sender As Object, e As MouseEventArgs) Handles Library_YearsLV.MouseLeave
+        PreviewPlayer.StreamStop()
+        If MainPlayer.PlayerState = Player.State.Playing Then
+            MainPlayer.StreamPlay()
+        End If
+    End Sub
+
+    Private Sub MitemYear_OnPlaySingle()
+        If Library_YearsLV.SelectedIndex <> -1 Then
+            MainPlayer.LoadSong(libraryYearsLVItems(Library_YearsLV.SelectedIndex).Source, MainPlaylist)
+        End If
+    End Sub
+
     Private Async Sub Library_Favourites_Lview_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Library_Favourites_Lview.SelectionChanged
         Try
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_Library_Favourites.IsChecked = True
             Else
                 Library_Favourites_Overlay.Visibility = Visibility.Visible
@@ -3240,18 +4038,18 @@ Class MainWindow
             End If
             Library_Favourites_SPanel.Children.Clear()
             Library_Favourites_SPanel.Children.Add(Mitem)
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_Library_Favourites_Mitem.IsChecked = True
             Else
                 Library_Favourites_SPanel.Visibility = Visibility.Visible
             End If
             Await Mitem.WaitCloseAsync()
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_Library_Favourites_Mitem.IsChecked = False
             Else
                 Library_Favourites_SPanel.Visibility = Visibility.Hidden
             End If
-            If My.Settings.UseAnimations Then
+            If My.Settings.USEANIMATIONS Then
                 Switches_Library_Favourites.IsChecked = False
             Else
                 Library_Favourites_Overlay.Visibility = Visibility.Hidden
@@ -3259,6 +4057,7 @@ Class MainWindow
         Catch ex As Exception
         End Try
     End Sub
+
     Private Sub TitleBar_MiniPlayer_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_MiniPlayer.Click
         Me.Hide()
         My.Windows.MiniPlayer.Show()
@@ -3277,10 +4076,11 @@ Class MainWindow
     End Sub
     Private Sub MainWindow_Drop(sender As Object, e As DragEventArgs) Handles Me.Drop
         Dim files() As String = e.Data.GetData(DataFormats.FileDrop)
+        Log("MainWindow_Drop: " & files.Count)
         For Each file In files
             Try
                 If IO.File.GetAttributes(file) = IO.FileAttributes.Directory Then
-                    Select Case My.Settings.PlaylistDragDropAction
+                    Select Case My.Settings.PLAYLISTDRAGDROPACTION
                         Case Utils.DragDropPlaylistBehaviour.AddToFirst
                             For Each _file In Utils.FileFilters.Split("|"c).SelectMany(Function(filter) System.IO.Directory.GetFiles(file, filter, IO.SearchOption.TopDirectoryOnly)).ToArray()
                                 MainPlaylist.Insert(0, _file, Player.StreamTypes.Local)
@@ -3307,7 +4107,7 @@ Class MainWindow
                     End Select
                 Else
                     If IO.File.Exists(file) Then
-                        Select Case My.Settings.PlaylistDragDropAction
+                        Select Case My.Settings.PLAYLISTDRAGDROPACTION
                             Case Utils.DragDropPlaylistBehaviour.AddToFirst
                                 MainPlaylist.Insert(0, file, Player.StreamTypes.Local)
                             Case Utils.DragDropPlaylistBehaviour.AddToLast
@@ -3328,41 +4128,13 @@ Class MainWindow
             End Try
         Next
     End Sub
-
-    Private Sub TitleBar_ABLoop_Set_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_ABLoop_Set.Click
-        Dim A As Double
-        Dim cA = Double.TryParse(TitleBar_ABLoop_A.Items(0).Text, A)
-        Dim B As Double
-        Dim cB = Double.TryParse(TitleBar_ABLoop_B.Items(0).Text, B)
-        If cA AndAlso cB Then
-            MainPlayer.ABLoop = New Player.ABLoopItem(A, B)
-        End If
+    Private Sub media_cover_bindtocover_Click(sender As Object, e As RoutedEventArgs) Handles media_cover_bindtocover.Click
+        CoverBinding = 0
+        media_cover.Source = MainPlayer.CurrentMediaCover
     End Sub
 
-    Private Sub TitleBar_ABLoop_MouseEnter(sender As Object, e As MouseEventArgs) Handles TitleBar_ABLoop.MouseEnter
-        PosDurSwitch = True
-    End Sub
-
-    Private Sub TitleBar_ABLoop_MouseLeave(sender As Object, e As MouseEventArgs) Handles TitleBar_ABLoop.MouseLeave
-        PosDurSwitch = False
-    End Sub
-
-    Private Sub TitleBar_DSP_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_DSP.Click
-        My.Windows.DSPPlugins.Owner = Me
-        My.Windows.DSPPlugins.Show()
-    End Sub
-
-    Private Sub TitleBar_Playlist_CustomPlaylistManager_Click(sender As Object, e As RoutedEventArgs) Handles TitleBar_Playlist_CustomPlaylistManager.Click
-        My.Windows.PlaylistManager.Show()
-    End Sub
-    Dim WithEvents thumb As TabbedThumbnail = Nothing
-    Public Sub SetThumb()
-        thumb = TaskbarThumbnailManager.AddThumbnail(True, media_cover.Source, System.Drawing.SystemIcons.Error, "Debug", "Debug Tip")
-        'TaskbarThumbnailManager.Bind(Home_NowPlaying, thumb)
-        TaskbarThumbnailManager.Bind(CustomTaskBarThumb.Binding.FromVisualiser(MainPlayer, thumb, Player.Visualizers.SpectrumPeak, Drawing.Color.Black, Drawing.Color.Red, Drawing.Color.Empty, Drawing.Color.Black, 2, 1, 250, 2))
-    End Sub
-    Public Sub RemThumb()
-        TaskbarThumbnailManager.RemoveThumbnail(0)
+    Private Sub media_cover_bindtovisualiser_Click(sender As Object, e As RoutedEventArgs) Handles media_cover_bindtovisualiser.Click
+        CoverBinding = 1
     End Sub
 
 End Class

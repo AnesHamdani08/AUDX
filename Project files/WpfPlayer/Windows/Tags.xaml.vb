@@ -178,17 +178,19 @@ Public Class Tags
         End If
     End Sub
     Private Sub Cover_Remove()
-        Dim ib = InputBox("Which cover do you want to remove ?" & vbCrLf & "Enter the cover number below." & vbCrLf & "Note: the cover number starts from zero.")
-        Try
-            If Regex.Replace(ib, "[^0-9]", "") <= CoverList.Count - 1 Then
-                CoverList.RemoveAt(Regex.Replace(ib, "[^0-9]", ""))
-            End If
-        Catch ex As Exception
-            Throw New Exception("Check your input!")
-        End Try
+        Dim IB As New InputDialog("Which cover do you want to remove ?" & vbCrLf & "Enter the cover number below." & vbCrLf & "Note: the cover number starts from zero.") With {.Owner = Me}
+        If IB.ShowDialog Then
+            Try
+                If Regex.Replace(IB.Input, "[^0-9]", "") <= CoverList.Count - 1 Then
+                    CoverList.RemoveAt(Regex.Replace(IB.Input, "[^0-9]", ""))
+                End If
+            Catch ex As Exception
+                Throw New Exception("Check your input!")
+            End Try
+        End If
     End Sub
     Private Sub Cover_MoveTo()
-        If CoverList.Count > 2 Then
+        If CoverList.Count >= 2 Then
             Dim ib As New InputDialog("Move from;to , separate using "";""")
             If ib.ShowDialog Then
                 Dim ibsplit = ib.Input.Split(";")
@@ -315,6 +317,7 @@ Public Class Tags
                                 CoverBG.Tag = album.Id
                                 Overlay(True)
                                 CoverBG.RunWorkerAsync()
+                                Exit For
                             End If
                         Else
                             Dim idlg As New InputDialog(SB.ToString) With {.Owner = Me}
@@ -337,8 +340,9 @@ Public Class Tags
                                 CoverBG.Tag = album.Id
                                 Overlay(True)
                                 CoverBG.RunWorkerAsync()
-                                Top_Title.Content = tag_title
+                                Top_Title.Content = tag_title.Text
                                 Top_Artist.Content = artists
+                                Exit For
                             End If
                         End If
                     ElseIf _result = MessageBoxResult.Cancel Then

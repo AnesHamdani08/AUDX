@@ -8,6 +8,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <hc:IntellisenseResources Source="/HandyControl;Component/DesignTime/DesignTimeResources.xaml"/>
+                <ResourceDictionary Source="/HandyControl;Component/DesignTime/DesignTimeResources.xaml"/>
                 <hc:ThemeResources/>
                 <hc:Theme/>
                 <!-- Other merged dictionaries here -->

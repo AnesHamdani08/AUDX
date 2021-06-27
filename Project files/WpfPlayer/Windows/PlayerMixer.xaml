@@ -1,0 +1,234 @@
+﻿<hc:Window x:Class="PlayerMixer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Mixer" Height="358.333" Width="986.967" Icon="/WpfPlayer;component/Res/icon_n.ico" Background="#FF646464">
+    <hc:Window.NonClientAreaContent>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Right" Grid.Column="1" x:Name="TitleBar_AddInstance" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource AddGeometry}" Foreground="{x:Null}"/>
+        </Grid>
+    </hc:Window.NonClientAreaContent>
+    <Grid>
+        <Separator Margin="-215,110,0,0" Background="Black" RenderTransformOrigin="0.5,0.5" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Width="350" BorderThickness="0">
+            <Separator.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="10"/>
+            </Separator.Effect>
+            <Separator.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Separator.RenderTransform>
+        </Separator>
+        <ComboBox x:Name="Main_CB_Players" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="333"/>
+        <Button x:Name="Main_PlayersRefresh" hc:IconElement.Geometry="{StaticResource RotateLeftGeometry}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0"/>
+        <Button x:Name="Main_PlayersRemove" hc:IconElement.Geometry="{StaticResource RemoveGeometry}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,55,0"/>
+        <Button x:Name="Main_PlayersAdd" hc:IconElement.Geometry="{StaticResource AddGeometry}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,94,0"/>
+        <Grid x:Name="Player1" HorizontalAlignment="Left" Margin="0,60,0,0" Width="375">
+            <Rectangle Fill="#FF1E1E1E" HorizontalAlignment="Left" Height="20" Margin="238,54,0,0" VerticalAlignment="Top" Width="127" Stroke="#FF646464" StrokeThickness="2" RenderTransformOrigin="0.5,0.5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Ellipse x:Name="Player1_Cover" Fill="#FF1E1E1E" HorizontalAlignment="Center" Height="200" Margin="0" VerticalAlignment="Center" Width="200">
+                <Ellipse.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Ellipse.Effect>
+            </Ellipse>
+            <TextBlock x:Name="Player1_Pos" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="Wrap" Text="00:00:000" VerticalAlignment="Top" FontFamily="Digital-7" FontSize="26.667" Foreground="Red">
+                <TextBlock.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <Slider x:Name="Player1_Vol" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" Height="200" Maximum="100" TickFrequency="10" TickPlacement="Both" Orientation="Vertical">
+                <Slider.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Slider.Effect>
+            </Slider>
+            <Button x:Name="Player1_SyncToTwo" Content="SYNC" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Height="27" Foreground="Red" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667" Width="68">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg">
+                        <ImageBrush.RelativeTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </ImageBrush.RelativeTransform>
+                    </ImageBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Player1_Play" Content="▶" HorizontalAlignment="Right" Margin="0,0,10,5" VerticalAlignment="Bottom" Height="27" Foreground="Lime" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="UniformToFill"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Player1_Pause" Content="| |" HorizontalAlignment="Right" Margin="0,0,46,5" VerticalAlignment="Bottom" Height="27" Foreground="Red" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="UniformToFill"/>
+                </Button.Background>
+            </Button>
+            <TextBlock x:Name="Player1_Block" HorizontalAlignment="Right" Margin="0,57,14,0" TextWrapping="Wrap" Text="BLOCK" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold" FontSize="10.667">
+                <TextBlock.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="Uniform"/>
+                </TextBlock.Background>
+            </TextBlock>
+        </Grid>
+        <Separator Margin="215,110,0,0" Background="Black" RenderTransformOrigin="0.5,0.5" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
+            <Separator.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="0"/>
+            </Separator.Effect>
+            <Separator.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Separator.RenderTransform>
+        </Separator>
+        <Rectangle Fill="#FF1E1E1E" HorizontalAlignment="Center" Height="224" Margin="467,40,467,63" VerticalAlignment="Center" Width="45">
+            <Rectangle.Effect>
+                <DropShadowEffect Direction="200" BlurRadius="10"/>
+            </Rectangle.Effect>
+        </Rectangle>
+        <Slider x:Name="Player1_B" HorizontalAlignment="Left" Margin="412,164,0,0" VerticalAlignment="Top" Height="100" Maximum="100" TickFrequency="10" TickPlacement="Both" Orientation="Vertical">
+            <Slider.Effect>
+                <DropShadowEffect Direction="200"/>
+            </Slider.Effect>
+        </Slider>
+        <Slider x:Name="Player2_B" HorizontalAlignment="Left" Margin="537,164,0,0" VerticalAlignment="Top" Height="100" Maximum="100" TickFrequency="10" TickPlacement="Both" Orientation="Vertical">
+            <Slider.Effect>
+                <DropShadowEffect Direction="200"/>
+            </Slider.Effect>
+        </Slider>
+        <Grid x:Name="Player1_Vol_Grid" HorizontalAlignment="Left" Height="53" Margin="467,206,0,0" VerticalAlignment="Top" Width="23">
+            <Rectangle x:Name="Player1_Vol_1" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player1_Vol_2" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player1_Vol_3" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player1_Vol_4" Fill="#FFFF8B00" HorizontalAlignment="Center" Height="10" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Orange" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player1_Vol_5" Fill="Red" HorizontalAlignment="Center" Height="10" Margin="0,0,0,40" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Red" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+        </Grid>
+        <Grid x:Name="Player2_Vol_Grid" HorizontalAlignment="Left" Height="53" Margin="490,206,0,0" VerticalAlignment="Top" Width="22">
+            <Rectangle x:Name="Player2_Vol_1" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player2_Vol_2" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player2_Vol_3" Fill="Lime" HorizontalAlignment="Center" Height="10" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Lime" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player2_Vol_4" Fill="#FFFF8B00" HorizontalAlignment="Center" Height="10" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#FFFF8B00" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Player2_Vol_5" Fill="Red" HorizontalAlignment="Center" Height="10" Margin="0,0,0,40" VerticalAlignment="Bottom" Width="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="Red" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+        </Grid>
+        <Slider x:Name="Player_Mix" HorizontalAlignment="Left" Margin="412,289,0,0" VerticalAlignment="Top" Height="28" Maximum="100" TickFrequency="10" TickPlacement="Both" Width="155" Minimum="-100" Value="100">
+            <Slider.Effect>
+                <DropShadowEffect Direction="200"/>
+            </Slider.Effect>
+        </Slider>
+        <Image x:Name="Logo" HorizontalAlignment="Left" Height="45" Margin="467,159,0,0" VerticalAlignment="Top" Width="45" Source="/WpfPlayer;component/Res/sample-rate.png">
+            <Image.Effect>
+                <DropShadowEffect Direction="200"/>
+            </Image.Effect>
+        </Image>
+        <Button x:Name="Main_PlayerSendToOne" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,661,0" Content="1"/>
+        <Button x:Name="Main_PlayerSendToTwo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,290,0" Content="2"/>
+        <Grid x:Name="Player2" HorizontalAlignment="Right" Margin="0,60,0,0" Width="375">
+            <Rectangle Fill="#FF1E1E1E" HorizontalAlignment="Left" Height="20" Margin="238,54,0,0" VerticalAlignment="Top" Width="127" Stroke="#FF646464" StrokeThickness="2" RenderTransformOrigin="0.5,0.5">
+                <Rectangle.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Ellipse x:Name="Player2_Cover" Fill="#FF1E1E1E" HorizontalAlignment="Center" Height="200" Margin="0" VerticalAlignment="Center" Width="200">
+                <Ellipse.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Ellipse.Effect>
+            </Ellipse>
+            <TextBlock x:Name="Player2_Pos" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="Wrap" Text="00:00:000" VerticalAlignment="Top" FontFamily="Digital-7" FontSize="26.667" Foreground="Red">
+                <TextBlock.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <Slider x:Name="Player2_Vol" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" Height="200" Maximum="100" TickFrequency="10" TickPlacement="Both" Orientation="Vertical">
+                <Slider.Effect>
+                    <DropShadowEffect Direction="200"/>
+                </Slider.Effect>
+            </Slider>
+            <Button x:Name="Player2_SyncToOne" Content="SYNC" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Height="27" Foreground="Red" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667" Width="68">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg">
+                        <ImageBrush.RelativeTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </ImageBrush.RelativeTransform>
+                    </ImageBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Player2_Play" Content="▶" HorizontalAlignment="Right" Margin="0,235,10,0" VerticalAlignment="Top" Height="27" Foreground="Lime" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="UniformToFill"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Player2_Pause" Content="| |" HorizontalAlignment="Right" Margin="0,0,46,5" VerticalAlignment="Bottom" Height="27" Foreground="Red" BorderBrush="{x:Null}" FontWeight="Bold" FontSize="10.667">
+                <Button.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="UniformToFill"/>
+                </Button.Background>
+            </Button>
+            <TextBlock x:Name="Player2_Block" HorizontalAlignment="Right" Margin="0,57,14,0" TextWrapping="Wrap" Text="BLOCK" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold" FontSize="10.667">
+                <TextBlock.Background>
+                    <ImageBrush ImageSource="/WpfPlayer;component/Res/BrushesBlackMetalTexture.jpg" Stretch="Uniform"/>
+                </TextBlock.Background>
+            </TextBlock>
+        </Grid>
+    </Grid>
+</hc:Window>

@@ -2,8 +2,8 @@
 
 Class Application
     Private Sub Application_DispatcherUnhandledException(sender As Object, e As DispatcherUnhandledExceptionEventArgs) Handles Me.DispatcherUnhandledException
-        If My.Settings.SuppressErrors = False Then
-            Select Case My.Settings.OnErrorShow
+        If My.Settings.SUPRESSERRORS = False Then
+            Select Case My.Settings.ONERRORSHOW
                 Case 0 'msg
                     Dim Err = New ErrorDialog(e.Exception.Message)
                     Err.ShowDialog()
@@ -39,26 +39,23 @@ Class Application
         Else
             e.Handled = True
         End If
-        My.Windows.Console.Log(e.Exception.ToString)
+        My.Windows.Console.Log_Debug(e.Exception.ToString)
     End Sub
-    Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup 'complete mat
-        If Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName).Count > 1 Then
-            If e.Args.Count > 0 Then
-                '    For Each prcs In Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName)
-                '        If prcs.Id <> Process.GetCurrentProcess.Id Then
-                '            Dim BS As New BuildString
-                '            If e.Args(0) = "-api" Then
-                '                BS.PostString(prcs.MainWindowHandle, &H500, 0, e.Args(0) & ">>" & e.Args(1) & ">>" & e.Args(2) & ">>" & e.Args(3))
-                '            Else
-                '                BS.PostString(prcs.MainWindowHandle, &H400, 0, String.Join(">>", e.Args))
-                '            End If
-                '            Exit For
-                '        End If
-                '    Next
-                Dim manager = New NamedPipeManager("MuPlayPipe")
-                manager.Write(String.Join(">", e.Args))
+    Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup
+        If My.Settings.ALLOW_MULTIPLEINSTANCES = False Then
+            If Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName).Count > 1 Then
+                My.Windows.MainWindow.WhyAreWeHere = "JustToSuffer"
+                If e.Args.Count > 0 Then
+                    Dim manager = New NamedPipeManager("MuPlayPipe")
+                    manager.Write(String.Join(">", e.Args), 1000)
+                End If
+                Process.GetCurrentProcess.Kill()
+                'Application.Current.Shutdown(0)
+                'Threading.Thread.Sleep(5000)
+            Else
+                Dim SP As New SplashScreen("Res/MuPlayLogo.png")
+                SP.Show(True)
             End If
-            Application.Current.Shutdown(0)
         Else
             Dim SP As New SplashScreen("Res/MuPlayLogo.png")
             SP.Show(True)
@@ -67,5 +64,9 @@ Class Application
 
     ' Application-level events, such as Startup, Exit, and DispatcherUnhandledException
     ' can be handled in this file.
+
+    'TODO    
+    'Complete library manager:artists:saving :artists :year , complete years 
+    'Pin current playing track To top of playlist
 
 End Class

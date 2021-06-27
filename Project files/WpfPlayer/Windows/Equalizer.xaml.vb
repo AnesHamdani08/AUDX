@@ -82,33 +82,31 @@ Public Class Equalizer
     End Sub
 
     Private Sub Equalizer_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        Try
-            AddHandler TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.OnEqChanged, AddressOf OnEqChanged
-        Catch ex As Exception
-
-        End Try
+        AddHandler TryCast(Application.Current.MainWindow, MainWindow).MainPlayer.OnEqChanged, AddressOf OnEqChanged
     End Sub
 
     Private Sub Presets_CB_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Presets_CB.SelectionChanged
         Select Case Presets_CB.SelectedIndex
-            Case 0 'Heavy Bass Boost
+            Case 2 'Bass Boost Pro
                 SetPreset(4, 2, 1, 0, -1, -2, 0, 2, 3, 4)
-            Case 1 'Bass Boost
+            Case 4 'Bass Boost Lite
                 SetPreset(6, 2, 2, 1, -6, -4, -3, 0, 5, 0)
-            Case 2 'Bass Boost +
+            Case 3 'Bass Boost +
                 SetPreset(15, -8, -8, -10, -10, -6, -3, -1, 0, -1)
-            Case 3 'Acoustic
+            Case 5 'Acoustic
                 SetPreset(6, 5, 4, 1, 2, 2, 4, 5, 3, 1)
-            Case 4 'Electronic
+            Case 6 'Electronic
                 SetPreset(4, 4, 1, 0, -2, 3, 1, 1, 4, 5)
-            Case 5 'Piano
+            Case 7 'Piano
                 SetPreset(3, 2, 0, 3, 3, 1, 4, 5, 3, 3)
-            Case 6 'Pop
+            Case 8 'Pop
                 SetPreset(-2, -1, 0, 2, 4, 4, 2, 0, -1, -1)
-            Case 7 'Rock
+            Case 9 'Rock
                 SetPreset(5, 4, 3, 1, 0, -1, 0, 3, 4, 5)
-            Case 8 'Bass Booster
+            Case 1 'Super Bass Boost
                 SetPreset(6, 5, 4, 3, 1, 0, 0, 0, 0, 0)
+            Case 0 'Ultra Bass Boost
+                SetPreset(15, 0, -7, -12, -10, -8, -6, -5, -4, -4)
         End Select
     End Sub
 End Class

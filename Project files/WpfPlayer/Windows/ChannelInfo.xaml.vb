@@ -62,7 +62,7 @@ Public Class ChannelInfo
             TB_Cpu_Usage.Text = "Cpu Usage:  " & Math.Abs(CpuCMV - CpuCAV) & "%/" & CpuCAV & "%"
             TB_Mem_Usage.Text = "Memory Usage: " & MemCMV & "MB/" & MemCAV & "MB/" & Math.Round(Mem_Usage_All.Maximum) & "MB"
             Try
-                If My.Settings.UseAnimations Then
+                If My.Settings.USEANIMATIONS Then
                     SetPercent(Cpu_Usage_All, CpuCAV)
                     SetPercent(Mem_Usage_MP, Math.Round((MemCMV / MaxMem) * 100))
                     SetPercent(Mem_Usage_All, Math.Round(((MaxMem - MemCAV) / MaxMem) * 100))

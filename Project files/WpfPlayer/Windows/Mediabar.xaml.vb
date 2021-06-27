@@ -205,7 +205,7 @@ Public Class Mediabar
     Private Sub TimeOutTimer_Tick(sender As Object, e As EventArgs) Handles TimeOutTimer.Tick
         If Opacity = 1 Then
             TimeOutTimer.Stop()
-            CloseAnim(My.Settings.MediaBar_AnimType)
+            CloseAnim(My.Settings.MEDIABAR_ANIMTYPE)
         ElseIf Opacity = 0 Then
             Hide()
         End If

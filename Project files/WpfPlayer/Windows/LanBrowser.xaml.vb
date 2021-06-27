@@ -21,7 +21,7 @@ Public Class LanBrowser
     Dim SelectedItemInPlaylist As Integer = -1
     Dim CurrentTreeview As TreeView = Nothing
     Dim myMediaRenderer As UPnPMediaRenderer_v1 = Nothing
-    Dim WithEvents DLNAtreeview As New Forms.TreeView With {.BorderStyle = Forms.BorderStyle.None}
+    Dim WithEvents DLNAtreeview As New Forms.TreeView With {.BorderStyle = Forms.BorderStyle.None, .BackColor = System.Drawing.Color.Empty}
     Public Class UPnPDeviceListItemWrapper
         Public UPnPDevice As UPnPDevice = Nothing
 
@@ -336,11 +336,13 @@ Public Class LanBrowser
                 Next
                 For Each n As XmlElement In XMLDC.ChildNodes
                     Try
-                        Using WC As New WebClient
-                            Cover = System.Drawing.Image.FromStream(New MemoryStream(WC.DownloadData((Info(6)))))
-                        End Using
+                        If Not String.IsNullOrEmpty(Info(6).Trim) Then
+                            Using WC As New WebClient
+                                Cover = System.Drawing.Image.FromStream(New MemoryStream(WC.DownloadData((Info(6)))))
+                            End Using
+                        End If
                     Catch ex As Exception
-                        Throw New Exception(TimeOfDay.ToShortTimeString & ": " & "Error on getting Album Cover from UPNP" & ex.Message)
+                        TryCast(Application.Current.MainWindow, MainWindow).ShowNotification("LAN Browser", TimeOfDay.ToShortTimeString & ": " & "Error on getting Album Cover from UPNP " & ex.Message, HandyControl.Data.NotifyIconInfoType.Error)
                     End Try
                 Next
                 '0 title1 class,2 ALbum,3 genre,4 artist,5 uri,6 cover uri

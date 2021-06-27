@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="Input Dialog" Height="126.333" Width="300" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Input Dialog" Height="300" Width="300" Icon="/WpfPlayer;component/Res/icon_n.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="ib_input" HorizontalAlignment="Left" Height="23" Margin="10,56,0,0" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="236"/>
-        <ScrollViewer Margin="0,0,0,40">
+        <TextBox x:Name="ib_input" HorizontalAlignment="Left" Height="23" Margin="10,0,0,10" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="236"/>
+        <ScrollViewer Margin="0,0,0,54">
             <TextBox x:Name="ib_msg" Margin="0,0,0,0" TextWrapping="Wrap" IsEnabled="False"/>
         </ScrollViewer>
-        <Button x:Name="ib_done" IsDefault="True" Content="ü" HorizontalAlignment="Right" Margin="251,56,10,0" VerticalAlignment="Bottom" Width="31" FontFamily="Wingdings" FontSize="16"/>
+        <Button x:Name="ib_done" IsDefault="True" Content="ü" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="31" FontFamily="Wingdings" FontSize="16"/>
 
     </Grid>
 </hc:GlowWindow>

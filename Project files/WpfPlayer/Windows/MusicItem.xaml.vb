@@ -10,6 +10,7 @@
     Private IsArtistMode As Boolean = False
     Private _sources As List(Of String)
     Private MV As New System.Threading.ManualResetEvent(False)
+    Public Event OnPlaySingle()
     Public Sub New(Source As String, _Title As String, _Artist As String, _Cover As System.Drawing.Bitmap, Player As Player, PreviewPlayer As Player, Playlist As Playlist)
 
         ' This call is required by the designer.
@@ -27,6 +28,12 @@
         _pplayer = PreviewPlayer
         _playlist = Playlist
         _source = Source
+        btn_add_playall.IsEnabled = False
+        btn_add_playnow.IsEnabled = False
+        btn_add_playsinglenow.IsEnabled = True
+        btn_add_queuefirst.IsEnabled = True
+        btn_add_queuelast.IsEnabled = True
+        btn_add_queuenext.IsEnabled = True
     End Sub
 
     Public Sub New(Source As String, _Title As String, _Artist As String, _Cover As Uri, Player As Player, PreviewPlayer As Player, Playlist As Playlist)
@@ -46,6 +53,12 @@
         _pplayer = PreviewPlayer
         _playlist = Playlist
         _source = Source
+        btn_add_playall.IsEnabled = False
+        btn_add_playnow.IsEnabled = False
+        btn_add_playsinglenow.IsEnabled = True
+        btn_add_queuefirst.IsEnabled = True
+        btn_add_queuelast.IsEnabled = True
+        btn_add_queuenext.IsEnabled = True
     End Sub
     Public Sub New(Sources As List(Of String), _Name As String, _Cover As Uri, Player As Player, Playlist As Playlist)
 
@@ -63,6 +76,11 @@
         _sources = Sources
         btn_preview.IsEnabled = False
         btn_add_playall.IsEnabled = True
+        btn_add_playnow.IsEnabled = True
+        btn_add_playsinglenow.IsEnabled = True
+        btn_add_queuefirst.IsEnabled = True
+        btn_add_queuelast.IsEnabled = True
+        btn_add_queuenext.IsEnabled = True
     End Sub
     Public Sub New(Sources As List(Of String), _Name As String, _Cover As System.Drawing.Bitmap, Player As Player, Playlist As Playlist)
 
@@ -80,6 +98,11 @@
         _sources = Sources
         btn_preview.IsEnabled = False
         btn_add_playall.IsEnabled = True
+        btn_add_playnow.IsEnabled = True
+        btn_add_playsinglenow.IsEnabled = True
+        btn_add_queuefirst.IsEnabled = True
+        btn_add_queuelast.IsEnabled = True
+        btn_add_queuenext.IsEnabled = True
     End Sub
     Private Sub btn_preview_Click(sender As Object, e As RoutedEventArgs) Handles btn_preview.Click
         _pplayer.LoadSong(_source, Nothing, False)
@@ -163,11 +186,20 @@
         _player.LoadSong(_playlist.JumpTo(0), _playlist, False)
         _player.StreamPlay()
     End Sub
+
+    Private Sub btn_add_playsinglenow_Click(sender As Object, e As RoutedEventArgs) Handles btn_add_playsinglenow.Click
+        If IsArtistMode Then
+            RaiseEvent OnPlaySingle()
+        Else
+            _player.LoadSong(_source, _playlist)
+            _player.StreamPlay()
+        End If
+    End Sub
     Public Function WaitCloseAsync() As Task
-        Return Task.Factory.StartNew(CType((Function()
-                                                MV.WaitOne()
-                                                MV.Reset()
-                                            End Function), Action))
+        Return Task.Run(Sub()
+                            MV.WaitOne()
+                            MV.Reset()
+                        End Sub)
     End Function
 
     Private Sub btn_close_Click(sender As Object, e As RoutedEventArgs) Handles btn_close.Click

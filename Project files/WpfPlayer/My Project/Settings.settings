@@ -2,30 +2,30 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="" GeneratedClassName="MySettings" UseMySettingsClassName="true">
   <Profiles />
   <Settings>
-    <Setting Name="LastMediaTitle" Type="System.String" Scope="User">
+    <Setting Name="LASTMEDIATITLE" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastPlaylist" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="LASTPLAYLIST" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
     </Setting>
-    <Setting Name="LastMediaSeek" Type="System.Double" Scope="User">
+    <Setting Name="LASTMEDIASEEK" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LastMediaDuration" Type="System.Double" Scope="User">
+    <Setting Name="LASTMEDIADURATION" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LastMediaIndex" Type="System.Int32" Scope="User">
+    <Setting Name="LASTMEDIAINDEX" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="DefaultTheme" Type="System.Int32" Scope="User">
+    <Setting Name="DEFAULTTHEME" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LibrariesPath" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="LIBRARIESPATH" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
     </Setting>
-    <Setting Name="UseAnimations" Type="System.Boolean" Scope="User">
+    <Setting Name="USEANIMATIONS" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FX_EQ" Type="Un4seen.Bass.BASS_DX8_PARAMEQ" Scope="User">
@@ -34,50 +34,50 @@
     <Setting Name="FX_REVERB" Type="Un4seen.Bass.BASS_DX8_REVERB" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UseDiscordRPC" Type="System.Boolean" Scope="User">
+    <Setting Name="USEDISCORDRPC" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FX_DAMP" Type="Un4seen.Bass.AddOn.Fx.BASS_BFX_DAMP" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastMediaType" Type="System.Int32" Scope="User">
+    <Setting Name="LASTMEDIATYPE" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LastMediaArtist" Type="System.String" Scope="User">
+    <Setting Name="LASTMEDIAARTIST" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastMedia" Type="System.String" Scope="User">
+    <Setting Name="LASTMEDIA" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastMediaYear" Type="System.Int32" Scope="User">
+    <Setting Name="LASTMEDIAYEAR" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MusicBrainzNotify" Type="System.Boolean" Scope="User">
+    <Setting Name="MUSICBRAINZNOTIFY" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="LyricsNotify" Type="System.Boolean" Scope="User">
+    <Setting Name="LYRICSNOTIFY" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="BackgroundType" Type="System.Int32" Scope="User">
+    <Setting Name="BACKGROUNDTYPE" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MediaBar_AnimType" Type="System.Int32" Scope="User">
+    <Setting Name="MEDIABAR_ANIMTYPE" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="FavouriteTracks" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="FAVOURITETRACKS" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
     </Setting>
-    <Setting Name="Home_ShowVisualiser" Type="System.Boolean" Scope="User">
+    <Setting Name="HOME_SHOWVISUALISER" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="OnMediaChange_FadeAudio" Type="System.Boolean" Scope="User">
+    <Setting Name="ONMEDIACHANGE_FADEAUDIO" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="StreamDownloaderNotify" Type="System.Boolean" Scope="User">
+    <Setting Name="STREAMDOWNLOADERNOTIFY" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Notificationtts" Type="System.Boolean" Scope="User">
+    <Setting Name="NOTIFICATIONTTS" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FX_BALANCE" Type="System.Single" Scope="User">
@@ -86,108 +86,108 @@
     <Setting Name="FX_SAMPLERATE" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="OnErrorShow" Type="System.Int32" Scope="User">
+    <Setting Name="ONERRORSHOW" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="SuppressErrors" Type="System.Boolean" Scope="User">
+    <Setting Name="SUPRESSERRORS" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AllowGlobalHotkeys" Type="System.Boolean" Scope="User">
+    <Setting Name="ALLOWGLOBALHOTKEYS" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_PlayPause" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_PLAYPAUSE" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">179</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_PlayPause_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_PLAYPAUSE_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Next" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_NEXT" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">118</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Next_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_NEXT_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Previous" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_PREVIOUS" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">116</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Previous_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_PREVIOUS_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Skip10" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_SKIP10" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">119</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Skip10_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_SKIP10_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Back10" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_BACK10" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">117</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_Back10_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_BACK10_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeUp" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEUP" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">175</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeUp_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEUP_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeDown" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEDOWN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">174</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeDown_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEDOWN_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeMute" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEMUTE" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">173</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_VolumeMute_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_VOLUMEMUTE_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="Library_Path" Type="System.String" Scope="User">
+    <Setting Name="LIBRARY_PATH" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SoundCloud_Notify" Type="System.Boolean" Scope="User">
+    <Setting Name="SOUNDCLOUD_NOTIFY" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FX_STEREOMIX" Type="System.Object" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="MiniPlayer_SmartColors" Type="System.Boolean" Scope="User">
+    <Setting Name="MINIPLAYER_SMARTCOLORS" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CacheLibraryData" Type="System.Boolean" Scope="User">
+    <Setting Name="CACHELIBRARYDATA" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="IsFirstStart" Type="System.Boolean" Scope="User">
+    <Setting Name="ISFIRSTSTART" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="UpdatesServer" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="UPDATESSERVER" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://github.com/AnesHamdani08/MuPlay/blob/main/Extras/Updates%20Server/MuPlayLocalUpdatesServer.xml</Value>
     </Setting>
-    <Setting Name="SkipSilences" Type="System.Boolean" Scope="User">
+    <Setting Name="SKIPSILENCES" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="PlaylistDragDropAction" Type="System.Int32" Scope="User">
+    <Setting Name="PLAYLISTDRAGDROPACTION" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
-    <Setting Name="FBD_QuickAcess_SubFolders" Type="System.IO.SearchOption" Scope="User">
+    <Setting Name="FBD_QUICKACESS_SUBFOLDERS" Type="System.IO.SearchOption" Scope="User">
       <Value Profile="(Default)">TopDirectoryOnly</Value>
     </Setting>
-    <Setting Name="DSP_Plugins" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="DSP_PLUGINS" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
     </Setting>
-    <Setting Name="Player_AutoPlay" Type="System.Boolean" Scope="User">
+    <Setting Name="PLAYER_AUTOPLAY" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="fxEQgains" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="FXEQGAINS" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_NowPlaying" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_NOWPLAYING" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="GlobalHotkey_NowPlaying_MOD" Type="System.Int32" Scope="User">
+    <Setting Name="GLOBALHOTKEY_NOWPLAYING_MOD" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="API_ALLOWGET" Type="System.Boolean" Scope="User">
@@ -204,6 +204,31 @@
     </Setting>
     <Setting Name="API" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="API_TIMEOUT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
+    <Setting Name="API_Plugins" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
+    </Setting>
+    <Setting Name="DEFAULTRESUMEACTION" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ALLOW_MULTIPLEINSTANCES" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HOMEVISUALISERTYPE" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="TABSELECTORTYPE" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="USECOVERCACHING" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DUMMY" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

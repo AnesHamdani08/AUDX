@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfPlayer"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="Lan Browser" Height="300" Width="535" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon_n.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}">
+        Title="Lan Browser" Height="300" Width="535" WindowStartupLocation="CenterOwner" Icon="/WpfPlayer;component/Res/icon_n.ico" Background="{Binding NonClientAreaBackground, ElementName=glowWindow}" ResizeMode="NoResize">
     <Grid>
         <ListBox x:Name="DLNAServers" HorizontalAlignment="Left" Height="100" Margin="215,10,0,0" VerticalAlignment="Top" Width="150"/>
         <ListBox x:Name="MediaRendererList" HorizontalAlignment="Left" Height="100" Margin="370,10,-15,0" VerticalAlignment="Top" Width="150"/>

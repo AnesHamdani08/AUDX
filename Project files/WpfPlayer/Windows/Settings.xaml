@@ -6,7 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="Settings" Height="589.625" Width="420" WindowStartupLocation="CenterOwner" InactiveGlowColor="#FFD100FF" ActiveGlowColor="#FFFF0080" Icon="/WpfPlayer;component/Res/icon_n.ico">
+        Title="Settings" Height="662.625" Width="420" WindowStartupLocation="CenterOwner" InactiveGlowColor="#FFD100FF" ActiveGlowColor="#FFFF0080" Icon="/WpfPlayer;component/Res/icon_n.ico">
     <hc:GlowWindow.NonClientAreaContent>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,11 +20,11 @@
             </Button>
         </Grid>
     </hc:GlowWindow.NonClientAreaContent>
-    <Grid>
+    <Grid Margin="0,0,0,-70">
         <TabControl x:Name="tabControl">
             <TabItem Header="Main" IsSelected="True">
                 <ScrollViewer Margin="0">
-                    <Grid Background="{Binding NonClientAreaBackground, ElementName=glowWindow}" Width="412">
+                    <Grid Background="{Binding NonClientAreaBackground, ElementName=glowWindow}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" Height="700">
                         <CheckBox x:Name="set_discordrpc" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Content="Discord Rich Presense"/>
                         <CheckBox x:Name="set_animations" Content="Animations" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                         <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" Margin="10,55,0,0" TextWrapping="Wrap" Text="Background:" VerticalAlignment="Top"/>
@@ -49,7 +49,7 @@
                             <ComboBoxItem Content="Stack trace" x:Name="onerror_stacktrace" IsEnabled="False"/>
                             <ComboBoxItem Content="Auto" x:Name="onerror_tostring" IsEnabled="False"/>
                         </ComboBox>
-                        <Button x:Name="open_globalhotkeymanager" Margin="10,283,300,216" Content="Global Hotkeys"/>
+                        <Button x:Name="open_globalhotkeymanager" Margin="10,283,300,216" Content="Global Hotkeys" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" Margin="246,325,0,0" TextWrapping="Wrap" Text="Output" VerticalAlignment="Top"/>
                         <ComboBox x:Name="set_output" HorizontalAlignment="Left" Margin="10,318,0,0" VerticalAlignment="Top" Width="140">
                             <ComboBoxItem Content="Error message" x:Name="onerror_errormsg1"/>
@@ -58,8 +58,8 @@
                             <ComboBoxItem Content="Auto" x:Name="onerror_tostring1" IsEnabled="False"/>
                         </ComboBox>
                         <Button x:Name="Refresh_btn" Content="Refresh" HorizontalAlignment="Left" Margin="155,318,0,0" VerticalAlignment="Top"  hc:IconElement.Geometry="{StaticResource RotateLeftGeometry}"/>
-                        <Button x:Name="set_addtolibray" Margin="10,353,300,146" Content="Add To Library"/>
-                        <Button x:Name="set_scanlibrary" Margin="116,353,210,146" Content="Scan Library"/>
+                        <Button x:Name="set_addtolibray" Margin="10,353,300,146" Content="Add To Library" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Button x:Name="set_scanlibrary" Margin="116,353,210,146" Content="Scan Library" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <TextBlock x:Name="get_libdate" HorizontalAlignment="Left" Margin="207,353,0,0" TextWrapping="Wrap" Text="Created On: " VerticalAlignment="Top"/>
                         <TextBlock x:Name="get_libcount" HorizontalAlignment="Left" Margin="207,369,0,0" TextWrapping="Wrap" Text="Count: " VerticalAlignment="Top"/>
                         <Button x:Name="Lib_Refresh_btn" HorizontalAlignment="Left" Margin="362,353,0,0" VerticalAlignment="Top"  hc:IconElement.Geometry="{StaticResource RotateLeftGeometry}"/>
@@ -67,15 +67,23 @@
                         <CheckBox x:Name="set_cachelibrarydata" HorizontalAlignment="Left" Margin="12,411,0,0" VerticalAlignment="Top" Content="Cache library data"/>
                         <CheckBox x:Name="set_skipsilences" HorizontalAlignment="Left" Margin="12,434,0,0" VerticalAlignment="Top" Content="Skip silences"/>
                         <CheckBox x:Name="set_fbd_subfolder" HorizontalAlignment="Left" Margin="12,457,0,0" VerticalAlignment="Top" Content="Folder browser dialog (Top Directory only/Sub folders)"/>
-                        <CheckBox x:Name="set_player_autoplay" HorizontalAlignment="Left" Margin="12,477,0,0" VerticalAlignment="Top" Content="AutoPlay on song load"/>
-                        <ComboBox x:Name="set_dragdropbehaviour" HorizontalAlignment="Left" Margin="12,497,0,0" VerticalAlignment="Top" Width="108">
+                        <CheckBox x:Name="set_player_autoplay" HorizontalAlignment="Left" Margin="12,479,0,0" VerticalAlignment="Top" Content="AutoPlay on song load"/>
+                        <ComboBox x:Name="set_dragdropbehaviour" HorizontalAlignment="Left" Margin="12,502,0,-3" VerticalAlignment="Top" Width="108">
                             <ComboBoxItem Content="Replace" x:Name="DragDrop_Replace"/>
                             <ComboBoxItem Content="Add to first" x:Name="DragDrop_AddToFirst"/>
                             <ComboBoxItem Content="Add to last" x:Name="DragDrop_AddToLast"/>
                             <ComboBoxItem Content="Add to next" x:Name="DragDrop_AddToNext"/>
                             <ComboBoxItem Content="Add to last and play" x:Name="DragDrop_AddToLastPlay"/>
                         </ComboBox>
-                        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="125,504,0,0" TextWrapping="Wrap" Text="DragDrop behaviour" VerticalAlignment="Top"/>
+                        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="125,509,0,0" TextWrapping="Wrap" Text="DragDrop behaviour" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="set_resumeaction" HorizontalAlignment="Left" Margin="12,535,0,0" VerticalAlignment="Top" Width="108">
+                            <ComboBoxItem Content="Ask" />
+                            <ComboBoxItem Content="Resume Session" />
+                            <ComboBoxItem Content="Start Over" />
+                        </ComboBox>
+                        <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" Margin="125,542,0,0" TextWrapping="Wrap" Text="Startup resume action" VerticalAlignment="Top"/>
+                        <CheckBox x:Name="set_MultipleInstances" HorizontalAlignment="Left" Margin="10,570,0,0" VerticalAlignment="Top" Content="Allow Multiple Instances"/>
+                        <CheckBox x:Name="set_TabSelectorType" HorizontalAlignment="Left" Margin="10,593,0,0" VerticalAlignment="Top" Content="Tab Selector/Sidebar"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

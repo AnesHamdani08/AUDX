@@ -26,7 +26,7 @@ Public Class MiniPlayer
         TaskBarNext = New ThumbnailToolBarButton(TryCast(Application.Current.MainWindow, MainWindow).Nexticon, "Next")
         TaskbarManager.Instance.ThumbnailToolBars.AddButtons(helper.Handle, {TaskBarPrev, TaskBarPlayPause, TaskBarNext})
         TaskbarManager.Instance.TabbedThumbnail.SetThumbnailClip(helper.Handle, New System.Drawing.Rectangle(Media_Cover.Margin.Left + 5, Media_Cover.Margin.Top + 30, Media_Cover.Width, Media_Cover.Height))
-        If My.Settings.MiniPlayer_SmartColors Then
+        If My.Settings.MINIPLAYER_SMARTCOLORS Then
             Dim Clr = Utils.GetAverageColor(Player.CurrentMediaCover)
             Dim iClr = Utils.GetInverseColor(Clr)
             Dim ClrBrush = New SolidColorBrush(Clr)
@@ -72,7 +72,7 @@ Public Class MiniPlayer
         Media_Cover.Source = Cover
         Media_Length.Text = Utils.SecsToMins(Player.GetLength)
         Media_Seek.Maximum = Player.GetLength
-        If My.Settings.MiniPlayer_SmartColors Then
+        If My.Settings.MINIPLAYER_SMARTCOLORS Then
             Dim Clr = Utils.GetAverageColor(Thumb)
             Dim iClr = Utils.GetInverseColor(Clr)
             Dim ClrBrush = New SolidColorBrush(Clr)

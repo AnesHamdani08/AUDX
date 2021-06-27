@@ -30,45 +30,25 @@
                         <MenuItem.Icon>
                             <Image Source="Res/control-panelg.png"/>
                         </MenuItem.Icon>
-                        <MenuItem x:Name="TitleBar_Unsync" Header="Unsynced">
-                            <MenuItem.Icon>
-                                <Image Source="Res/no-syncg.png"/>
-                            </MenuItem.Icon>
-                            <MenuItem x:Name="TitleBar_UnsyncAdd" Header="Add">
+                        <MenuItem x:Name="TitleBar_UnsyncAdd" Header="Add">
                                 <MenuItem.Icon>
                                     <Image Source="Res/add-songg.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Load from">
-                                <MenuItem x:Name="TitleBar_UnsyncYT" Header="Youtube">
-                                    <MenuItem.Icon>
-                                        <Image Source="Res/youtubeg.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem x:Name="TitleBar_UnsyncSC" Header="Soundcloud">
-                                    <MenuItem.Icon>
-                                        <Image Source="Res/soundcloudg.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem x:Name="TitleBar_UnsyncURL" Header="URL">
-                                    <MenuItem.Icon>
-                                        <Image Source="Res/linkg.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </MenuItem>
-                        </MenuItem>
-                        <MenuItem Header="Synced">
-                            <MenuItem.Icon>
-                                <Image Source="Res/syncg.png"/>
-                            </MenuItem.Icon>
-                            <MenuItem x:Name="TitleBar_SyncAdd" Header="Add">
+                        <MenuItem Header="Load from">
+                            <MenuItem x:Name="TitleBar_UnsyncYT" Header="Youtube">
                                 <MenuItem.Icon>
-                                    <Image Source="Res/add-songg.png"/>
+                                    <Image Source="Res/youtubeg.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem x:Name="TitleBar_SyncScan" Header="Scan">
+                            <MenuItem x:Name="TitleBar_UnsyncSC" Header="Soundcloud">
                                 <MenuItem.Icon>
-                                    <Image Source="Res/scang.png"/>
+                                    <Image Source="Res/soundcloudg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_UnsyncURL" Header="URL">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/linkg.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
@@ -229,7 +209,7 @@
                                         <Image Source="Res/forward-30.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem x:Name="TitleBar_60FPS" Header="60 FPS (May cause lag !)">
+                                <MenuItem x:Name="TitleBar_60FPS" Header="60 FPS">
                                     <MenuItem.Icon>
                                         <Image Source="Res/forward-60.png"/>
                                     </MenuItem.Icon>
@@ -285,7 +265,7 @@
                                     <Image Source="Res/nas.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem x:Name="TitleBar_ABLoop" Header="A/B Loop">
+                            <MenuItem x:Name="TitleBar_ABLoop" Header="A-B Loop">
                                 <MenuItem.Icon>
                                     <Image Source="Res/ABLoop.png"/>
                                 </MenuItem.Icon>
@@ -300,37 +280,204 @@
                                         <Image Source="Res/editg.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem x:Name="TitleBar_ABLoop_Disable" Header="Disable">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/cross.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_SRTLyricsMI" Header="SRT Lyrics">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/Subtitles.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_SRTLyrics" Header="SRT Load">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/Subtitles.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_SRTLyricsWTMR" Header="SRT Load With Timer">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/Subtitles.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_SRTLyricsSync" Header="SRT Sync">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/syncg.png"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem x:Name="TitleBar_SRTLyricsSyncPlayer" Header="SRT Sync Player" IsEnabled="False">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/syncg.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TitleBar_SRTLyricsSyncSubs" Header="SRT Sync Subtitles" IsEnabled="False">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/syncg.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_SRTLyricsOffset" Header="SRT Offset" IsEnabled="False">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/Subtitles.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_SRTLyricsTMR_Interval" Header="SRT Timer Accuracy">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/frequency.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_DoubleOuput" Header="Double Output" >
+                                <MenuItem.Icon>
+                                    <Image Source="Res/outputw.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_DoubleOuput_Toggle" Header="Toggle">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/syncg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_DoubleOuput_Devices" Header="Ouput">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/syncg.png"/>
+                                    </MenuItem.Icon>
+                                    <ComboBox x:Name="TitleBar_DoubleOuput_Ouput" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Margin="0">
+                                        <!--<MenuItem.Template>
+                                        <ControlTemplate TargetType="{x:Type MenuItem}">
+                                            <ComboBox Width="200" x:Name="TitleBar_DoubleOuput_Devices" SelectionChanged="TitleBar_OutputDevices_SelectionChanged"/>
+                                        </ControlTemplate>
+                                    </MenuItem.Template>
+                                    <MenuItem x:Name="TitleBar_DoubleOuput_Devices_Sync" Header="Sync">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/syncg.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>-->
+                                    </ComboBox>
+                                    <MenuItem x:Name="TitleBar_DoubleOuput_Devices_Sync" Header="Sync">
+                                        <MenuItem.Icon>
+                                            <Image Source="Res/syncg.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_DoubleOuput_PosSync" Header="Position Sync" IsChecked="True">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/syncg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_DoubleOuput_VolSync" Header="Volume Sync" IsChecked="True">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/syncg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Youtube" Header="Youtube">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/youtubeg.png"/>
+                                </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Playlist">
+                    <MenuItem Header="Library">
                         <MenuItem.Icon>
-                            <Image Source="Res/playlist-settingsg.png"/>
+                            <Image Source="Res/musiclibraryg.png"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Favourites" x:Name="TitleBar_Playlist_Favourites">
+                        <MenuItem Header="Edit">
                             <MenuItem.Icon>
-                                <Image Source="Res/ThumbsUp.png"/>
+                                <Image Source="Res/editg.png"/>
                             </MenuItem.Icon>
+                            <MenuItem x:Name="TitleBar_Library_Scan" Header="Scan">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/scang.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_AddSong" Header="Add Song">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/plus.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_AddCurrentSong" Header="Add Current Song">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/plus.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_RemoveSong" Header="Remove Song">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/cross.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_RemoveCurrentSong" Header="Remove Current Song">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/cross.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Caching">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/ssdg.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="TitleBar_Library_Caching_CacheAll" Header="Update Cache">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/ssdg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_Library_Caching_CacheArtists" Header="Update Artists Cache">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/ssdg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="TitleBar_Library_Caching_CacheYears" Header="Update Years Cache">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/ssdg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_Rebuild" Header="Rebuild">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/syncg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TitleBar_Library_RefreshStats" Header="Refresh Stats">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/syncg.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
                         </MenuItem>
-                        <MenuItem Header="All" x:Name="TitleBar_Playlist_All">
+                        <MenuItem Header="Playlist">
                             <MenuItem.Icon>
-                                <Image Source="Res/control-panelg.png"/>
+                                <Image Source="Res/playlist-settingsg.png"/>
                             </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Random 10" x:Name="TitleBar_Playlist_Random10">
-                            <MenuItem.Icon>
-                                <Image Source="Res/control-panelg.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Shuffle All" x:Name="TitleBar_Playlist_ShuffleAll">
-                            <MenuItem.Icon>
-                                <Image Source="Res/control-panelg.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Custom playlist manager" x:Name="TitleBar_Playlist_CustomPlaylistManager">
-                            <MenuItem.Icon>
-                                <Image Source="Res/control-panelg.png"/>
-                            </MenuItem.Icon>
+                            <MenuItem Header="Playlists">
+                                <MenuItem.Icon>
+                                    <Image Source="Res/playlist-settingsg.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Favourites" x:Name="TitleBar_Playlist_Favourites">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/ThumbsUp.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="All" x:Name="TitleBar_Playlist_All">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/control-panelg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Random 10" x:Name="TitleBar_Playlist_Random10">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/control-panelg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Shuffle All" x:Name="TitleBar_Playlist_ShuffleAll">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/control-panelg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Shuffle Current" x:Name="TitleBar_Playlist_ShuffleCurrent">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/control-panelg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Custom playlist manager" x:Name="TitleBar_Playlist_CustomPlaylistManager">
+                                    <MenuItem.Icon>
+                                        <Image Source="Res/control-panelg.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
                         </MenuItem>
                     </MenuItem>
                     <MenuItem x:Name="TitleBar_MiniPlayer" Header="Mini Player"/>
@@ -467,6 +614,12 @@
                 <Image x:Name="media_cover" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Stretch="Fill" Width="50" tz:Transitionz.Blur= "{tz:BlurParams Duration=200, From=20, TransitionOn=Visibility, To=0}"
 					tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
 					tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvasVisChanger}">
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="media_cover_bindtocover" Header="Bind To Cover"/>
+                            <MenuItem x:Name="media_cover_bindtovisualiser" Header="Bind To Visualiser"/>
+                        </ContextMenu>
+                    </Image.ContextMenu>
                     <Image.InputBindings>
                         <MouseBinding MouseAction="LeftDoubleClick"
 							Command="{Binding DataContext.MouseDoubleClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -603,7 +756,7 @@
             <TabItem Header="Home">
                 <Grid Background="#FFE5E5E5">
                     <Grid x:Name="Home_FancyBackground" Margin="0" Visibility="Hidden">
-                       <!-- <Grid.Effect>
+                        <!-- <Grid.Effect>
                             <BlurEffect Radius="200"/>
                         </Grid.Effect> -->
                         <Ellipse x:Name="Home_FancyBackground_el1" Fill="Red" HorizontalAlignment="Left" Height="250" Margin="10,10,0,0" VerticalAlignment="Top" Width="{Binding Height,ElementName=Home_FancyBackground_el1}" Visibility="Hidden"/>
@@ -721,6 +874,49 @@
                     </Image>
                     <Rectangle x:Name="Home_Rec7_Overlay" Fill="#BF000000" HorizontalAlignment="Left" Height="150" Margin="1025,220,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
                     <hc:RunningBlock x:Name="Home_Rec7_RunningBlock" HorizontalAlignment="Left" Margin="1025,220,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Width="150" Content="{Binding ToolTip, ElementName=Home_Rec7}" AutoReverse="True" Visibility="Hidden"/>
+                    <ScrollViewer x:Name="home_lyrics_sv" HorizontalAlignment="Left" Height="157" Margin="35,385,0,0" VerticalAlignment="Top" Width="530">
+                        <TextBlock x:Name="home_lyrics_block" TextWrapping="Wrap" Margin="10">
+                            <TextBlock.Effect>
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="White"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                    </ScrollViewer>
+                    <Border x:Name="Media_Next_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
+                        <Grid>
+                            <Border x:Name="Media_Next_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
+                            <TextBlock x:Name="Media_Next_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                            <TextBlock x:Name="Media_Next_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="Media_Previous_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
+                        <Grid>
+                            <Border x:Name="Media_Previous_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
+                            <TextBlock x:Name="Media_Previous_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                            <TextBlock x:Name="Media_Previous_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
+                        </Grid>
+                    </Border>
+                    <Label x:Name="Media_next" Content="  " HorizontalAlignment="Left" Margin="455,10,0,0" VerticalAlignment="Top" Background="{x:Null}" FontStyle="Italic" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
+						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
+						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvas}" Opacity="0">
+                        <Label.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="0"/>
+                        </Label.Effect>
+                    </Label>
+                    <TextBlock x:Name="Subtitles_Text_Current" TextWrapping="Wrap" Text="       " VerticalAlignment="Center" FontSize="24" TextAlignment="Center" Foreground="White" Opacity="0">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Direction="250"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock x:Name="Subtitles_Text_Previous" TextWrapping="Wrap" Text="      " VerticalAlignment="Center" FontSize="16" TextAlignment="Center" Foreground="White" Opacity="0" Margin="100,-100,100,0">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Direction="250"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock x:Name="Subtitles_Text_Next" TextWrapping="Wrap" Text="Shouldn't Be Visible" VerticalAlignment="Center" FontSize="16" TextAlignment="Center" Foreground="White" Opacity="0" Margin="100,100,100,0">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Direction="250"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
                     <Rectangle x:Name="QuickAccess_Overlay" Fill="Black" Stroke="Black" Opacity="0.5" Visibility="Hidden"/>
                     <Border ClipToBounds="True" CornerRadius="6" Background="#7FFFFFFF" x:Name="QuickAccess_MainCanvasBorder" Height="300" Width="600" Margin="296,121" tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
 						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_OverlayChanger}">
@@ -746,41 +942,13 @@
                             </Button>
                         </Canvas>
                     </Border>
-                    <Label x:Name="Media_next" Content="  " HorizontalAlignment="Left" Margin="455,10,0,0" VerticalAlignment="Top" Background="{x:Null}" FontStyle="Italic" tz:Transitionz.Opacity="{tz:OpacityParams Duration=200, From=0, TransitionOn=Visibility, To=1}"
-						tz:Transitionz.Translate="{tz:TranslateParams Duration=200, From=10\,0, TransitionOn=Visibility, To=0\,0}"
-						tz:Transitionz.Visibility="{Binding IsChecked, Converter={StaticResource b2vc}, ElementName=Switches_TopBarCanvas}" Opacity="0">
-                        <Label.Effect>
-                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="0"/>
-                        </Label.Effect>
-                    </Label>
                     <hc:LoadingLine x:Name="overlay_loadingline" Margin="0,270,0,267" DotDelayTime="75" DotSpeed="2" DotCount="15" DotInterval="5" Visibility="Hidden"/>
                     <hc:LoadingLine x:Name="Overlay_Loading" Margin="0,268,0,0" VerticalAlignment="Top" Height="6" DotCount="15" Visibility="Hidden"/>
-                    <ScrollViewer x:Name="home_lyrics_sv" HorizontalAlignment="Left" Height="157" Margin="35,385,0,0" VerticalAlignment="Top" Width="530">
-                        <TextBlock x:Name="home_lyrics_block" TextWrapping="Wrap" Margin="10">
-                            <TextBlock.Effect>
-                                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="White"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
-                    </ScrollViewer>
                     <TextBlock x:Name="Home_Overlay_State" HorizontalAlignment="Center" Margin="0,30,0,0" TextWrapping="Wrap" Text="State" VerticalAlignment="Center" Foreground="White" Visibility="Hidden">
                         <TextBlock.Effect>
                             <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White"/>
                         </TextBlock.Effect>
                     </TextBlock>
-                    <Border x:Name="Media_Next_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
-                        <Grid>
-                            <Border x:Name="Media_Next_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
-                            <TextBlock x:Name="Media_Next_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
-                            <TextBlock x:Name="Media_Next_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
-                        </Grid>
-                    </Border>
-                    <Border x:Name="Media_Previous_Border" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="200,0,0,0" VerticalAlignment="Bottom" Width="250" CornerRadius="25" Background="{Binding NonClientAreaBackground, ElementName=PrimWindow, Mode=OneWay}" Opacity="0" Visibility="Hidden">
-                        <Grid>
-                            <Border x:Name="Media_Previous_Border_Cover" BorderThickness="1" HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="98" CornerRadius="25"/>
-                            <TextBlock x:Name="Media_Previous_Border_Artist" Margin="103,72,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" Width="145" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
-                            <TextBlock x:Name="Media_Previous_Border_Title" Margin="103,49,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="145" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NonClientAreaForeground, ElementName=PrimWindow, Mode=OneWay}" MaxHeight="16"/>
-                        </Grid>
-                    </Border>
                 </Grid>
             </TabItem>
             <TabItem Header="Playlists">
@@ -1061,7 +1229,7 @@
                     </TabControl>
                 </Grid>
             </TabItem>
-            <TabItem Header="Switches">
+            <TabItem Header="Switches" Visibility="Collapsed">
                 <Grid>
                     <CheckBox x:Name="Switches_TopBarCanvasVisChanger" Content="TopBarVis" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,10,0,0"/>
                     <CheckBox x:Name="Switches_OverlayChanger" Content="Overlay" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,33,0,0"/>
@@ -1076,11 +1244,6 @@
                     <CheckBox x:Name="Switches_Library_Years_Mitem" Content="Library Years Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,240,0,0"/>
                     <CheckBox x:Name="Switches_Library_Favourites" Content="Library Favourites" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,263,0,0"/>
                     <CheckBox x:Name="Switches_Library_Favourites_Mitem" Content="Library Favourites Mitem" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,286,0,0"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Changelog">
-                <Grid Background="#FFE5E5E5">
-                    
                 </Grid>
             </TabItem>
         </TabControl>

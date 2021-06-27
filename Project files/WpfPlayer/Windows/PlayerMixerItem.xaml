@@ -1,0 +1,45 @@
+﻿<hc:Window x:Class="PlayerMixerItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Mixer Player(0)" Height="300" Width="300" Icon="/WpfPlayer;component/Res/icon_n.ico">
+    <hc:Window.Resources>
+        <local:DoubleToSeconds x:Key="D2S"/>
+    </hc:Window.Resources>
+    <Grid>
+        <Image x:Name="Main_Cover" HorizontalAlignment="Center" Height="142" Margin="0,10,0,0" VerticalAlignment="Top" Width="142" Source="/WpfPlayer;component/Res/MuPlayLogoF.png"/>
+        <Button x:Name="Main_song_btn" Width="30" BorderBrush="{x:Null}" HorizontalAlignment="Center" Margin="171,0,91,15" VerticalAlignment="Bottom" IsEnabled="True">
+            <Button.Effect>
+                <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush Stretch="Uniform" ImageSource="/Res/song.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_play_btn" Width="40" BorderBrush="{x:Null}" Height="40" HorizontalAlignment="Center" BorderThickness="1" Margin="126,0,126,10" VerticalAlignment="Bottom">
+            <Button.Effect>
+                <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/Res/play.png" Stretch="Uniform"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_prev_btn" Width="30" BorderBrush="{x:Null}" HorizontalAlignment="Center" Margin="91,0,171,15" VerticalAlignment="Bottom" IsEnabled="True">
+            <Button.Effect>
+                <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="20" Color="White"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/Res/previous.png" Stretch="Uniform"/>
+            </Button.Background>
+        </Button>
+        <TextBlock x:Name="Main_Title" HorizontalAlignment="Center" Margin="0,157,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" FontSize="13.333"/>
+        <TextBlock x:Name="Main_Artist" HorizontalAlignment="Center" Margin="0,180,0,0" TextWrapping="Wrap" Text="Artist" VerticalAlignment="Top" FontFamily="Segoe UI Light"/>
+        <Slider x:Name="Main_Slider" Margin="10,201,10,0" ToolTip="{Binding Value,Converter={StaticResource D2S},ElementName=Main_Slider}" VerticalAlignment="Top"/>
+        <Slider x:Name="Main_Slider_Volume" Margin="0,230,10,0" ToolTip="{Binding Value, ElementName=Main_Slider}" VerticalAlignment="Top" HorizontalAlignment="Right" Width="76"/>
+        <Slider x:Name="Main_Slider_Balance" Margin="10,230,206,0" ToolTip="{Binding Value, ElementName=Main_Slider}" VerticalAlignment="Top" Maximum="100" Minimum="-100"/>
+    </Grid>
+</hc:Window>

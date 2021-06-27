@@ -70,13 +70,13 @@ Public Class DSPPlugins
 
     Private Sub LinkPlayer_OnDspAdded(DSP As Player.DSPPlugin) Handles LinkPlayer.OnDspAdded
         DSP_Source.Add(New DSPPluginItem(DSP_Source.Count + 1, DSP.Name, DSP))
-        My.Settings.DSP_Plugins.Add(DSP.Source)
+        My.Settings.DSP_PLUGINS.Add(DSP.Source)
         My.Settings.Save()
     End Sub
 
     Private Sub LinkPlayer_OnDspRemoved(DSP As Player.DSPPlugin) Handles LinkPlayer.OnDspRemoved
         DSP_Source.Remove(DSP_Source.FirstOrDefault(Function(k) k.Source.Handle = DSP.Handle))
-        My.Settings.DSP_Plugins.Remove(DSP.Source)
+        My.Settings.DSP_PLUGINS.Remove(DSP.Source)
         My.Settings.Save()
     End Sub
 

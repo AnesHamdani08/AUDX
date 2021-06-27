@@ -6,117 +6,120 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="About" Height="600" Width="600" Icon="/WpfPlayer;component/Res/icon_n.ico" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterOwner">
-    <Grid>
-        <WrapPanel x:Name="Blocks_WP">
-            <Rectangle x:Name="R00" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R01" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R02" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R03" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R04" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R10" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R11" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R12" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R13" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R14" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R20" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R21" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R22" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R23" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R24" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R30" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R31" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R32" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R33" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R34" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R40" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R41" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R42" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R43" Fill="Black" Height="118" Width="118"/>
-            <Rectangle x:Name="R44" Fill="Black" Height="118" Width="118"/>
-        </WrapPanel>
-        <local:SmoothProgressBar x:Name="LProgBar1" Margin="0" RenderTransformOrigin="0.5,0.5" Width="50" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100" HorizontalAlignment="Right">
-            <local:SmoothProgressBar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="180"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </local:SmoothProgressBar.RenderTransform>
-            <local:SmoothProgressBar.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2989CC"/>
-                    <GradientStop Color="#FF72B8C5" Offset="0.281"/>
-                    <GradientStop Color="#FFEF1472" Offset="0.47"/>
-                    <GradientStop Color="#FFD99E00" Offset="0.711"/>
-                </LinearGradientBrush>
-            </local:SmoothProgressBar.Foreground>
-            <local:SmoothProgressBar.Effect>
-                <BlurEffect Radius="50"/>
-            </local:SmoothProgressBar.Effect>
-        </local:SmoothProgressBar>
-        <local:SmoothProgressBar x:Name="RProgBar1" Margin="0" RenderTransformOrigin="0.5,0.5" Width="50" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100" HorizontalAlignment="Left">
-            <local:SmoothProgressBar.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2989CC" Offset="1"/>
-                    <GradientStop Color="#FF72B8C5" Offset="0.719"/>
-                    <GradientStop Color="#FFEF1472" Offset="0.53"/>
-                    <GradientStop Color="#FFD99E00" Offset="0.289"/>
-                </LinearGradientBrush>
-            </local:SmoothProgressBar.Foreground>
-            <local:SmoothProgressBar.Effect>
-                <BlurEffect Radius="50"/>
-            </local:SmoothProgressBar.Effect>
-        </local:SmoothProgressBar>
-        <local:SmoothProgressBar x:Name="LProgBar" Margin="0,9,0,-276" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Width="50" Height="{Binding Width, ElementName=WAbout}" Background="{x:Null}" Value="100" Maximum="32" Smoothness="100">
-            <local:SmoothProgressBar.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2989CC"/>
-                    <GradientStop Color="#FF72B8C5" Offset="0.281"/>
-                    <GradientStop Color="#FFEF1472" Offset="0.47"/>
-                    <GradientStop Color="#FFD99E00" Offset="0.711"/>
-                </LinearGradientBrush>
-            </local:SmoothProgressBar.Foreground>
-            <local:SmoothProgressBar.Effect>
-                <BlurEffect Radius="50"/>
-            </local:SmoothProgressBar.Effect>
-            <local:SmoothProgressBar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="270"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </local:SmoothProgressBar.RenderTransform>
-        </local:SmoothProgressBar>
-        <local:SmoothProgressBar x:Name="RProgBar" Margin="0,-276,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="50" Height="{Binding Width, ElementName=WAbout}" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100">
-            <local:SmoothProgressBar.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2989CC"/>
-                    <GradientStop Color="#FF72B8C5" Offset="0.281"/>
-                    <GradientStop Color="#FFEF1472" Offset="0.47"/>
-                    <GradientStop Color="#FFD99E00" Offset="0.711"/>
-                </LinearGradientBrush>
-            </local:SmoothProgressBar.Foreground>
-            <local:SmoothProgressBar.Effect>
-                <BlurEffect Radius="50"/>
-            </local:SmoothProgressBar.Effect>
-            <local:SmoothProgressBar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="90"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </local:SmoothProgressBar.RenderTransform>
-        </local:SmoothProgressBar>
-        <hc:GifImage x:Name="MilkAndMochaGIF" Width="200" Height="161" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-160">
-            <hc:GifImage.Source>
-                <BitmapImage UriSource="/Res/milk-and-mocha-cute.gif"/>
-            </hc:GifImage.Source>
-        </hc:GifImage>
-        <Image x:Name="Logo" Margin="100,20,100,0" VerticalAlignment="Top" Source="/WpfPlayer;component/Res/MuPlayLogo.png"/>
-        <TextBlock x:Name="SubText" Margin="0,206,0,0" Foreground="{Binding NonClientAreaForeground, ElementName=WAbout}" TextWrapping="Wrap" Text="All the resources used in MuPlay are listed on our GitHub repository[AnesHamdani08/MuPlay]. Thank you for all your support , if you have any feedback feel free to leave a ticket at &quot;Issues&quot; section in the repository." VerticalAlignment="Top" FontSize="16" TextAlignment="Center"/>
+        Title="About" Height="600" Width="1200" Icon="/WpfPlayer;component/Res/icon_n.ico" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterOwner">
+    <Grid Background="Black">
+        <Grid HorizontalAlignment="Left" Width="594" Height="571">
+            <WrapPanel x:Name="Blocks_WP">
+                <Rectangle x:Name="R00" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R01" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R02" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R03" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R04" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R10" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R11" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R12" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R13" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R14" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R20" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R21" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R22" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R23" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R24" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R30" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R31" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R32" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R33" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R34" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R40" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R41" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R42" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R43" Fill="Black" Height="118" Width="118"/>
+                <Rectangle x:Name="R44" Fill="Black" Height="118" Width="118"/>
+            </WrapPanel>
+            <local:SmoothProgressBar x:Name="LProgBar1" Margin="0" RenderTransformOrigin="0.5,0.5" Width="50" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100" HorizontalAlignment="Right">
+                <local:SmoothProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="180"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </local:SmoothProgressBar.RenderTransform>
+                <local:SmoothProgressBar.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF2989CC"/>
+                        <GradientStop Color="#FF72B8C5" Offset="0.281"/>
+                        <GradientStop Color="#FFEF1472" Offset="0.47"/>
+                        <GradientStop Color="#FFD99E00" Offset="0.711"/>
+                    </LinearGradientBrush>
+                </local:SmoothProgressBar.Foreground>
+                <local:SmoothProgressBar.Effect>
+                    <BlurEffect Radius="50"/>
+                </local:SmoothProgressBar.Effect>
+            </local:SmoothProgressBar>
+            <local:SmoothProgressBar x:Name="RProgBar1" Margin="0" RenderTransformOrigin="0.5,0.5" Width="50" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100" HorizontalAlignment="Left">
+                <local:SmoothProgressBar.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF2989CC" Offset="1"/>
+                        <GradientStop Color="#FF72B8C5" Offset="0.719"/>
+                        <GradientStop Color="#FFEF1472" Offset="0.53"/>
+                        <GradientStop Color="#FFD99E00" Offset="0.289"/>
+                    </LinearGradientBrush>
+                </local:SmoothProgressBar.Foreground>
+                <local:SmoothProgressBar.Effect>
+                    <BlurEffect Radius="50"/>
+                </local:SmoothProgressBar.Effect>
+            </local:SmoothProgressBar>
+            <local:SmoothProgressBar x:Name="LProgBar" Margin="272,0,272,-276" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Width="50" Height="600" Background="{x:Null}" Value="100" Maximum="32" Smoothness="100">
+                <local:SmoothProgressBar.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF2989CC"/>
+                        <GradientStop Color="#FF72B8C5" Offset="0.281"/>
+                        <GradientStop Color="#FFEF1472" Offset="0.47"/>
+                        <GradientStop Color="#FFD99E00" Offset="0.711"/>
+                    </LinearGradientBrush>
+                </local:SmoothProgressBar.Foreground>
+                <local:SmoothProgressBar.Effect>
+                    <BlurEffect Radius="50"/>
+                </local:SmoothProgressBar.Effect>
+                <local:SmoothProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="270"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </local:SmoothProgressBar.RenderTransform>
+            </local:SmoothProgressBar>
+            <local:SmoothProgressBar x:Name="RProgBar" Margin="272,-276,272,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="50" Height="600" Background="{x:Null}" Value="32" Maximum="32" Smoothness="100">
+                <local:SmoothProgressBar.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF2989CC"/>
+                        <GradientStop Color="#FF72B8C5" Offset="0.281"/>
+                        <GradientStop Color="#FFEF1472" Offset="0.47"/>
+                        <GradientStop Color="#FFD99E00" Offset="0.711"/>
+                    </LinearGradientBrush>
+                </local:SmoothProgressBar.Foreground>
+                <local:SmoothProgressBar.Effect>
+                    <BlurEffect Radius="50"/>
+                </local:SmoothProgressBar.Effect>
+                <local:SmoothProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </local:SmoothProgressBar.RenderTransform>
+            </local:SmoothProgressBar>
+            <hc:GifImage x:Name="MilkAndMochaGIF" Width="200" Height="161" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="197,0,197,-160">
+                <hc:GifImage.Source>
+                    <BitmapImage UriSource="/Res/milk-and-mocha-cute.gif"/>
+                </hc:GifImage.Source>
+            </hc:GifImage>
+            <Image x:Name="Logo" Margin="100,20,100,0" VerticalAlignment="Top" Source="/WpfPlayer;component/Res/MuPlayLogo.png"/>
+            <TextBlock x:Name="SubText" Margin="0,206,0,0" Foreground="{Binding NonClientAreaForeground, ElementName=WAbout}" TextWrapping="Wrap" Text="All the resources used in MuPlay are listed on our GitHub repository[AnesHamdani08/MuPlay]. Thank you for all your support , if you have any feedback feel free to leave a ticket at &quot;Issues&quot; section in the repository." VerticalAlignment="Top" FontSize="16" TextAlignment="Center" Width="594"/>
+        </Grid>
+        <Image x:Name="Credits" HorizontalAlignment="Right" Height="2777" Margin="0,600,0,0" VerticalAlignment="Top" Width="600" Source="/WpfPlayer;component/Res/Credits.png"/>
     </Grid>
 </hc:Window>

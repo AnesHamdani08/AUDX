@@ -138,8 +138,8 @@ Public Class PlaylistManager
         End If
     End Sub
 
-    Private Sub Main_CustomPlaylist_View_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles Main_CustomPlaylist_View.MouseDown
-        If e.ClickCount = 2 AndAlso Main_CustomPlaylist_View.SelectedIndex <> -1 Then
+    Private Sub Main_CustomPlaylist_View_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles Main_CustomPlaylist_View.SelectionChanged
+        If Main_CustomPlaylist_View.SelectedIndex <> -1 Then
             Dim csp = Playlists_Source(Main_CustomPlaylist_View.SelectedIndex)
             If MessageBox.Show(Me, "Are you sure you want to load this playlist." & vbCrLf & csp.Name & " with " & csp.Count & " song(s), that was created on " & csp.DateCreated, "MuPlay", MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
                 With TryCast(Application.Current.MainWindow, MainWindow)

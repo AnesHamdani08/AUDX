@@ -1,0 +1,122 @@
+﻿<hc:Window x:Class="LibraryManager" x:Name="LibraryManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:WpfPlayer"
+        mc:Ignorable="d"
+        Title="Library Manager [Manual Override]" Height="600" Width="800" Icon="/WpfPlayer;component/Res/icon_n.ico">
+    <hc:Window.NonClientAreaContent>
+        <Menu HorizontalAlignment="Left">
+            <MenuItem x:Name="Btn_Save" Header="Save">
+                <MenuItem.Icon>
+                    <Image Source="/Res/saveg.png"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem x:Name="Btn_SaveAs" Header="Save As">
+                <MenuItem.Icon>
+                    <Image Source="/Res/saveg.png"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem x:Name="Btn_Sync" Header="Sync">
+                <MenuItem.Icon>
+                    <Image Source="/Res/syncg.png"/>
+                </MenuItem.Icon>
+                <MenuItem x:Name="Btn_SyncArtistsFromTracks" Header="Artists From Tracks">
+                    <MenuItem.Icon>
+                        <Image Source="/Res/syncg.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="Btn_SyncYearsFromTracks" Header="Years From Tracks">
+                    <MenuItem.Icon>
+                        <Image Source="/Res/syncg.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+    </hc:Window.NonClientAreaContent>
+    <Grid>
+        <TabControl x:Name="Main_TabControl">
+            <TabItem Header="Tracks">
+                <Grid>
+                    <TreeView x:Name="Tracks_TreeView" HorizontalAlignment="Left" Width="300"/>
+                    <TabControl x:Name="Tracks_TabControl" HorizontalAlignment="Left" Margin="300,0,0,0" Width="492">
+                        <TabItem Header="Dummy"/>
+                        <TabItem Header="Stats">
+                            <Grid>
+                                <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,13,0,0" TextWrapping="Wrap" Text="Date Created " VerticalAlignment="Top"/>
+                                <hc:DateTimePicker x:Name="Tracks_Stats_DateCreated" HorizontalAlignment="Left" Margin="88,6,0,0" VerticalAlignment="Top" Width="244" Height="30"/>
+                                <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="19,48,0,0" TextWrapping="Wrap" Text="Track Count " VerticalAlignment="Top"/>
+                                <hc:NumericUpDown x:Name="Tracks_Stats_TrackCount" Height="30" Margin="90,41,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Paths">
+                            <Grid>
+                                <Button x:Name="Tracks_Paths_Add" hc:IconElement.Geometry="{StaticResource AddGeometry}" Content="Add" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Paths_Remove" hc:IconElement.Geometry="{StaticResource RemoveGeometry}" Content="Remove" Height="30" Margin="81,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Paths_RemoveAll" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}" Content="Remove All" Height="30" Margin="168,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Paths_Edit"  hc:IconElement.Geometry="{StaticResource ConfigGeometry}" Content="Edit" Height="30" Margin="276,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBlock x:Name="textBlock2_Copy" HorizontalAlignment="Left" Margin="10,52,0,0" TextWrapping="Wrap" Text="Path Count " VerticalAlignment="Top"/>
+                                <hc:NumericUpDown x:Name="Tracks_Paths_PathCount" Height="30" Margin="81,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Tracks">
+                            <Grid>
+                                <Button x:Name="Tracks_Tracks_Add" hc:IconElement.Geometry="{StaticResource AddGeometry}" Content="Add" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Tracks_Remove" hc:IconElement.Geometry="{StaticResource RemoveGeometry}" Content="Remove" Height="30" Margin="81,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Tracks_RemoveAll" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}" Content="Remove All" Height="30" Margin="168,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Tracks_Tracks_Edit" hc:IconElement.Geometry="{StaticResource ConfigGeometry}" Content="Edit" Height="30" Margin="276,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBox x:Name="Tracks_Tracks_Title" Height="23" TextWrapping="Wrap" Width="258" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="81,45,0,0"/>
+                                <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="50,52,0,0" TextWrapping="Wrap" Text="Title " VerticalAlignment="Top"/>
+                                <TextBox x:Name="Tracks_Tracks_Artist" Height="23" TextWrapping="Wrap" Width="258" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="81,80,0,0"/>
+                                <TextBlock x:Name="textBlock1_Copy" HorizontalAlignment="Left" Margin="45,87,0,0" TextWrapping="Wrap" Text="Artist " VerticalAlignment="Top"/>
+                                <TextBox x:Name="Tracks_Tracks_Year" Height="23" TextWrapping="Wrap" Width="258" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="81,115,0,0"/>
+                                <TextBlock x:Name="textBlock1_Copy1" HorizontalAlignment="Left" Margin="51,122,0,0" TextWrapping="Wrap" Text="Year " VerticalAlignment="Top"/>
+                                <TextBox x:Name="Tracks_Tracks_Source" Height="23" TextWrapping="Wrap" Width="258" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="81,150,0,0"/>
+                                <TextBlock x:Name="textBlock1_Copy2" HorizontalAlignment="Left" Margin="36,157,0,0" TextWrapping="Wrap" Text="Source " VerticalAlignment="Top"/>
+                                <TextBlock x:Name="textBlock2_Copy2" HorizontalAlignment="Left" Margin="13,192,0,0" TextWrapping="Wrap" Text="Track Count " VerticalAlignment="Top"/>
+                                <hc:NumericUpDown x:Name="Tracks_Tracks_Count" Height="30" Margin="81,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Artists">
+                <Grid>
+                    <TreeView x:Name="Artists_TreeView" HorizontalAlignment="Left" Width="300"/>
+                    <TabControl x:Name="Artists_TabControl" HorizontalAlignment="Left" Margin="300,0,0,0" Width="492">
+                        <TabItem Header="Dummy"/>
+                        <TabItem Header="Artists">
+                            <Grid>
+                                <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="Name " Margin="44,17,0,0"/>
+                                <TextBox x:Name="textBox" Height="23" TextWrapping="Wrap" Width="258" VerticalAlignment="Top" Margin="84,10,150,0"/>
+                                <TextBlock x:Name="textBlock2_Copy3" HorizontalAlignment="Left" Margin="13,52,0,0" TextWrapping="Wrap" Text="Artists Count " VerticalAlignment="Top"/>
+                                <hc:NumericUpDown x:Name="Artists_Artists_Count" Height="30" Margin="90,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75"/>
+                                <ListView x:Name="Artists_Tracks" HorizontalAlignment="Left" Height="245" Margin="13,115,0,0" VerticalAlignment="Top" Width="469">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="#" DisplayMemberBinding="{Binding Num}"/>
+                                            <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Source}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <TextBlock x:Name="textBlock2_Copy1" HorizontalAlignment="Left" Margin="47,87,0,0" TextWrapping="Wrap" Text="Tracks" VerticalAlignment="Top"/>
+                                <Button x:Name="Artists_Tracks_Add" hc:IconElement.Geometry="{StaticResource AddGeometry}" Content="Add" Height="30" Margin="84,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Artists_Tracks_Remove" hc:IconElement.Geometry="{StaticResource RemoveGeometry}" Content="Remove" Height="30" Margin="155,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Artists_Tracks_RemoveAll" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}" Content="Remove All" Height="30" Margin="242,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button x:Name="Artists_Tracks_Edit" hc:IconElement.Geometry="{StaticResource ConfigGeometry}" Content="Edit" Height="30" Margin="350,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Years" IsEnabled ="False">
+                <Grid/>
+            </TabItem>
+        </TabControl>
+        <Grid x:Name="Overlay" Background="#7F000000" Opacity="0" Visibility="Hidden">
+            <hc:LoadingLine x:Name="Overlay_LoadingLine" VerticalAlignment="Center" DotCount="10" DotDiameter="5" DotSpeed="1" IsRunning="False" Opacity="0"/>
+        </Grid>
+    </Grid>
+</hc:Window>

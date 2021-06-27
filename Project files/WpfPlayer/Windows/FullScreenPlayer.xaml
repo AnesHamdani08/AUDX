@@ -1,12 +1,100 @@
-﻿<Window x:Class="FullScreenPlayer"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfPlayer"
+        xmlns:hc="https://handyorg.github.io/handycontrol" x:Class="FullScreenPlayer"
         mc:Ignorable="d"
-        Title="FullScreenPlayer" Height="300" Width="300">
+        Title="Fullscreen Player" Height="720" Width="1280" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" Topmost="False" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None">
     <Grid>
-        
+        <Image x:Name="Main_BG" Source="/WpfPlayer;component/Res/FullscreenPlayerBG.jpg" Stretch="UniformToFill" Margin="-10">
+            <Image.Effect>
+                <BlurEffect Radius="20"/>
+            </Image.Effect>
+        </Image>
+        <Rectangle Fill="#7F0B0B0B" Margin="-10"/>
+        <Image x:Name="Main_Logo" Source="/WpfPlayer;component/Res/MuPlayLogo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="295" Margin="20,20,0,0">
+            <Image.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Image.Effect>
+        </Image>
+        <Button x:Name="Main_BT_PlayPause" HorizontalAlignment="Left" Margin="57,0,0,20" VerticalAlignment="Bottom" Width="64" Height="64" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wplay.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_BT_Prev" HorizontalAlignment="Left" Margin="20,0,0,36" VerticalAlignment="Bottom" Width="32" Height="32" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wprevious.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_BT_Next" HorizontalAlignment="Left" Margin="126,0,0,36" VerticalAlignment="Bottom" Width="32" Height="32" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wnext.png"/>
+            </Button.Background>
+        </Button>
+        <hc:PreviewSlider x:Name="Main_Track" VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="500" Margin="387,0,387,43">
+            <hc:PreviewSlider.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </hc:PreviewSlider.Effect>
+        </hc:PreviewSlider>
+        <TextBlock x:Name="Main_Pos" HorizontalAlignment="Center" Margin="350,0,892,43" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Bottom" Foreground="White" FontSize="13.333">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock x:Name="Main_Len" HorizontalAlignment="Center" Margin="892,0,350,43" TextWrapping="Wrap" Text="00:00" VerticalAlignment="Bottom" Foreground="White" FontSize="13.333">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <Button x:Name="Main_BT_Loop" HorizontalAlignment="Right" Margin="0,0,10,36" VerticalAlignment="Bottom" Width="32" Height="32" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wno-loop.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_BT_Shuffle" HorizontalAlignment="Right" Margin="0,0,47,36" VerticalAlignment="Bottom" Width="32" Height="32" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wno-shuffle.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Main_BT_Volume" HorizontalAlignment="Right" Margin="0,0,84,36" VerticalAlignment="Bottom" Width="32" Height="32" BorderBrush="{x:Null}" Foreground="{x:Null}">
+            <Button.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="#FFC60156"/>
+            </Button.Effect>
+            <Button.Background>
+                <ImageBrush ImageSource="/WpfPlayer;component/Res/wFvol.png"/>
+            </Button.Background>
+        </Button>
+        <Image x:Name="Main_Cover" HorizontalAlignment="Right" Height="300" VerticalAlignment="Center" Width="{Binding Height,ElementName=Main_Cover}" Margin="0,0,100,0" Source="/WpfPlayer;component/Res/MuPlayLogoF.png">
+            <Image.Effect>
+                <DropShadowEffect/>
+            </Image.Effect>
+        </Image>
+        <ScrollViewer x:Name="scrollViewer" HorizontalAlignment="Left" Height="400" Margin="100,0,0,0" VerticalAlignment="Center" Width="700" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Effect>
+                <DropShadowEffect Color="#FFF35D9B" BlurRadius="20" ShadowDepth="0"/>
+            </ScrollViewer.Effect>
+            <WrapPanel x:Name="Main_Playlist" Orientation="Vertical"/>
+        </ScrollViewer>
+        <Grid x:Name="Main_Volume_G" Opacity="0" Height="30" Margin="0,0,50,76" VerticalAlignment="Bottom" Width="100" Background="#FF0B0B0B" HorizontalAlignment="Right">
+            <Slider x:Name="Main_Volume" Width="100" Maximum="100" HorizontalAlignment="Center" VerticalAlignment="Center" LargeChange="10" SmallChange="1"/>
+        </Grid>
     </Grid>
 </Window>
