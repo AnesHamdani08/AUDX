@@ -1,5 +1,5 @@
-# MuPlay
-![MuPlayLogo](https://user-images.githubusercontent.com/38377619/119999253-d22a7500-bfd1-11eb-8ae9-d3257bc7a7d2.png)<br>
+# AUDX
+![AUDXLogo](https://user-images.githubusercontent.com/38377619/124486958-6ac0cb80-ddae-11eb-96c9-501397876b6a.png)
 A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
@@ -116,8 +116,9 @@ V         | Release date | Availability | Notes
 0.1.0.0|12/5/2021|Public|First public version
 0.1.0.1|28/5/2021|Public|NaN
 0.2.0.0|27/6/2021|Public|No updates till 15/7/2021
+0.2.0.0|5/7/2021|Private|Changed App Name To AUDX
 # Resources
--All icons used in MuPlay are from [Icons8](https://icons8.com) Style:Windows 10<br>
+-All icons used in AUDX are from [Icons8](https://icons8.com) Style:Windows 10<br>
 # Used libraries
 Made possible by:<br>
 -[AngleSharp](https://github.com/AngleSharp/AngleSharp)<br>
@@ -132,6 +133,6 @@ Made possible by:<br>
 -[SciChart Transitionz](https://github.com/ABTSoftware/SciChart.Wpf.UI/wiki/Transitionz-Library)<br>
 -[Taglib-Sharp](https://github.com/mono/taglib-sharp)<br>
 # Disclaimer
-If you find any copyright infringement  in MuPlay feel free to leave a post in "Issues" , or contact me via email: aneshamdani9@gmail.com<br>
+If you find any copyright infringement  in AUDX feel free to leave a post in "Issues" , or contact me via email: aneshamdani9@gmail.com<br>
 # Thank you
-Thanks for checking MuPlay feel free to express your feedback in "Issues" , all your thoughts are welcome.
+Thanks for checking AUDX feel free to express your feedback in "Issues" , all your thoughts are welcome.
