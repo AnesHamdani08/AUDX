@@ -1,5 +1,5 @@
 # AUDX
-![AUDXLogo](https://user-images.githubusercontent.com/38377619/124486958-6ac0cb80-ddae-11eb-96c9-501397876b6a.png)
+![AUDXLogo](https://user-images.githubusercontent.com/38377619/124486958-6ac0cb80-ddae-11eb-96c9-501397876b6a.png)<br>
 A powerful music player and manager written in VB.Net
 This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
