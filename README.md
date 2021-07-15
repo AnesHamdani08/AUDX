@@ -1,7 +1,7 @@
 # AUDX
 ![AUDXLogo](https://user-images.githubusercontent.com/38377619/124486958-6ac0cb80-ddae-11eb-96c9-501397876b6a.png)<br>
 A powerful music player and manager written in VB.Net
-This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to MuPlay.New members are welcome to add features or help clean the code.
+This project is inspired from the well-known music player MusicBee which is written in VB.net. I'm currently in the way of adding new features to AUDX.New members are welcome to add features or help clean the code.
 Thank you for stepping by.
 # Features(Arranged by number of appearance) 
  - Clean and Modern UI Based on HandyControls
@@ -23,7 +23,7 @@ Thank you for stepping by.
    - Support for Sonique, Winamp, Windows Media Player, and BassBox
    - Windows Built-In
    - Plugin
-   - MuPlay Built-In
+   - AUDX Built-In
    - Framerate Limiting
  - Built-In Plugins:
    - Winamp DSP Support
@@ -121,7 +121,6 @@ V         | Release date | Availability | Notes
 -All icons used in AUDX are from [Icons8](https://icons8.com) Style:Windows 10<br>
 # Used libraries
 Made possible by:<br>
--[AngleSharp](https://github.com/AngleSharp/AngleSharp)<br>
 -[Bass.Net](http://bass.radio42.com/)<br>
 -[Bass](https://www.un4seen.com/)<br>
 -[DiscordRPC](https://github.com/Lachee/discord-rpc-csharp)<br>
