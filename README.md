@@ -71,7 +71,7 @@ Thank you for stepping by.
    - Recommended tracks
    - Lyrics (if available)
  - Playlist Tab:
-   - Commands: Add , Remov , Move Up , Move Down , Move To , Clear , Edit Mode
+   - Commands: Add , Remove , Move Up , Move Down , Move To , Clear , Edit Mode
  - Visualiser Tab
  - Library Tab:
    - Browse By:
