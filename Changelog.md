@@ -1,3 +1,39 @@
+# V 0.2.1.0
+ - Major : 0
+ - Minor : 2
+ - Minor Revision : 0
+ - Build : 0
+ - Updates for AUDX are back
+ - Libray Manual Override is now functional
+ - Taskbar Progress Color and Overlay Icon should now work
+ - DiscordRPC is no longer showing "System.Windows.Controls.Label"
+ - Non-Music Youtube videos shouldn't now throw an error
+ - Media Next/Previous buttons should now override repeat settings
+ - Implemented a new notification queuing "Notification Bucket"
+ - Previously executed console commands can now be scrolled through using keyboard arrow keys
+ - Fixed library manager foreground colors
+ - Fancy background settings can now be changed via settings
+ - Added USB Flash Drive button to titlebar for quick access to UFD operations
+ - Added view controls to the playlist
+ - Current playing track is now pinned in the top of the playlist
+ - Redisgned the Mini Player
+ - Universal Simulated Volume Hotkeys
+ - Repeate and Shuffle types are now saved
+ - Try the number guessing game in the developer console!
+ - Discord RPC Is now showing the app's icon instead of the full logo
+ - Changed the home screen layout. Now showing:
+   - Most Played Songs
+   - Random Selection
+ - Improved loading time
+ - Custom playlist manager now have a refresh button
+ - Media controls can be docked from console
+   - Top
+   - Bottom
+ - Added Debug Logging and it's automatically enabled. You can disable it from console
+ - Added the ability to select a closing action: 
+   - Close
+   - Minimize To Tray
+   - Ask Everytime
 # V 0.2.0.0
  - Major : 0
  - Minor : 2
@@ -29,7 +65,7 @@
  - A-B Loop should now indicate the state in the plugins section
  - Added disable button to A-B Loop
  - Added Library to titlebar menu
- - No Updates for MuPlay are scheduled till 15/07/2021
+ - No Updates for AUDX are scheduled till 15/07/2021
 # V 0.1.0.1
  - Major : 0
  - Minor : 1
@@ -40,7 +76,7 @@
  - Windows explorer Open With is now functional<br>
  - Sleep timer is now available<br>
  - New changelog popup will appear after updating<br>
- - Launch of MuPlayAPI which will let developers integrate their apps with MuPlay<br>
+ - Launch of AUDXAPI which will let developers integrate their apps with AUDX<br>
  - More EQ presets<br>
  - File > Synced > Scan is now working<br>
  - Settings > Scan is now removing song that are no longer exists<br>
