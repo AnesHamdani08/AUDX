@@ -34,6 +34,11 @@
    - Close
    - Minimize To Tray
    - Ask Everytime
+ - Added a new player skin : Floating Player
+ - Fixed some color bugs
+ - Added full song info to home screen
+ - Player skins are now in the title bar
+ - All previous changelogs can now be browsed from the app , so you can see how this app has evolved over time ;)
 # V 0.2.0.0
  - Major : 0
  - Minor : 2
@@ -103,6 +108,5 @@
 //------------------------------------------------------<br>
 # To be implemented
  - Documentation<br>
- - Custom taskbar thumbnail<br>
  - Suggest features in github.<br>
 
