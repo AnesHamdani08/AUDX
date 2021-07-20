@@ -39,6 +39,7 @@
  - Added full song info to home screen
  - Player skins are now in the title bar
  - All previous changelogs can now be browsed from the app , so you can see how this app has evolved over time ;)
+ - Tray Notification context menu icons color should now sync with the app's theme
 # V 0.2.0.0
  - Major : 0
  - Minor : 2
