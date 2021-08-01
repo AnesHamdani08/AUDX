@@ -1,9 +1,0 @@
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\bin\Debug\WpfPlayerAPI.dll
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\bin\Debug\WpfPlayerAPI.pdb
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\bin\Debug\WpfPlayerAPI.xml
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.Resources.resources
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.vbproj.GenerateResource.Cache
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.dll
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.xml
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.pdb
-D:\Visual Studio Files\WpfPlayerAPI\WpfPlayerAPI\obj\Debug\WpfPlayerAPI.vbprojResolveAssemblyReference.cache
