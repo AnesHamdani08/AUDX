@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MuPlay>
- <LastVersion>0.1.0.2</LastVersion>
+ <LastVersion>0.2.2.0</LastVersion>
  <UpdateLink>http://speedtest.tele2.net/100MB.zip</UpdateLink>
- <ChangeLog>- Addition of a standalone tags manager&amp; - Fullscreen player&amp; - Bug fixes&amp; - Tag Manager bug fixes:&amp;  - Endless cover search popup&amp;  - "Must disconnect specified child from current parent Visual before attaching to new parent Visual."&amp;  - Move from;to didn't work with 2 covers</ChangeLog>
+ <ChangeLog>V 0.2.2.0&amp;  - Major : 0&amp;  - Minor :  2&amp;  - Minor Revision :  2&amp;  - Build :  0&amp; Addition of safe listening notifier&amp; New Integration API Engine&amp; Redesigned settings&amp; Updated the Stream Downloader plugin&amp; Bug Fixes</ChangeLog>
 </MuPlay>
