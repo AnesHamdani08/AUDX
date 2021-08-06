@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AUDX>
- <LastVersion>0.2.2.0</LastVersion>
+ <LastVersion>0.2.3.0</LastVersion>
  <UpdateLink>http://speedtest.tele2.net/100MB.zip</UpdateLink>
  <ChangeLog>V 0.2.2.0&amp;  - Major : 0&amp;  - Minor :  2&amp;  - Minor Revision :  2&amp;  - Build :  0&amp; Addition of safe listening notifier&amp; New Integration API Engine&amp; Redesigned settings&amp; Updated the Stream Downloader plugin&amp; Bug Fixes</ChangeLog>
 </AUDX>
