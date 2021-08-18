@@ -1,7 +1,36 @@
+# V 0.2.3.0
+ - Loop and Shuffle buttons are now with media controls
+ - Added a playlist maker
+ - Stream Downloader now support forwarding to Internet Download Manager (IDM)
+ - Fixed multiple instances, apparently it was reversed (Checked = Unchecked and vice versa)
+ - Quick Access items can now be changed
+ - Added enhanced keyboard controls (CTRL+K)
+ - Home background can now be changed
+   - Static
+   - Dynamic (GIF)
+   - Cover
+   - Color
+   - Background Blur (Aero)
+   - Acrylic Background
+ - Remade notifications system, now featuring
+   - Filter Rules
+   - Routing
+   - Dedicated space in home screen
+ - Fixed some bugs related to the downloads manager
+# V 0.2.2.0
+ - Major : 0
+ - Minor : 2
+ - Minor Revision : 2
+ - Build : 0
+ - Addition of safe listening notifier
+ - New Integration API Engine
+ - Redesigned settings
+ - Updated the Stream Downloader plugin
+ - Bug Fixes
 # V 0.2.1.0
  - Major : 0
  - Minor : 2
- - Minor Revision : 0
+ - Minor Revision : 1
  - Build : 0
  - Updates for AUDX are back
  - Libray Manual Override is now functional
