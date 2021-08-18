@@ -118,6 +118,8 @@ V         | Release date | Availability | Notes
 0.2.0.0|27/6/2021|Public|No updates till 15/7/2021
 0.2.0.0|5/7/2021|Private|Changed App Name To AUDX
 0.2.1.0|25/7/2021|Public|First pre-compiled release
+0.2.2.0|1/8/2021|Private|NaN
+0.2.3.0|TBA|NaN
 # Resources
 -All icons used in AUDX are from [Icons8](https://icons8.com) Style:Windows 10<br>
 # Used libraries
