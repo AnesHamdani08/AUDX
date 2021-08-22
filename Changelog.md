@@ -17,6 +17,11 @@
    - Routing
    - Dedicated space in home screen
  - Fixed some bugs related to the downloads manager
+ - Next/Previous songs now shows on every tab
+ - New visualisation engine
+ - Fixed Youtube video thumbnail
+ - Files now can be preview on the go using the preview player
+ - Console apps now open in new window
 # V 0.2.2.0
  - Major : 0
  - Minor : 2
