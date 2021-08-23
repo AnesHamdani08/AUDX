@@ -6,8 +6,7 @@ Thank you for stepping by.
 # Features(Arranged by number of appearance) 
  - Clean and Modern UI Based on HandyControls
  - Support for: MP3, M4A, MP2, MP1, OGG, WAV, FLAC, ALAC, Webm, WMA, AIFF, custom generated, and more via OS codecs and add-ons<br>
- - Load from: Local, Youtube, Soundcloud, URL
- - Library Scanning
+ - Load from: Local, Youtube, Soundcloud, URL 
  - Sleep Timer
  - Internal and External Tags Manager
  - FX:
@@ -34,21 +33,46 @@ Thank you for stepping by.
    - A/B Loop
    - Live lyrics(Only SRT is supported at the moment)   
    - Custom Taskbar thumbnails
- - Playlists:
-   - Favourite songs
-   - All
-   - All shuffled
-   - Random 10
-   - Custom playlist manager
- - MiniPlayer
- - Fullscreen Player
+   - Double Output
+ - Libray
+   - Edit:
+     - Scan
+     - Add
+     - Add Current
+     - Remove
+     - Remove Current
+     - Cache
+     - Rebuild
+     - Refresh Stats
+     - Refresh
+   - Playlists:
+     - Favourite songs
+     - All
+     - All shuffled
+     - Random 10
+     - Custom playlist manager
+     - Auto Playlist Maker
+ - Players
+   - MiniPlayer
+   - Floating Player
+   - FullScreen Player
+     - With BG
+     - Without BG 
  - OnScreen Clock
  - Search Playlist and library
+ - Notifications
  - Advanced Settings:
    - Discord Rich Presense
    - Background:
      - Cover
      - Fancy
+     - Static
+     - Dynamic(GIF)
+     - Color
+     - Blur
+     - Acrylic Blur
+ - Quick Access
+ - Settings
    - Fade Audio on media change
    - Notifcation TTS
    - Library Caching
