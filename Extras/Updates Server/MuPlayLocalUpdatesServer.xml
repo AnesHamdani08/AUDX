@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AUDX>
- <LastVersion>0.2.2.0</LastVersion>
- <UpdateLink>http://speedtest.tele2.net/100MB.zip</UpdateLink>
- <ChangeLog>V 0.2.2.0&amp;  - Major : 0&amp;  - Minor :  2&amp;  - Minor Revision :  2&amp;  - Build :  0&amp; Addition of safe listening notifier&amp; New Integration API Engine&amp; Redesigned settings&amp; Updated the Stream Downloader plugin&amp; Bug Fixes</ChangeLog>
+ <LastVersion>0.2.3.0</LastVersion>
+ <UpdateLink>https://github-releases.githubusercontent.com/356522111/22eb3cf9-7967-4164-aff2-2fd5ef2f11d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210824%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210824T143052Z&X-Amz-Expires=300&X-Amz-Signature=a55d9f9da9f7fbd1f7beab6cb8584ebe53fe4c7c63d5b6671cc8f15ced2b56da&X-Amz-SignedHeaders=host&actor_id=38377619&key_id=0&repo_id=356522111&response-content-disposition=attachment%3B%20filename%3DAUDX0230.rar&response-content-type=application%2Foctet-stream</UpdateLink>
+ <ChangeLog>V 0.2.3.0&amp;  - Major : 0&amp;  - Minor :  2&amp;  - Minor Revision :  3&amp;  - Build :  0&amp;Loop and Shuffle buttons are now with media controls&amp;Added a playlist maker&amp;Stream Downloader now support forwarding to Internet Download Manager (IDM)&amp;Fixed multiple instances&amp;Quick Access items can now be changed&amp;Added enhanced keyboard controls (CTRL+K)&amp;Home background can now be changed&amp;Remade notifications system&amp;Fixed some bugs related to the downloads manager&amp;Next/Previous songs now shows on every tab&amp;New visualisation engine&amp;Fixed Youtube video thumbnail&amp;Files now can be preview on the go using the preview player&amp;Console apps now open in new window</ChangeLog>
 </AUDX>
