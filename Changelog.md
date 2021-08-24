@@ -1,3 +1,5 @@
+# V 0.2.4.0
+ - Changing to playlist view now scrolls into current song
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
