@@ -1,5 +1,8 @@
 # V 0.2.4.0
  - Changing to playlist view now scrolls into current song
+ - Optimized the app's exiting code
+ - Optimized playlist making code(Play All,Shuffle All,Shuffle Current and Random 10)
+ - Support for most supported platforms by youtube-dl ([GO](https://github.com/AnesHamdani08/AUDX/wiki/Youtube-DL-Supported-Platforms))
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
@@ -143,7 +146,6 @@
  - DragDrop with changeable actions<br>
  - Added a dedicated console window with command injecting<br>
 //------------------------------------------------------<br>
-# To be implemented
- - Documentation<br>
+# To be implemented 
  - Suggest features in github.<br>
 
