@@ -4,6 +4,10 @@
  - Optimized playlist making code(Play All,Shuffle All,Shuffle Current and Random 10)
  - Support for most supported platforms by youtube-dl ([GO](https://github.com/AnesHamdani08/AUDX/wiki/Youtube-DL-Supported-Platforms))
  - Right clicking most played or random selection songs now gives more controls
+ - Lyrics and song info can now be copied to clipboard
+ - Visualiser can now be stopped
+ - Visualiser background can now be changed
+ - Added support for save/load custom EQs
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
