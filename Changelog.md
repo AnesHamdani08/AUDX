@@ -8,6 +8,7 @@
  - Visualiser can now be stopped
  - Visualiser background can now be changed
  - Added support for save/load custom EQs
+ - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
