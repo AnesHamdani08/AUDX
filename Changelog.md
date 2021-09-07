@@ -1,4 +1,4 @@
-# V 0.2.4.0
+# V 0.3.0.0
  - Changing to playlist view now scrolls into current song
  - Optimized the app's exiting code
  - Optimized playlist making code(Play All,Shuffle All,Shuffle Current and Random 10)
@@ -11,6 +11,8 @@
  - Added Mixes Page
  - Added Player Profiles
  - Re-enabled Lyrics
+ - Added the ability to queue existing song to play next
+ - Added the ability to flash taskbar icon when notification is recieved
  - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
