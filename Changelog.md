@@ -14,6 +14,11 @@
  - Added the ability to queue existing song to play next
  - Added the ability to flash taskbar icon when notification is recieved
  - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added
+ - Added the ability to Allow or Deny duplicates in the playlist
+ - Re-designed system tray menu
+ - Added PIP for visualisers
+ - Added Background Player
+ - Added the ability to switch to video mode for supported files"
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
