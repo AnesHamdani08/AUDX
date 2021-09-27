@@ -19,6 +19,13 @@
  - Added PIP for visualisers
  - Added Background Player
  - Added the ability to switch to video mode for supported files"
+ - Added the ability to play a temporary file
+ - Re-Added the ability to play a folder
+ - Reseting song position now requires > 5 seconds instead of Length /4
+ - Added Notify On Media Change in settings
+ - Added the ability to delete and check the logs
+ - Added the ability to change playlist direction
+ - Added the ability to automatically assosciate audio files to AUDX in settings
 # V 0.2.3.0
  - Loop and Shuffle buttons are now with media controls
  - Added a playlist maker
