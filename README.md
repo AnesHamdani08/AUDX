@@ -147,6 +147,7 @@ V         | Release date | Availability | Notes
 0.2.1.0|25/7/2021|Public|First pre-compiled release
 0.2.2.0|1/8/2021|Private|NaN
 0.2.3.0|23/8/2021|Public|NaN
+0.3.0.0|27/9/2021|Public|Skipped 0.2.4.0
 # Resources
 -All icons used in AUDX are from [Icons8](https://icons8.com) Style:Windows 10<br>
 # Used libraries
