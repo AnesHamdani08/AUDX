@@ -27,8 +27,7 @@
  - Fixed next doesn't care about queue next
  - Added Youtube Search
  - Added Automatic File Manupilation Detection For Library
- - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added
- - Added the ability to Allow or Deny duplicates in the playlist
+ - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added 
  - Re-designed system tray menu
  - Added PIP for visualisers
  - Added Background Player
