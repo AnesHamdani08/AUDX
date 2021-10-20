@@ -13,6 +13,20 @@
  - Re-enabled Lyrics
  - Added the ability to queue existing song to play next
  - Added the ability to flash taskbar icon when notification is recieved
+ - Added the ability to Allow or Deny duplicates in the playlist
+ - Re-designed system tray menu", "Added PIP for visualisers
+ - Added Background Player
+ - Added the ability to switch to video mode for supported files
+ - Added the ability to play a temporary file
+ - Re-Added the ability to play a folder
+ - Reseting song position now requires > 5 seconds instead of Length /4
+ - Added Notify On Media Change in settings
+ - Added the ability to delete and check the logs
+ - Added the ability to change playlist direction
+ - Added the ability to automatically assosciate audio files to AUDX in settings
+ - Fixed next doesn't care about queue next
+ - Added Youtube Search
+ - Added Automatic File Manupilation Detection For Library
  - V 0.2.4.0 Will be changed to V 0.3.0.0 because a huge update has been added
  - Added the ability to Allow or Deny duplicates in the playlist
  - Re-designed system tray menu
